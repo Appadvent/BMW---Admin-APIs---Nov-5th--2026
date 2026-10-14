@@ -188,6 +188,9 @@ export const ProductDao = {
   },
 
   getProductById: async (id: number) => {
+    if (!id || typeof id !== "number" || isNaN(id) || id <= 0) {
+      return null;
+    }
     return await (prisma.product as any).findUnique({
       where: { id },
       include: {

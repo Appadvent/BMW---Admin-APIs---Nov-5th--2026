@@ -99,7 +99,7 @@ export default function ProductCard({
         {/* Action Buttons */}
         <div className="mt-auto grid grid-cols-2 gap-2 pt-2 border-t border-gray-100">
           <Link
-            href={`/products/${prod?.id || prod?._id || idx}`}
+            href={prod?.id ? `/products/${prod.id}` : '#'}
             className="text-center text-[12px] font-bold py-2.5 px-3 rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors flex items-center justify-center gap-1"
           >
             Details

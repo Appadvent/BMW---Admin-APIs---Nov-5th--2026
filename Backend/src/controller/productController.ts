@@ -151,7 +151,17 @@ export const ProductController = {
   getProductById: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const product = await ProductDao.getProductById(Number(id));
+      const numId = Number(id);
+
+      if (!id || isNaN(numId) || numId <= 0) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid product ID",
+        });
+        return;
+      }
+
+      const product = await ProductDao.getProductById(numId);
 
       if (!product) {
         res.status(404).json({
@@ -174,6 +184,16 @@ export const ProductController = {
   updateProduct: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
+      const numId = Number(id);
+
+      if (!id || isNaN(numId) || numId <= 0) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid product ID",
+        });
+        return;
+      }
+
       const {
         title,
         description,
@@ -191,7 +211,7 @@ export const ProductController = {
         specifications,
       } = req.body;
 
-      const existingProduct = await ProductDao.getProductById(Number(id));
+      const existingProduct = await ProductDao.getProductById(numId);
 
       if (!existingProduct) {
         res.status(404).json({
@@ -283,9 +303,18 @@ export const ProductController = {
   deleteProduct: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
+      const numId = Number(id);
+
+      if (!id || isNaN(numId) || numId <= 0) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid product ID",
+        });
+        return;
+      }
 
       // 1. Find product first (to get image URL)
-      const product = await ProductDao.getProductById(Number(id));
+      const product = await ProductDao.getProductById(numId);
       if (!product) {
         res.status(404).json({
           success: false,

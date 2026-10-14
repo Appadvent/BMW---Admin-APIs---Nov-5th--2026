@@ -46,6 +46,9 @@ export const fetchProductById = createAsyncThunk(
   "products/fetchById",
   async (id: string | number, { rejectWithValue }) => {
     try {
+      if (!id || id === "undefined" || id === "null" || isNaN(Number(id)) || Number(id) <= 0) {
+        return rejectWithValue("Invalid product ID");
+      }
       const { data } = await api.get(`/product/${id}`);
       return data.data; // returns single product object with specifications, features, category, tag
     } catch (error: any) {
