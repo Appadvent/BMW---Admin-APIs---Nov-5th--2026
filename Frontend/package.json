@@ -1,0 +1,44 @@
+{
+  "name": "streamline-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 8002",
+    "build": "next build",
+    "start": "next start -p 8002",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@reduxjs/toolkit": "^2.12.0",
+    "animate.css": "^4.1.1",
+    "antd": "^6.6.5",
+    "axios": "^1.20.0",
+    "dayjs": "^1.11.23",
+    "file-loader": "^6.2.0",
+    "framer-motion": "^13.4.4",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.48.0",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-redux": "^9.3.0",
+    "react-slick": "^0.31.0",
+    "recharts": "^3.10.1",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
+    "slick-carousel": "^2.0.0",
+    "swiper": "^14.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/react-slick": "^0.23.13",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

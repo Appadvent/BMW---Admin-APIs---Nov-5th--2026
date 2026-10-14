@@ -1,0 +1,381 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pages {
+  id        Int      @id @default(autoincrement())
+  type      String   @unique
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  phone     String
+  services  String   @default("")
+  carModel  String?
+  vin       String?
+  oemNumber String?
+  year      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AdminUser {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id             Int             @id @default(autoincrement())
+  title          String          @unique
+  description    String
+  image          String?
+  brochure       String?
+  tag            String?
+  oemNumber      String?
+  make           String?
+  model          String?
+  yearRange      String?
+  position       String?
+  condition      String?
+  categoryId     Int?
+  category       Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subcategoryId  Int?
+  subcategory    Subcategory?    @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  features       Feature[]
+  specifications Specification[]
+}
+
+model ProductHeading {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Feature {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model Specification {
+  id        Int      @id @default(autoincrement())
+  name      String
+  value     String
+  order     Int      @default(0)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
+  description   String?
+  image         String?
+  subcategories Subcategory[]
+  products      Product[]
+  blogs         Blog[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now()) @updatedAt
+}
+
+model Subcategory {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String?
+  description String?
+  image       String?
+  status      String    @default("ACTIVE")
+  categoryId  Int
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
+  @@unique([categoryId, name])
+  @@index([categoryId])
+}
+
+model Blog {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String
+  image         String?
+  categoryId    Int?
+  author        String?
+  publishedDate DateTime?
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdAt     DateTime  @default(now())
+}
+
+model About {
+  id             Int         @id @default(autoincrement())
+  badge          String? // e.g. "About Us", "Who We Are", "Our Story"
+  title          String? // Main section heading
+  subtitle       String? // Optional sub-heading or tagline
+  description    String?     @db.Text // Main paragraph description
+  content        String?     @db.Text // Extended rich text content
+  image          String? // Primary media image
+  image2         String? // Secondary media image for multi-image layouts
+  videoUrl       String? // Video showcase URL
+  layout         String?     @default("image-left") // "image-left" | "image-right" | "image-top" | "text-only" | "centered" | "split"
+  itemsLayout    String?     @default("grid") // "grid" | "list" | "cards" | "columns-2" | "columns-3" | "columns-4"
+  alignment      String?     @default("left") // "left" | "center" | "right"
+  ctaEnabled     Boolean     @default(false)
+  ctaText        String?     @default("Know More")
+  ctaLink        String?
+  ctaTarget      String?     @default("_self") // "_self" | "_blank"
+  isActive       Boolean     @default(true)
+  titleOne       String?     @db.VarChar(80)
+  titleTwo       String?     @db.VarChar(80)
+  descriptionOne String?     @db.VarChar(300)
+  descriptionTwo String?     @db.VarChar(300)
+  items          AboutItem[]
+  sections       AboutSection[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @default(now()) @updatedAt
+}
+
+model AboutItem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  @db.Text
+  icon        String? // Icon identifier or image URL
+  link        String? // Optional destination link
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  aboutId     Int
+  about       About    @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model AboutSection {
+  id            Int                @id @default(autoincrement())
+  title         String
+  subtitle      String?
+  badge         String?
+  description   String?            @db.Text
+  content       String?            @db.Text
+  image         String?
+  imagePosition String?            @default("left") // "left" | "right" | "top" | "none"
+  layout        String?            @default("default") // "default" | "split" | "cards" | "stats"
+  order         Int                @default(0)
+  isActive      Boolean            @default(true)
+  aboutId       Int
+  about         About              @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  items         AboutSectionItem[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @default(now()) @updatedAt
+}
+
+model AboutSectionItem {
+  id          Int          @id @default(autoincrement())
+  title       String?
+  description String?      @db.Text
+  image       String?
+  icon        String?
+  order       Int          @default(0)
+  isActive    Boolean      @default(true)
+  sectionId   Int
+  section     AboutSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
+}
+
+model Reviews {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(80)
+  title       String
+  description String   @db.VarChar(300)
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Service {
+  id        Int           @id @default(autoincrement())
+  heading   String        @db.VarChar(300)
+  items     ServiceItem[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ServiceItem {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(80)
+  description String   @db.VarChar(300)
+  image       String?
+  serviceId   Int
+  service     Service  @relation(fields: [serviceId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Founder {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(80)
+  title       String   @db.VarChar(80)
+  description String   @db.VarChar(300)
+  image       String? // S3 or CloudFront URL
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Home {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(80)
+  description String   @db.VarChar(300)
+  image1      String?
+  image2      String?
+  image3      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MissionVision {
+  id          Int                 @id @default(autoincrement())
+  heading     String              @db.VarChar(80)
+  description String              @db.VarChar(300)
+  items       MissionVisionItem[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model MissionVisionItem {
+  id          Int    @id @default(autoincrement())
+  title       String @db.VarChar(80)
+  description String @db.VarChar(300)
+
+  missionVisionId Int
+  missionVision   MissionVision @relation(fields: [missionVisionId], references: [id])
+}
+
+model WhyChoose {
+  id          Int             @id @default(autoincrement())
+  heading     String          @db.VarChar(60)
+  description String          @db.VarChar(300)
+  items       WhyChooseItem[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model WhyChooseItem {
+  id          Int       @id @default(autoincrement())
+  description String    @db.VarChar(120)
+  whyChooseId Int
+  whyChoose   WhyChoose @relation(fields: [whyChooseId], references: [id])
+}
+
+model Benefit {
+  id          Int           @id @default(autoincrement())
+  heading     String
+  description String
+  items       BenefitItem[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model BenefitItem {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(80)
+  description String   @db.VarChar(300)
+  benefitId   Int
+  benefit     Benefit  @relation(fields: [benefitId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model FAQSection {
+  id        Int       @id @default(autoincrement())
+  heading   String
+  items     FAQItem[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model FAQItem {
+  id        Int        @id @default(autoincrement())
+  question  String
+  answer    String
+  sectionId Int
+  section   FAQSection @relation(fields: [sectionId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Plan {
+  id        Int     @id @default(autoincrement())
+  name      String
+  price     Float? // null for Free plan
+  priceType String // "monthly", "yearly", etc.
+  isPopular Boolean @default(false)
+
+  //   Only dynamic button text
+  buttonText String @default("Choose Plan")
+
+  features PlanFeature[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlanFeature {
+  id     Int    @id @default(autoincrement())
+  text   String
+  planId Int
+  plan   Plan   @relation(fields: [planId], references: [id])
+}
+
+model Testimonial {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(120)
+  message     String   @db.Text
+  image       String?  // Optional profile photo or avatar URL
+  designation String?  @db.VarChar(120) // Role, title, company, or destination
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model Banner {
+  id                Int      @id @default(autoincrement())
+  bgMediaType       String   @default("IMAGE") // "IMAGE" | "VIDEO"
+  bgMedia           String   // Media URL (uploaded image or video)
+  label             String?  @db.VarChar(100)  // Small tag/badge text
+  heading           String   @db.VarChar(180)  // Main headline
+  description       String?  @db.VarChar(500)  // Supporting body text
+  textAlignment     String   @default("LEFT")  // "LEFT" | "CENTER" | "RIGHT"
+  primaryBtnText    String?  @db.VarChar(60)   // e.g. "Explore Our Products"
+  primaryBtnLink    String?  @db.VarChar(255)  // e.g. "/products"
+  secondaryBtnText  String?  @db.VarChar(60)   // e.g. "Contact Us"
+  secondaryBtnLink  String?  @db.VarChar(255)  // e.g. "/contact"
+  sideImage         String?  // Optional side visual URL
+  sideImagePosition String?  @default("RIGHT") // "LEFT" | "RIGHT"
+  sequence          Int      @default(1)       // Display sequence order
+  isActive          Boolean  @default(true)    // Active/inactive state
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+}
+

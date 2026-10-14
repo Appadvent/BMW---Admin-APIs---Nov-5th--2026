@@ -1,0 +1,22 @@
+
+
+4. rnd on Redis cache
+8. missing Interfaces
+*9. Missing fields "country code, timezone, ip address, device token, inApp-password", discuss with vimlesh if "inApp-password" need to set at resigter or first time login // done
+12. discuss fields used for login // done
+13. Maintain login history, with data like ip address, timezone, userId, location, etc // done
+15. Delete opt from db after, reattampt count or expired or verified, NOTE; no need to use "orderBy" as only one entry should exists in table for otp per email // done
+16. Use resendOtp to resend new otp for verification  // done
+17. use  // type = VARIFY_ACCOUNT | LOGIN | PASSWORD_RESET  // done
+19. Check  if (user.isVerified)  in resendOtp // done
+
+1. urserController.ts>AuthController -> UserController /// done 
+2. rnd on auto swagger generation tool/lib // done
+*3. Seperate validation logic from controller, with proper foramt, type and regex // done
+*5. Missing dao // done
+*6. Remove "error: error.message" from respose and use console.error( {user: userId, email: email, error: error.message} ) // done
+7. Use constant instead of inline text such as "OTP resent successfully"  // done
+*10. Remove uncessary fields from jwt signature // done
+11. Create jwt file in utils // done
+14. Move token from resigter to verifyOtp // done
+18. In verify otp, if otp verified, account should be mark as verified automatically with other actions // done
