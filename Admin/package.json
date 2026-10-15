@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 7006",
+    "dev": "vite --port 7007",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview --port 7006"
+    "preview": "vite preview --port 7007"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.0",

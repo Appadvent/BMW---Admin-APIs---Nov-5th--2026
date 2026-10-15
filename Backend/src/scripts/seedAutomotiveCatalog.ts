@@ -16,19 +16,19 @@ if (fs.existsSync(MAPPING_FILE)) {
 
 const DEFAULT_BUMPER_ASSY_URL =
   minioMapping["bumper_assy_row_1.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1791976669010-bumper_assy_row_1.png";
+  "https://minioapi.appadvent.in/i-mag/products/1792056119575-bumper_assy_row_1.png";
 
 const DEFAULT_BUMPER_SHELL_URL =
   minioMapping["bumper_shell_row_1.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1791976670167-bumper_shell_row_1.png";
+  "https://minioapi.appadvent.in/i-mag/products/1792056121191-bumper_shell_row_1.png";
 
 const DEFAULT_HEADLIGHT_URL =
   minioMapping["headlight_bmw_row_2.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1791976670864-headlight_bmw_row_2.png";
+  "https://minioapi.appadvent.in/i-mag/products/1792056123162-headlight_bmw_row_2.png";
 
 const DEFAULT_LENS_HOUSING_URL =
   minioMapping["headlight_bmw_row_3.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1791976670943-headlight_bmw_row_3.png";
+  "https://minioapi.appadvent.in/i-mag/products/1792056123400-headlight_bmw_row_3.png";
 
 // Helper to find uploaded MinIO image for a row
 function getExtractedImage(prefix: string, rowIdx: number): string | null {
@@ -42,7 +42,7 @@ function getExtractedImage(prefix: string, rowIdx: number): string | null {
   return null;
 }
 
-async function seedAutomotiveCatalog() {
+export async function seedAutomotiveCatalog() {
   console.log("Starting Automotive Parts Catalogue Seeding...");
 
   // 1. Define Category definitions matching the 4 Excel files
@@ -402,11 +402,13 @@ async function seedAutomotiveCatalog() {
   console.log("Automotive Parts Catalogue Seeding Finished Successfully!");
 }
 
-seedAutomotiveCatalog()
-  .catch((e) => {
-    console.error("Seeding Error:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+if (require.main === module) {
+  seedAutomotiveCatalog()
+    .catch((e) => {
+      console.error("Seeding Error:", e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

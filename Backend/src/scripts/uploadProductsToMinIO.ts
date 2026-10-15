@@ -1,10 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import prisma from "../config/db.config";
-import { minioClient, BUCKET_NAME, getMinioPublicUrl } from "../config/minio.config";
 
 const PRODUCTS_DIR = path.resolve(__dirname, "../../../Frontend/public/uploads/products");
 const MAPPING_FILE = path.resolve(__dirname, "./minio_image_mapping.json");
+const SEED_FILE = path.resolve(__dirname, "./seedAutomotiveCatalog.ts");
+const API_PORT = process.env.PORT || 5002;
+const UPLOAD_URL = `http://localhost:${API_PORT}/api/upload`;
 
 // Helper to determine mime type
 function getMimeType(filename: string): string {
@@ -15,35 +17,48 @@ function getMimeType(filename: string): string {
   return "application/octet-stream";
 }
 
-async function uploadSingleFile(filename: string): Promise<string> {
+/**
+ * Upload single file using the exact same API that the Admin interface uses:
+ * POST /api/upload (multipart/form-data with file and folder: "products")
+ */
+async function uploadViaAdminApi(filename: string): Promise<string> {
   const filePath = path.join(PRODUCTS_DIR, filename);
   const buffer = fs.readFileSync(filePath);
-  const sanitizedName = filename.replace(/[^a-zA-Z0-9.-]/g, "_");
-  const objectKey = `products/${Date.now()}-${sanitizedName}`;
+  const mimeType = getMimeType(filename);
 
-  const metaData = {
-    "Content-Type": getMimeType(filename),
-  };
+  const blob = new Blob([buffer], { type: mimeType });
+  const formData = new FormData();
+  formData.append("file", blob, filename);
+  formData.append("folder", "products");
 
-  await minioClient.putObject(
-    BUCKET_NAME,
-    objectKey,
-    buffer,
-    buffer.length,
-    metaData
-  );
+  const response = await fetch(UPLOAD_URL, {
+    method: "POST",
+    body: formData,
+  });
 
-  return getMinioPublicUrl(objectKey);
+  if (!response.ok) {
+    throw new Error(`Upload failed for ${filename} with HTTP ${response.status}`);
+  }
+
+  const resData = (await response.json()) as any;
+  if (!resData.success || !resData.data?.url) {
+    throw new Error(`Invalid API response for ${filename}: ${JSON.stringify(resData)}`);
+  }
+
+  return resData.data.url;
 }
 
 async function uploadAllImages() {
-  console.log("Reading product images from:", PRODUCTS_DIR);
+  console.log("=== Step 1: Uploading Images using Admin API ===");
+  console.log("Reading images from:", PRODUCTS_DIR);
+  console.log("Target Upload API:", UPLOAD_URL);
+
   const files = fs.readdirSync(PRODUCTS_DIR).filter((f) => {
     const ext = path.extname(f).toLowerCase();
     return [".png", ".jpg", ".jpeg", ".webp"].includes(ext);
   });
 
-  console.log(`Found ${files.length} images to upload to MinIO.`);
+  console.log(`Found ${files.length} images to process.`);
 
   // Load existing mapping if any
   let mapping: Record<string, string> = {};
@@ -56,31 +71,38 @@ async function uploadAllImages() {
     }
   }
 
-  // Upload in batches of 10
-  const BATCH_SIZE = 10;
+  // Upload files in concurrency batches of 5
+  const BATCH_SIZE = 5;
+  let uploadCount = 0;
+
   for (let i = 0; i < files.length; i += BATCH_SIZE) {
     const batch = files.slice(i, i + BATCH_SIZE);
     await Promise.all(
       batch.map(async (filename) => {
         if (mapping[filename]) {
-          return; // already uploaded
+          uploadCount++;
+          return;
         }
         try {
-          const url = await uploadSingleFile(filename);
+          const url = await uploadViaAdminApi(filename);
           mapping[filename] = url;
-          console.log(`[${Object.keys(mapping).length}/${files.length}] Uploaded: ${filename}`);
-        } catch (err) {
-          console.error(`Failed to upload ${filename}:`, err);
+          uploadCount++;
+          if (uploadCount % 20 === 0 || uploadCount === files.length) {
+            console.log(`Uploaded via API: ${uploadCount}/${files.length} (${filename} -> ${url})`);
+          }
+        } catch (err: any) {
+          console.error(`Failed to upload ${filename} via API:`, err.message);
         }
       })
     );
-    // Persist progress
+
+    // Save mapping periodically
     fs.writeFileSync(MAPPING_FILE, JSON.stringify(mapping, null, 2), "utf-8");
   }
 
-  console.log(`All ${Object.keys(mapping).length} images uploaded and mapped!`);
+  console.log(`All available images processed! Total mapped in ${MAPPING_FILE}: ${Object.keys(mapping).length}`);
 
-  // Default fallback URLs from mapping
+  // Default URLs from mapping
   const bumperAssyDefault =
     mapping["bumper_assy_row_1.png"] ||
     mapping["bumper_assy_row_1.jpeg"] ||
@@ -101,30 +123,63 @@ async function uploadAllImages() {
     mapping["headlight_bmw_row_11.png"] ||
     headlightDefault;
 
-  // 1. Update Categories
-  console.log("Updating Categories with MinIO URLs...");
-  await (prisma as any).category.updateMany({
+  console.log("Bumper Assy Default URL:", bumperAssyDefault);
+  console.log("Bumper Shell Default URL:", bumperShellDefault);
+  console.log("Headlight Default URL:", headlightDefault);
+  console.log("Lens Housing Default URL:", lensHousingDefault);
+
+  // === Step 2: Update Seed File with the newly generated URLs ===
+  console.log("\n=== Step 2: Updating Seed File with New MinIO URLs ===");
+  if (fs.existsSync(SEED_FILE)) {
+    let seedContent = fs.readFileSync(SEED_FILE, "utf-8");
+    seedContent = seedContent.replace(
+      /const DEFAULT_BUMPER_ASSY_URL =\s*minioMapping\["bumper_assy_row_1\.png"\] \|\|\s*"[^"]+";/,
+      `const DEFAULT_BUMPER_ASSY_URL =\n  minioMapping["bumper_assy_row_1.png"] ||\n  "${bumperAssyDefault}";`
+    );
+    seedContent = seedContent.replace(
+      /const DEFAULT_BUMPER_SHELL_URL =\s*minioMapping\["bumper_shell_row_1\.png"\] \|\|\s*"[^"]+";/,
+      `const DEFAULT_BUMPER_SHELL_URL =\n  minioMapping["bumper_shell_row_1.png"] ||\n  "${bumperShellDefault}";`
+    );
+    seedContent = seedContent.replace(
+      /const DEFAULT_HEADLIGHT_URL =\s*minioMapping\["headlight_bmw_row_2\.png"\] \|\|\s*"[^"]+";/,
+      `const DEFAULT_HEADLIGHT_URL =\n  minioMapping["headlight_bmw_row_2.png"] ||\n  "${headlightDefault}";`
+    );
+    seedContent = seedContent.replace(
+      /const DEFAULT_LENS_HOUSING_URL =\s*minioMapping\["headlight_bmw_row_3\.png"\] \|\|\s*"[^"]+";/,
+      `const DEFAULT_LENS_HOUSING_URL =\n  minioMapping["headlight_bmw_row_3.png"] ||\n  "${lensHousingDefault}";`
+    );
+    fs.writeFileSync(SEED_FILE, seedContent, "utf-8");
+    console.log("Updated seedAutomotiveCatalog.ts with new default URLs!");
+  }
+
+  // === Step 3: Replace Image URLs in Categories ===
+  console.log("\n=== Step 3: Updating Categories with MinIO URLs ===");
+  const updateAssy = await (prisma as any).category.updateMany({
     where: { name: { contains: "Bumper Assembly", mode: "insensitive" } },
     data: { image: bumperAssyDefault },
   });
+  console.log(`Updated Bumper Assembly categories: ${updateAssy.count}`);
 
-  await (prisma as any).category.updateMany({
+  const updateShell = await (prisma as any).category.updateMany({
     where: { name: { contains: "Bumper Shell", mode: "insensitive" } },
     data: { image: bumperShellDefault },
   });
+  console.log(`Updated Bumper Shell categories: ${updateShell.count}`);
 
-  await (prisma as any).category.updateMany({
+  const updateHeadlight = await (prisma as any).category.updateMany({
     where: { name: { contains: "Headlight", mode: "insensitive" } },
     data: { image: headlightDefault },
   });
+  console.log(`Updated Headlight categories: ${updateHeadlight.count}`);
 
-  await (prisma as any).category.updateMany({
+  const updateLens = await (prisma as any).category.updateMany({
     where: { name: { contains: "Lens", mode: "insensitive" } },
     data: { image: lensHousingDefault },
   });
+  console.log(`Updated Lens & Housing categories: ${updateLens.count}`);
 
-  // 2. Update Products
-  console.log("Updating Products with MinIO URLs...");
+  // === Step 4: Replace Image URLs in Products ===
+  console.log("\n=== Step 4: Updating Products with MinIO URLs ===");
   const categories = await (prisma as any).category.findMany();
   for (const cat of categories) {
     let prefix = "bumper_assy";
@@ -137,13 +192,13 @@ async function uploadAllImages() {
       prefix = "headlight_bmw";
       defaultUrl = headlightDefault;
     } else if (cat.name.toLowerCase().includes("lens") || cat.name.toLowerCase().includes("housing")) {
-      prefix = "headlight_bmw"; // or lens default
+      prefix = "headlight_bmw";
       defaultUrl = lensHousingDefault;
     }
 
     const prods = await (prisma as any).product.findMany({
       where: { categoryId: cat.id },
-      select: { id: true },
+      select: { id: true, title: true },
       orderBy: { id: "asc" },
     });
 
@@ -173,8 +228,8 @@ async function uploadAllImages() {
     }
   }
 
-  // 3. Create 4 Automotive OEM Media Posts (Blogs)
-  console.log("Creating 4 Automotive OEM Media Posts in Blog table...");
+  // === Step 5: Write 4 Automotive Media Posts (Blogs) ===
+  console.log("\n=== Step 5: Writing 4 Automotive Media Posts in Blog Table ===");
   await (prisma as any).blog.deleteMany({});
 
   const mediaPosts = [
@@ -231,13 +286,15 @@ Our inventory includes precision-matched left and right outer lenses and interna
   }
 
   console.log("Successfully published 4 Automotive OEM Media Posts!");
+  console.log("\n=== Image upload and database replacement complete! ===");
 }
 
 uploadAllImages()
   .catch((err) => {
-    console.error("Fatal error during MinIO upload & database update:", err);
+    console.error("Fatal error during process:", err);
     process.exit(1);
   })
-  .finally(() => {
+  .finally(async () => {
+    await prisma.$disconnect();
     process.exit(0);
   });

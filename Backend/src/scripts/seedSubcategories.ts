@@ -1,17 +1,50 @@
 import prisma from "../config/db.config";
+import * as fs from "fs";
+import * as path from "path";
+
+const MAPPING_FILE = path.resolve(__dirname, "./minio_image_mapping.json");
+let minioMapping: Record<string, string> = {};
+if (fs.existsSync(MAPPING_FILE)) {
+  try {
+    minioMapping = JSON.parse(fs.readFileSync(MAPPING_FILE, "utf-8"));
+  } catch {}
+}
+
+const BUMPER_ASSY_URL =
+  minioMapping["bumper_assy_row_1.png"] ||
+  "https://minioapi.appadvent.in/i-mag/products/1792056119575-bumper_assy_row_1.png";
+
+const BUMPER_ASSY_SIDE_URL =
+  minioMapping["bumper_assy_row_2.jpeg"] ||
+  "https://minioapi.appadvent.in/i-mag/products/1792056120027-bumper_assy_row_2.jpeg";
+
+const BUMPER_SHELL_URL =
+  minioMapping["bumper_shell_row_1.png"] ||
+  "https://minioapi.appadvent.in/i-mag/products/1792056121191-bumper_shell_row_1.png";
+
+const BUMPER_SHELL_SIDE_URL =
+  minioMapping["bumper_shell_row_2.png"] ||
+  "https://minioapi.appadvent.in/i-mag/products/1792056121419-bumper_shell_row_2.png";
+
+const HEADLIGHT_URL =
+  minioMapping["headlight_bmw_row_2.png"] ||
+  "https://minioapi.appadvent.in/i-mag/products/1792056123162-headlight_bmw_row_2.png";
+
+const LENS_HOUSING_URL =
+  minioMapping["headlight_bmw_row_3.png"] ||
+  "https://minioapi.appadvent.in/i-mag/products/1792056123400-headlight_bmw_row_3.png";
 
 export async function seedSubcategories() {
-  console.log("🌱 Seeding Subcategories...");
+  console.log("🌱 Seeding Automotive Subcategories with MinIO URLs...");
 
-  // Find categories
   const categories = await prisma.category.findMany();
   const getCat = (name: string) =>
     categories.find((c) => c.name.toLowerCase() === name.toLowerCase());
 
-  const archHardware = getCat("Architectural Hardware");
-  const glassFittings = getCat("Glass Fittings");
-  const doorLocks = getCat("Door Locks");
-  const waterPurifiers = getCat("Water Purifiers");
+  const assyCat = getCat("BMW OEM Bumper Assembly");
+  const shellCat = getCat("BMW OEM Bumper Shell");
+  const headlightCat = getCat("Headlight OEM BMW");
+  const lensCat = getCat("Lens and Housing - BMW / BENZ");
 
   const subcategoryData: Array<{
     categoryName: string;
@@ -22,252 +55,146 @@ export async function seedSubcategories() {
       description: string;
       image: string;
       status: string;
-      productTitles: string[];
     }>;
   }> = [
     {
-      categoryName: "Architectural Hardware",
-      catId: archHardware?.id,
+      categoryName: "BMW OEM Bumper Assembly",
+      catId: assyCat?.id,
       items: [
         {
-          name: "Door Handles & Pulls",
-          slug: "door-handles-and-pulls",
-          description: "Designer pull handles, mortise handles, and luxury lever handles for wooden and metal doors.",
-          image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&auto=format&fit=crop&q=80",
+          name: "Front Bumper Assemblies",
+          slug: "front-bumper-assemblies",
+          description: "Complete front bumper assemblies with factory mounting brackets, grilles, and sensor brackets.",
+          image: BUMPER_ASSY_URL,
           status: "ACTIVE",
-          productTitles: [
-            "Stainless Steel Door Handle",
-            "Prestige Lever Handle",
-            "Grip Series Pull Handle",
-          ],
         },
         {
-          name: "Door Hinges & Closers",
-          slug: "door-hinges-and-closers",
-          description: "Concealed hinges, heavy-duty ball bearing hinges, and hydraulic automatic door closers.",
-          image: "https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=800&auto=format&fit=crop&q=80",
+          name: "Rear Bumper Assemblies",
+          slug: "rear-bumper-assemblies",
+          description: "Complete rear bumper assemblies including lower diffusers and towing eye caps.",
+          image: BUMPER_ASSY_SIDE_URL,
           status: "ACTIVE",
-          productTitles: [],
         },
         {
-          name: "Architectural Fittings",
-          slug: "architectural-fittings",
-          description: "Tower bolts, magnetic door stoppers, safety chains, and architectural brass accessories.",
-          image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=800&auto=format&fit=crop&q=80",
+          name: "M Sport & Performance Bumpers",
+          slug: "m-sport-bumpers",
+          description: "Original OEM BMW M Sport and M-Tech complete aerodynamic bumper assemblies.",
+          image: BUMPER_ASSY_URL,
           status: "ACTIVE",
-          productTitles: [],
-        },
-        {
-          name: "Cabinet Handles & Knobs",
-          slug: "cabinet-handles-and-knobs",
-          description: "Modern kitchen cabinet handles, wardrobe pull handles, and minimalist drawer knobs in brass and matte finishes.",
-          image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800&auto=format&fit=crop&q=80",
-          status: "ACTIVE",
-          productTitles: [],
-        },
-        {
-          name: "Sliding & Folding Door Hardware",
-          slug: "sliding-and-folding-door-hardware",
-          description: "Heavy duty tracks, synchronous sliding rollers, and soft-close mechanisms for wooden interior doors.",
-          image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80",
-          status: "ACTIVE",
-          productTitles: [],
-        },
-        {
-          name: "Door Controls & Drop Seals",
-          slug: "door-controls-and-drop-seals",
-          description: "Concealed acoustic drop-down seals, magnetic door stoppers, and floor-mounted buffer hardware.",
-          image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=800&auto=format&fit=crop&q=80",
-          status: "ACTIVE",
-          productTitles: [],
-        },
-        {
-          name: "Panic Exit & Fire Hardware",
-          slug: "panic-exit-and-fire-hardware",
-          description: "UL-certified panic crash bars, fire-rated door coordinators, and emergency escape hardware for commercial spaces.",
-          image: "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800&auto=format&fit=crop&q=80",
-          status: "ACTIVE",
-          productTitles: [],
         },
       ],
     },
     {
-      categoryName: "Glass Fittings",
-      catId: glassFittings?.id,
+      categoryName: "BMW OEM Bumper Shell",
+      catId: shellCat?.id,
       items: [
         {
-          name: "Patch Fittings & Connectors",
-          slug: "patch-fittings-and-connectors",
-          description: "Precision engineered stainless steel patch fittings and pivot sets for frameless glass doors.",
-          image: "https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?w=800&auto=format&fit=crop&q=80",
+          name: "Front Bumper Covers & Skins",
+          slug: "front-bumper-covers",
+          description: "Genuine OEM front primed bumper covers ready for prep and paint.",
+          image: BUMPER_SHELL_URL,
           status: "ACTIVE",
-          productTitles: ["Patch Fitting", "Frameless Patch Fitting Set"],
         },
         {
-          name: "Sliding Systems & Railing",
-          slug: "sliding-systems-and-railing",
-          description: "Smooth glide top-hung sliding glass rail systems and shower enclosure hinges.",
-          image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80",
+          name: "Rear Bumper Covers & Skins",
+          slug: "rear-bumper-covers",
+          description: "Original rear bumper fascias with factory park distance sensor cutouts.",
+          image: BUMPER_SHELL_SIDE_URL,
           status: "ACTIVE",
-          productTitles: ["Glide Pro Sliding System", "Glass Door Hinge"],
-        },
-        {
-          name: "Spider & Curtain Wall Fittings",
-          slug: "spider-curtain-wall-fittings",
-          description: "Heavy duty stainless steel spider brackets and routels for exterior glass facades.",
-          image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80",
-          status: "ACTIVE",
-          productTitles: [],
         },
       ],
     },
     {
-      categoryName: "Door Locks",
-      catId: doorLocks?.id,
+      categoryName: "Headlight OEM BMW",
+      catId: headlightCat?.id,
       items: [
         {
-          name: "Smart & Digital Locks",
-          slug: "smart-digital-locks",
-          description: "Fingerprint, RFID card, passcode, and mobile app-enabled keyless smart door locks.",
-          image: "https://images.unsplash.com/photo-1558002038-1055907df827?w=800&auto=format&fit=crop&q=80",
+          name: "Adaptive LED Headlights",
+          slug: "adaptive-led-headlights",
+          description: "Complete intelligent matrix LED adaptive headlamp units.",
+          image: HEADLIGHT_URL,
           status: "ACTIVE",
-          productTitles: ["Digital Door Lock", "Smart Lock Pro"],
         },
         {
-          name: "Mechanical Mortise Locks",
-          slug: "mechanical-mortise-locks",
-          description: "High security mortise sashlocks, deadbolts, and euro profile brass cylinder locksets.",
-          image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=800&auto=format&fit=crop&q=80",
+          name: "Laser Headlights",
+          slug: "laser-headlights",
+          description: "OEM BMW Laserlicht long-range optical headlight assemblies.",
+          image: HEADLIGHT_URL,
           status: "ACTIVE",
-          productTitles: [],
         },
         {
-          name: "Padlocks & Rim Locks",
-          slug: "padlocks-rim-locks",
-          description: "Hardened steel weatherproof padlocks and surface rim night latch locks.",
-          image: "https://images.unsplash.com/photo-1510519138195-068d82f8d487?w=800&auto=format&fit=crop&q=80",
+          name: "Bi-Xenon Headlights",
+          slug: "bi-xenon-headlights",
+          description: "Original equipment high-intensity discharge Xenon headlamp systems.",
+          image: HEADLIGHT_URL,
           status: "ACTIVE",
-          productTitles: [],
         },
       ],
     },
     {
-      categoryName: "Water Purifiers",
-      catId: waterPurifiers?.id,
+      categoryName: "Lens and Housing - BMW / BENZ",
+      catId: lensCat?.id,
       items: [
         {
-          name: "Domestic RO Systems",
-          slug: "domestic-ro-systems",
-          description: "Advanced multi-stage RO, UV, and alkaline antioxidant drinking water purifiers for homes.",
-          image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&auto=format&fit=crop&q=80",
+          name: "Replacement Headlight Lenses",
+          slug: "headlight-lenses",
+          description: "Precision-molded polycarbonate clear outer lenses with UV protective hardcoat.",
+          image: LENS_HOUSING_URL,
           status: "ACTIVE",
-          productTitles: ["RO Water Purifier", "Aqua Pure RO System"],
         },
         {
-          name: "Commercial & Industrial RO",
-          slug: "commercial-industrial-ro",
-          description: "High-capacity commercial purification plants, stainless steel water dispensers and coolers.",
-          image: "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?w=800&auto=format&fit=crop&q=80",
+          name: "Headlamp Housing Shells",
+          slug: "headlamp-housings",
+          description: "Durable rear casing housings, internal brackets, and mounting tab repair units.",
+          image: LENS_HOUSING_URL,
           status: "ACTIVE",
-          productTitles: [],
-        },
-        {
-          name: "Filters & Purification Spares",
-          slug: "filters-and-spares",
-          description: "Sediment spun filters, activated carbon cartridges, RO membranes, and UV lamps.",
-          image: "https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=800&auto=format&fit=crop&q=80",
-          status: "ACTIVE",
-          productTitles: [],
         },
       ],
     },
   ];
 
-  let createdCount = 0;
-  let linkedProductCount = 0;
-
   for (const group of subcategoryData) {
     if (!group.catId) {
-      console.warn(`Category "${group.categoryName}" not found in database. Skipping.`);
+      console.warn(`Category "${group.categoryName}" not found. Skipping subcategories.`);
       continue;
     }
 
     for (const item of group.items) {
-      const existing = await prisma.subcategory.findUnique({
+      await prisma.subcategory.upsert({
         where: {
           categoryId_name: {
             categoryId: group.catId,
             name: item.name,
           },
         },
+        create: {
+          name: item.name,
+          slug: item.slug,
+          description: item.description,
+          image: item.image,
+          status: item.status,
+          categoryId: group.catId,
+        },
+        update: {
+          slug: item.slug,
+          description: item.description,
+          image: item.image,
+          status: item.status,
+        },
       });
-
-      let subcategory;
-      if (existing) {
-        subcategory = await prisma.subcategory.update({
-          where: { id: existing.id },
-          data: {
-            slug: item.slug,
-            description: item.description,
-            image: item.image,
-            status: item.status,
-          },
-        });
-        console.log(`Updated subcategory: ${item.name} (Cat ID: ${group.catId})`);
-      } else {
-        subcategory = await prisma.subcategory.create({
-          data: {
-            name: item.name,
-            categoryId: group.catId,
-            slug: item.slug,
-            description: item.description,
-            image: item.image,
-            status: item.status,
-          },
-        });
-        createdCount++;
-        console.log(`Created subcategory: ${item.name} (Cat ID: ${group.catId})`);
-      }
-
-      // Link products to this subcategory
-      if (item.productTitles.length > 0) {
-        for (const title of item.productTitles) {
-          const prod = await prisma.product.findFirst({
-            where: {
-              title: {
-                contains: title,
-                mode: "insensitive",
-              },
-            },
-          });
-          if (prod) {
-            await prisma.product.update({
-              where: { id: prod.id },
-              data: {
-                subcategoryId: subcategory.id,
-                categoryId: group.catId, // ensure matching category
-              },
-            });
-            linkedProductCount++;
-            console.log(`  -> Linked product "${prod.title}" to subcategory "${subcategory.name}"`);
-          }
-        }
-      }
+      console.log(`Subcategory "${item.name}" -> Category "${group.categoryName}"`);
     }
   }
 
-  console.log(`✅ Finished seeding! Added/Updated subcategories. Linked ${linkedProductCount} products.`);
+  console.log("✅ Automotive subcategories successfully seeded with MinIO URLs!");
 }
 
 if (require.main === module) {
   seedSubcategories()
-    .then(async () => {
-      await prisma.$disconnect();
-      process.exit(0);
+    .catch((e) => {
+      console.error("Seed subcategories error:", e);
     })
-    .catch(async (e) => {
-      console.error(e);
+    .finally(async () => {
       await prisma.$disconnect();
-      process.exit(1);
     });
 }
