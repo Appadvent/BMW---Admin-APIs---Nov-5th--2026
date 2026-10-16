@@ -183,15 +183,15 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section className="relative overflow-hidden pt-10 sm:pt-16 pb-20 sm:pb-28 border-b border-white/10">
         {/* Background Image: BMW M4 Grey Car directly from public assets */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img
             src="/76f1295d1c66c026e83fe0b88ecfaad88654837c.png"
             alt="BMW Sports Coupe"
-            className="w-full h-full object-cover object-top filter brightness-[0.45] contrast-125"
+            className="w-full h-full object-cover object-[center_28%] lg:object-[right_center] filter brightness-[0.85] contrast-[1.1]"
           />
-          {/* Gradients to blend seamless dark look */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#070707] via-[#070707]/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#070707] via-[#070707]/70 to-transparent" />
+          {/* Subtle gradients to blend text legibility on left while keeping car clearly visible on right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#070707] via-[#070707]/75 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070707] via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
