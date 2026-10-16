@@ -612,7 +612,7 @@ export default function HomePage() {
               {
                 title: "Body elements",
                 desc: "118 PARTS • DEMO DATA",
-                img: "/65743bae6004f15c86ba5c7172a8a08e3daa5382.jpg",
+                img: "/30580dfd4addb8615661ae3077d481e5696b239e.jpg",
                 link: "/products?category=body",
               },
             ].map((cat, idx) => (
@@ -769,8 +769,8 @@ export default function HomePage() {
                   <div className="mb-4">
                     <div
                       className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${prod.statusType === "success"
-                          ? "text-[#15803D]"
-                          : "text-[#B45309]"
+                        ? "text-[#15803D]"
+                        : "text-[#B45309]"
                         }`}
                     >
                       {prod.statusType === "success" ? (
@@ -923,7 +923,7 @@ export default function HomePage() {
         <div className="relative rounded-sm overflow-hidden bg-[#161719] p-8 sm:p-14 border border-white/10">
           {/* Faint large capital letters "LA" watermark on the right */}
           <div className="absolute right-0 top-0 bottom-0 pointer-events-none flex items-center pr-6 sm:pr-12 select-none">
-            <span className="text-[160px] sm:text-[230px] font-black text-white/5 leading-none tracking-tighter">
+            <span className="text-[200px] sm:text-[320px] font-black text-white/5 leading-none tracking-[0.2em]">
               LA
             </span>
           </div>
@@ -1057,8 +1057,8 @@ export default function HomePage() {
                 (idx === 0
                   ? "/734295950a53ab641f4c489e327584416018d44d.jpg"
                   : idx === 1
-                  ? "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg"
-                  : "/1889c8da558725682709642aeaf212caab3ad5e6.jpg");
+                    ? "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg"
+                    : "/1889c8da558725682709642aeaf212caab3ad5e6.jpg");
               const blogId = blog?.id || blog?._id || idx;
 
               return (
