@@ -314,10 +314,10 @@ export default function HomePage() {
                       className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#DC2626] cursor-pointer"
                     >
                       <option value="">{t.searchWidget.selectPlaceholder}</option>
-                      <option value="Seria 3">Seria 3 / M3</option>
-                      <option value="Seria 4">Seria 4 / M4</option>
-                      <option value="Seria 5">Seria 5 / M5</option>
-                      <option value="Seria 7">Seria 7</option>
+                      <option value="3 Series">3 Series / M3</option>
+                      <option value="4 Series">4 Series / M4</option>
+                      <option value="5 Series">5 Series / M5</option>
+                      <option value="7 Series">7 Series</option>
                       <option value="X3">X3 / X3 M</option>
                       <option value="X5">X5 / X5 M</option>
                     </select>
@@ -375,10 +375,10 @@ export default function HomePage() {
                       className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#DC2626] cursor-pointer"
                     >
                       <option value="">{t.searchWidget.selectPlaceholder}</option>
-                      <option value="Zderzaki">Zderzaki / Bumpers</option>
-                      <option value="Reflektory">Reflektory / Headlights</option>
-                      <option value="Atrapy">Grille / Atrapy</option>
-                      <option value="Klosze">Klosze / Housings</option>
+                      <option value="Bumpers">Bumpers</option>
+                      <option value="Headlights">Headlights</option>
+                      <option value="Grilles">Grilles</option>
+                      <option value="Housings">Lenses & Housings</option>
                     </select>
                   </div>
 
@@ -416,7 +416,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <Link
-                      href={`/contact-us?subject=Weryfikacja+VIN&vin=${encodeURIComponent(vinInput)}`}
+                      href={`/contact-us?subject=VIN+Verification&vin=${encodeURIComponent(vinInput)}`}
                       className="w-full bg-[#DC2626] hover:bg-[#b91c1c] text-white font-bold py-2.5 px-4 rounded text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md shadow-red-600/30"
                     >
                       <span>{t.searchWidget.vinVerifyBtn}</span>
@@ -461,28 +461,28 @@ export default function HomePage() {
             {
               id: "01",
               name: "BMW",
-              desc: "Części karoseryjne do serii 1, 3, 4, 5, 7 oraz gamy X.",
+              desc: "Body panels and parts for Series 1, 3, 4, 5, 7 and the X lineup.",
               img: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
               link: "/products?brand=BMW",
             },
             {
               id: "02",
               name: "Mercedes-Benz",
-              desc: "Elementy poszycia dla modeli osobowych i SUV (C, E, S, GLC, GLE).",
+              desc: "Exterior panels for passenger cars and SUVs (C, E, S, GLC, GLE).",
               img: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
               link: "/products?brand=Mercedes-Benz",
             },
             {
               id: "03",
               name: "Audi",
-              desc: "Nowoczesne elementy oświetlenia LED / Matrix oraz zderzaki S-Line.",
+              desc: "Modern LED / Matrix lighting components and S-Line bumpers.",
               img: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
               link: "/products?brand=Audi",
             },
             {
               id: "04",
               name: "Range Rover",
-              desc: "Komponenty nadwozia dla modeli Vogue, Sport, Velar i Evoque.",
+              desc: "Body components for Vogue, Sport, Velar, and Evoque models.",
               img: "/7b38ef87e0ed90915af6670b2661616389757b59.jpg",
               link: "/products?brand=Range+Rover",
             },
@@ -510,7 +510,7 @@ export default function HomePage() {
                   {brand.desc}
                 </p>
                 <div className="flex items-center gap-1.5 text-[11px] font-bold text-white group-hover:text-[#DC2626] transition-colors">
-                  <span>Przeglądaj markę</span>
+                  <span>Browse brand</span>
                   <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -548,7 +548,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {categoriesLoading ? (
             <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <span className="inline-block animate-pulse">Ładowanie kategorii z bazy danych...</span>
+              <span className="inline-block animate-pulse">Loading categories from database...</span>
             </div>
           ) : categories && categories.length > 0 ? (
             categories.slice(0, 6).map((cat: any, idx: number) => {
@@ -565,14 +565,14 @@ export default function HomePage() {
                 >
                   <img
                     src={bgImg}
-                    alt={cat?.name || "Kategoria części"}
+                    alt={cat?.name || "Parts category"}
                     className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
                   <div className="relative z-10">
                     {isLarge && (
                       <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] bg-[#DC2626]/20 px-2 py-0.5 rounded border border-[#DC2626]/40 mb-2 inline-block">
-                        {cat?.productCount ? `${cat.productCount} części w ofercie` : "Części OEM w ofercie"}
+                        {cat?.productCount ? `${cat.productCount} parts available` : "OEM parts in stock"}
                       </span>
                     )}
                     <h3 className={`${isLarge ? "text-xl sm:text-2xl font-extrabold" : "text-base font-bold"} text-white group-hover:text-[#DC2626] transition-colors mb-1`}>
@@ -584,7 +584,7 @@ export default function HomePage() {
                       </p>
                     )}
                     <span className="text-xs font-bold text-white flex items-center gap-1 group-hover:text-[#DC2626]">
-                      Zobacz ofertę <ArrowRight size={13} />
+                      Explore parts <ArrowRight size={13} />
                     </span>
                   </div>
                 </Link>
@@ -592,7 +592,7 @@ export default function HomePage() {
             })
           ) : (
             <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <p>Brak kategorii w bazie danych. Dodaj kategorie w panelu administratora.</p>
+              <p>No categories found in database. Add categories in the admin dashboard.</p>
             </div>
           )}
         </div>
@@ -626,7 +626,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {productsLoading ? (
             <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <span className="inline-block animate-pulse">Ładowanie części z bazy danych...</span>
+              <span className="inline-block animate-pulse">Loading parts from database...</span>
             </div>
           ) : products && products.length > 0 ? (
             products.slice(0, 4).map((prod: any, idx: number) => {
@@ -656,7 +656,7 @@ export default function HomePage() {
                 prod?.thumbnail ||
                 "/placeholder-car.jpg";
               const brand = prod?.make || prod?.brand || "OEM";
-              const title = prod?.title || prod?.name || "Część samochodowa";
+              const title = prod?.title || prod?.name || "Automotive Replacement Part";
               const prodId = prod?.id || prod?._id || `p-${idx}`;
 
               return (
@@ -686,15 +686,15 @@ export default function HomePage() {
                       {/* Specification Table */}
                       <div className="space-y-1.5 text-[11px] text-gray-600 border-t border-gray-100 pt-3 mb-4">
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Pojazd:</span>
+                          <span className="text-gray-400">Vehicle:</span>
                           <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{vehicle}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Numer OE:</span>
+                          <span className="text-gray-400">OE Number:</span>
                           <span className="font-mono font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{oem}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Wersja:</span>
+                          <span className="text-gray-400">Finish:</span>
                           <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{finish}</span>
                         </div>
                       </div>
@@ -710,7 +710,7 @@ export default function HomePage() {
                             }`}
                         >
                           <Check size={12} />
-                          <span>{idx % 2 === 0 ? "Dostępne dane dopasowania" : "Wymaga weryfikacji"}</span>
+                          <span>{idx % 2 === 0 ? "Fitment verified" : "Requires VIN Check"}</span>
                         </span>
                       </div>
 
@@ -736,7 +736,7 @@ export default function HomePage() {
             })
           ) : (
             <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <p>Brak produktów w bazie danych. Dodaj produkty w panelu administratora.</p>
+              <p>No products found in database. Add products in the admin dashboard.</p>
             </div>
           )}
         </div>
@@ -979,12 +979,12 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {blogsLoading ? (
             <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <span className="inline-block animate-pulse">Ładowanie poradników z bazy danych...</span>
+              <span className="inline-block animate-pulse">Loading guides from database...</span>
             </div>
           ) : blogs && blogs.length > 0 ? (
             blogs.slice(0, 3).map((blog: any, idx: number) => {
               const dateStr = blog?.createdAt
-                ? new Date(blog.createdAt).toLocaleDateString("pl-PL", {
+                ? new Date(blog.createdAt).toLocaleDateString("en-US", {
                   day: "2-digit",
                   month: "long",
                   year: "numeric",
@@ -1007,7 +1007,7 @@ export default function HomePage() {
                   <div className="h-[200px] overflow-hidden bg-gray-900">
                     <img
                       src={img}
-                      alt={blog?.title || "Poradnik"}
+                      alt={blog?.title || "Automotive Guide"}
                       className="w-full h-full object-cover filter brightness-90 group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -1036,7 +1036,7 @@ export default function HomePage() {
             })
           ) : (
             <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <p>Brak poradników w bazie danych. Dodaj wpisy w panelu administratora.</p>
+              <p>No guides found in database. Add articles in the admin dashboard.</p>
             </div>
           )}
         </div>
@@ -1084,40 +1084,40 @@ export default function HomePage() {
             >
               &times;
             </button>
-            <h3 className="text-lg font-bold text-white mb-2">Zapytaj o dostępność części</h3>
+            <h3 className="text-lg font-bold text-white mb-2">Check Part Availability</h3>
             <p className="text-xs text-gray-300 mb-4 bg-white/5 p-3 rounded border border-white/10">
               <strong className="text-white block">{quickInquiryModal}</strong>
-              Wprowadź swój numer telefonu, aby nasz konsultant potwierdził dostępność i cenę.
+              Enter your contact details so our parts specialist can confirm fitment, availability, and pricing.
             </p>
 
             {inquirySent ? (
               <div className="bg-green-900/40 border border-green-500/50 p-4 rounded text-center text-xs text-green-300">
-                Dziękujemy! Skontaktujemy się z Tobą w ciągu kilku minut.
+                Thank you! Our advisor will contact you shortly.
               </div>
             ) : (
               <form onSubmit={handleInquirySubmit} className="space-y-3.5">
                 <div>
                   <label className="block text-[11px] font-bold text-gray-300 mb-1">
-                    Imię i nazwisko / Firma
+                    Full Name / Company
                   </label>
                   <input
                     type="text"
                     value={inquiryName}
                     onChange={(e) => setInquiryName(e.target.value)}
-                    placeholder="np. Jan Kowalski"
+                    placeholder="e.g. John Smith"
                     className="w-full bg-[#1e1e1e] border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DC2626]"
                   />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-gray-300 mb-1">
-                    Numer telefonu do kontaktu *
+                    Phone Number *
                   </label>
                   <input
                     type="tel"
                     required
                     value={inquiryPhone}
                     onChange={(e) => setInquiryPhone(e.target.value)}
-                    placeholder="np. +48 000 000 000"
+                    placeholder="e.g. +48 000 000 000"
                     className="w-full bg-[#1e1e1e] border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DC2626]"
                   />
                 </div>
@@ -1125,15 +1125,16 @@ export default function HomePage() {
                   type="submit"
                   className="w-full bg-[#DC2626] hover:bg-[#b91c1c] text-white py-2.5 rounded font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
                 >
-                  Wyślij zapytanie
+                  Send Inquiry
                 </button>
               </form>
             )}
           </div>
         </div>
       )}
+
       {/* ========================================================================= */}
-      {/* 12. FIGMA FOOTER (Lampalzderzak.pl Complete Navigation & Legal) */}
+      {/* 12. FIGMA FOOTER (Complete Navigation & Legal in English) */}
       {/* ========================================================================= */}
       <footer className="w-full bg-[#0a0a0a] border-t border-white/10 pt-16 pb-12 text-gray-400 text-xs">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -1151,69 +1152,69 @@ export default function HomePage() {
                 </span>
               </Link>
               <p className="text-xs text-gray-400 leading-relaxed max-w-sm mb-4">
-                Specjalistyczny dystrybutor oryginalnych części karoseryjnych, zderzaków, oświetlenia
-                i elementów poszycia do marek BMW, Mercedes-Benz, Audi oraz Range Rover.
+                Specialized distributor of genuine OEM replacement body panels, bumpers, lighting systems,
+                and exterior housings for BMW, Mercedes-Benz, Audi, and Range Rover.
               </p>
               <div className="flex flex-col gap-1 text-[11px] text-gray-400">
                 <span className="flex items-center gap-1.5">
                   <Phone size={12} className="text-[#DC2626]" /> +48 000 000 000
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Mail size={12} className="text-[#DC2626]" /> kontakt@motorium.pl
+                  <Mail size={12} className="text-[#DC2626]" /> contact@lampalzderzak.com
                 </span>
               </div>
             </div>
 
-            {/* Col 2: Katalog marek */}
+            {/* Col 2: Brand Catalog */}
             <div>
               <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
-                Katalog marek
+                Vehicle Brands
               </h4>
               <ul className="space-y-2 text-[12px]">
                 <li><Link href="/products?brand=BMW" className="hover:text-white transition-colors">BMW</Link></li>
                 <li><Link href="/products?brand=Mercedes-Benz" className="hover:text-white transition-colors">Mercedes-Benz</Link></li>
                 <li><Link href="/products?brand=Audi" className="hover:text-white transition-colors">Audi</Link></li>
                 <li><Link href="/products?brand=Range+Rover" className="hover:text-white transition-colors">Range Rover</Link></li>
-                <li><Link href="/products" className="hover:text-white transition-colors">Wszystkie modele</Link></li>
+                <li><Link href="/products" className="hover:text-white transition-colors">All Models</Link></li>
               </ul>
             </div>
 
-            {/* Col 3: Kategorie */}
+            {/* Col 3: Categories */}
             <div>
               <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
-                Kategorie
+                Categories
               </h4>
               <ul className="space-y-2 text-[12px]">
-                <li><Link href="/products?category=bumpers" className="hover:text-white transition-colors">Zderzaki i poszycia</Link></li>
-                <li><Link href="/products?category=headlights" className="hover:text-white transition-colors">Reflektory LED</Link></li>
-                <li><Link href="/products?category=grilles" className="hover:text-white transition-colors">Grille i atrapy</Link></li>
-                <li><Link href="/products?category=lenses" className="hover:text-white transition-colors">Klosze i obudowy</Link></li>
-                <li><Link href="/products?category=splitters" className="hover:text-white transition-colors">Splittery i listwy</Link></li>
+                <li><Link href="/products?category=bumpers" className="hover:text-white transition-colors">Bumpers & Trims</Link></li>
+                <li><Link href="/products?category=headlights" className="hover:text-white transition-colors">LED Headlights</Link></li>
+                <li><Link href="/products?category=grilles" className="hover:text-white transition-colors">Grilles & Housings</Link></li>
+                <li><Link href="/products?category=lenses" className="hover:text-white transition-colors">Lenses & Covers</Link></li>
+                <li><Link href="/products?category=splitters" className="hover:text-white transition-colors">Splitters & Moldings</Link></li>
               </ul>
             </div>
 
-            {/* Col 4: Informacje i Pomoc */}
+            {/* Col 4: Info & Support */}
             <div>
               <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
-                Pomoc i Informacje
+                Help & Information
               </h4>
               <ul className="space-y-2 text-[12px]">
-                <li><Link href="/contact-us?subject=VIN+Verification" className="hover:text-white transition-colors">Weryfikacja po VIN</Link></li>
-                <li><Link href="/about" className="hover:text-white transition-colors">O firmie</Link></li>
-                <li><Link href="/news" className="hover:text-white transition-colors">Baza wiedzy i poradniki</Link></li>
-                <li><Link href="/contact-us?subject=B2B" className="hover:text-white transition-colors">Współpraca warsztatowa</Link></li>
-                <li><Link href="/contact-us" className="hover:text-white transition-colors">Kontakt z doradcą</Link></li>
+                <li><Link href="/contact-us?subject=VIN+Verification" className="hover:text-white transition-colors">VIN Fitment Verification</Link></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">About Company</Link></li>
+                <li><Link href="/news" className="hover:text-white transition-colors">Knowledge Base & Guides</Link></li>
+                <li><Link href="/contact-us?subject=B2B" className="hover:text-white transition-colors">Workshop Cooperation</Link></li>
+                <li><Link href="/contact-us" className="hover:text-white transition-colors">Contact Advisor</Link></li>
               </ul>
             </div>
           </div>
 
           {/* Copyright & Disclaimer */}
           <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-500">
-            <p>&copy; {new Date().getFullYear()} Lampalzderzak.pl. Wszelkie prawa zastrzeżone.</p>
+            <p>&copy; {new Date().getFullYear()} Lampalzderzak.pl. All rights reserved.</p>
             <div className="flex items-center gap-6">
-              <Link href="/about" className="hover:text-gray-300 transition-colors">Polityka prywatności</Link>
-              <Link href="/about" className="hover:text-gray-300 transition-colors">Regulamin serwisu</Link>
-              <span className="text-gray-400 font-semibold cursor-pointer">PL / EN</span>
+              <Link href="/about" className="hover:text-gray-300 transition-colors">Privacy Policy</Link>
+              <Link href="/about" className="hover:text-gray-300 transition-colors">Terms of Service</Link>
+              <span className="text-gray-400 font-semibold">EN</span>
             </div>
           </div>
         </div>
