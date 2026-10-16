@@ -36,9 +36,9 @@ import { useLanguage } from "../utils/LanguageContext";
 export default function HomePage() {
   const dispatch = useAppDispatch();
   const { language, setLanguage, t } = useLanguage();
-  const { list: products } = useAppSelector((state) => state.products);
-  const { list: categories } = useAppSelector((state) => state.categories);
-  const { list: blogs } = useAppSelector((state) => state.blogs);
+  const { list: products, loading: productsLoading, error: productsError } = useAppSelector((state) => state.products);
+  const { list: categories, loading: categoriesLoading, error: categoriesError } = useAppSelector((state) => state.categories);
+  const { list: blogs, loading: blogsLoading, error: blogsError } = useAppSelector((state) => state.blogs);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -566,19 +566,15 @@ export default function HomePage() {
 
         {/* Categories Grid (Figma / API: Headlights, Bumpers, Grilles, Body parts) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {categories && categories.length >= 4 ? (
+          {categoriesLoading ? (
+            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
+              <span className="inline-block animate-pulse">Ładowanie kategorii z bazy danych...</span>
+            </div>
+          ) : categories && categories.length > 0 ? (
             categories.slice(0, 6).map((cat: any, idx: number) => {
               const catId = cat?.id || cat?._id;
               const isLarge = idx === 0 || idx === 1;
-              const fallbackImages = [
-                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-                "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
-                "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
-                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-                "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
-                "/30580dfd4addb8615661ae3077d481e5696b239e.jpg",
-              ];
-              const bgImg = cat?.image || cat?.thumbnail || fallbackImages[idx % fallbackImages.length];
+              const bgImg = cat?.image || cat?.thumbnail || "/placeholder-car.jpg";
 
               return (
                 <Link
@@ -615,109 +611,9 @@ export default function HomePage() {
               );
             })
           ) : (
-            <>
-              {/* 1. Large Feature Card: Reflektory i Oświetlenie */}
-              <Link
-                href="/products?category=headlights"
-                className="md:col-span-2 relative h-[250px] sm:h-[280px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-6 flex flex-col justify-end group bg-[#111] cursor-pointer"
-              >
-                <img
-                  src="/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg"
-                  alt="Reflektory i Lampy"
-                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                <div className="relative z-10">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] bg-[#DC2626]/20 px-2 py-0.5 rounded border border-[#DC2626]/40 mb-2 inline-block">
-                    94 części w ofercie
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#DC2626] transition-colors mb-1">
-                    Reflektory i Lampy LED / Laser
-                  </h3>
-                  <p className="text-gray-300 text-xs max-w-md line-clamp-1 mb-2">
-                    Oryginalne reflektory adaptacyjne, wkłady, przetwornice i moduły skrętu.
-                  </p>
-                  <span className="text-xs font-bold text-white flex items-center gap-1 group-hover:text-[#DC2626]">
-                    Odkryj kategorię <ArrowRight size={13} />
-                  </span>
-                </div>
-              </Link>
-
-              {/* 2. Large Feature Card: Zderzaki Kompletne */}
-              <Link
-                href="/products?category=bumpers"
-                className="md:col-span-2 relative h-[250px] sm:h-[280px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-6 flex flex-col justify-end group bg-[#111] cursor-pointer"
-              >
-                <img
-                  src="/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg"
-                  alt="Zderzaki i poszycia"
-                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                <div className="relative z-10">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] bg-[#DC2626]/20 px-2 py-0.5 rounded border border-[#DC2626]/40 mb-2 inline-block">
-                    128 części w ofercie
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#DC2626] transition-colors mb-1">
-                    Zderzaki Przednie i Tylne
-                  </h3>
-                  <p className="text-gray-300 text-xs max-w-md line-clamp-1 mb-2">
-                    Zderzaki OEM w wersjach M-Pakiet, AMG Line oraz S-Line z otworami na PDC i kamery.
-                  </p>
-                  <span className="text-xs font-bold text-white flex items-center gap-1 group-hover:text-[#DC2626]">
-                    Odkryj kategorię <ArrowRight size={13} />
-                  </span>
-                </div>
-              </Link>
-
-              {/* 3. Atrapy i Grille */}
-              <Link
-                href="/products?category=grilles"
-                className="relative h-[220px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-5 flex flex-col justify-end group bg-[#111] cursor-pointer"
-              >
-                <img
-                  src="/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg"
-                  alt="Grille i atrapy"
-                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                <div className="relative z-10">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">
-                    52 części
-                  </span>
-                  <h4 className="text-base font-bold text-white group-hover:text-[#DC2626] transition-colors mb-1">
-                    Grille i Atrapy (Nerki)
-                  </h4>
-                  <span className="text-[11px] font-semibold text-gray-300 flex items-center gap-1 group-hover:text-white">
-                    Zobacz ofertę <ArrowRight size={11} />
-                  </span>
-                </div>
-              </Link>
-
-              {/* 4. Klosze i Obudowy */}
-              <Link
-                href="/products?category=lenses"
-                className="relative h-[220px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-5 flex flex-col justify-end group bg-[#111] cursor-pointer"
-              >
-                <img
-                  src="/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg"
-                  alt="Klosze reflektorów"
-                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                <div className="relative z-10">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">
-                    34 części
-                  </span>
-                  <h4 className="text-base font-bold text-white group-hover:text-[#DC2626] transition-colors mb-1">
-                    Klosze i Obudowy Reflektorów
-                  </h4>
-                  <span className="text-[11px] font-semibold text-gray-300 flex items-center gap-1 group-hover:text-white">
-                    Zobacz ofertę <ArrowRight size={11} />
-                  </span>
-                </div>
-              </Link>
-            </>
+            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
+              <p>Brak kategorii w bazie danych. Dodaj kategorie w panelu administratora.</p>
+            </div>
           )}
         </div>
       </section>
@@ -748,20 +644,24 @@ export default function HomePage() {
 
         {/* 4 Product Cards in Clean White Box style as shown in Figma */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {(products && products.length > 0
-            ? products.slice(0, 8).map((prod: any, idx: number) => {
+          {productsLoading ? (
+            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
+              <span className="inline-block animate-pulse">Ładowanie części z bazy danych...</span>
+            </div>
+          ) : products && products.length > 0 ? (
+            products.slice(0, 4).map((prod: any, idx: number) => {
               const oem =
                 prod?.oemNumber ||
                 prod?.specifications?.find((s: any) =>
                   s.name?.toLowerCase().includes("oem")
                 )?.value ||
-                "OEM-VERIFIED";
+                "—";
               const vehicle =
                 prod?.model ||
                 prod?.specifications?.find((s: any) =>
                   s.name?.toLowerCase().includes("model")
                 )?.value ||
-                "BMW / Mercedes / Audi";
+                "—";
               const finish =
                 prod?.finish ||
                 prod?.specifications?.find((s: any) =>
@@ -769,148 +669,96 @@ export default function HomePage() {
                   s.name?.toLowerCase().includes("version")
                 )?.value ||
                 prod?.category?.title ||
-                "OEM Specification";
+                "—";
               const imgSrc =
                 prod?.image ||
                 prod?.images?.[0] ||
                 prod?.thumbnail ||
-                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg";
+                "/placeholder-car.jpg";
               const brand = prod?.make || prod?.brand || "OEM";
-              const title = prod?.title || prod?.name || "Automotive Replacement Part";
+              const title = prod?.title || prod?.name || "Część samochodowa";
               const prodId = prod?.id || prod?._id || `p-${idx}`;
 
-              return {
-                id: String(prodId),
-                brand,
-                title,
-                img: imgSrc,
-                vehicle,
-                oem,
-                finish,
-                status: idx % 2 === 0 ? "Dostępne dane dopasowania" : "Wymaga weryfikacji",
-                statusType: idx % 2 === 0 ? "success" : "warning",
-              };
-            })
-            : [
-              {
-                id: "p1",
-                brand: "BMW",
-                title: "Reflektor LED BMW Seria 5 G30 / G31",
-                img: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-                vehicle: "G30 / G31 (2017-2020)",
-                oem: "63 11 7 438 433",
-                finish: "Kompletny z modułem",
-                status: "Wymaga weryfikacji",
-                statusType: "warning",
-              },
-              {
-                id: "p2",
-                brand: "MERCEDES-BENZ",
-                title: "Zderzak przedni C-Klasa W206 AMG Line",
-                img: "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
-                vehicle: "W206 (2021-)",
-                oem: "A2068800100",
-                finish: "Do lakierowania (PDC)",
-                status: "Dostępne dane dopasowania",
-                statusType: "success",
-              },
-              {
-                id: "p3",
-                brand: "MERCEDES-BENZ",
-                title: "Grill / Atrapa chłodnicy E-Klasa W213 Panamericana",
-                img: "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
-                vehicle: "W213 (2016-2020)",
-                oem: "A2138880123",
-                finish: "Czarny połysk / Chrom",
-                status: "Wymaga weryfikacji",
-                statusType: "warning",
-              },
-              {
-                id: "p4",
-                brand: "AUDI",
-                title: "Reflektor Matrix LED Audi A6 C8 4K",
-                img: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
-                vehicle: "A6 C8 (2018-)",
-                oem: "4K0 941 033",
-                finish: "Wersja europejska",
-                status: "Dostępne dane dopasowania",
-                statusType: "success",
-              },
-            ]
-          ).slice(0, 4).map((prod) => (
-            <div
-              key={prod.id}
-              className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between hover:shadow-xl transition-all duration-300"
-            >
-              {/* Product Image */}
-              <div className="relative h-[200px] bg-[#111] overflow-hidden">
-                <img
-                  src={prod.img}
-                  alt={prod.title}
-                  className="w-full h-full object-cover filter brightness-90 hover:scale-105 transition-transform duration-500"
-                />
-                <span className="absolute top-3 left-3 bg-[#DC2626] text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider shadow">
-                  {prod.brand}
-                </span>
-              </div>
-
-              {/* Product Content Details */}
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h4 className="text-sm font-bold text-gray-900 leading-snug mb-3 hover:text-[#DC2626] transition-colors line-clamp-2">
-                    {prod.title}
-                  </h4>
-
-                  {/* Specification Table */}
-                  <div className="space-y-1.5 text-[11px] text-gray-600 border-t border-gray-100 pt-3 mb-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Pojazd:</span>
-                      <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{prod.vehicle}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Numer OE:</span>
-                      <span className="font-mono font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{prod.oem}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Wersja:</span>
-                      <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{prod.finish}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Compatibility Badge + Action Buttons */}
-                <div>
-                  <div className="mb-4">
-                    <span
-                      className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${prod.statusType === "success"
-                        ? "bg-green-50 text-green-700 border border-green-200"
-                        : "bg-amber-50 text-amber-700 border border-amber-200"
-                        }`}
-                    >
-                      <Check size={12} />
-                      <span>{prod.status}</span>
+              return (
+                <div
+                  key={prodId}
+                  className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between hover:shadow-xl transition-all duration-300"
+                >
+                  {/* Product Image */}
+                  <div className="relative h-[200px] bg-[#111] overflow-hidden">
+                    <img
+                      src={imgSrc}
+                      alt={title}
+                      className="w-full h-full object-cover filter brightness-90 hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-3 left-3 bg-[#DC2626] text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider shadow">
+                      {brand}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
-                    <Link
-                      href={`/products`}
-                      className="flex-1 text-center py-2 text-xs font-bold text-gray-700 hover:text-[#DC2626] border border-gray-200 rounded hover:border-[#DC2626] transition-colors"
-                    >
-                      {t.recommended.details} &rarr;
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => setQuickInquiryModal(prod.title)}
-                      className="flex-1 bg-[#DC2626] hover:bg-[#b91c1c] text-white py-2 text-xs font-bold rounded transition-colors text-center cursor-pointer shadow-sm truncate px-1"
-                    >
-                      {t.recommended.inquire}
-                    </button>
+                  {/* Product Content Details */}
+                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h4 className="text-sm font-bold text-gray-900 leading-snug mb-3 hover:text-[#DC2626] transition-colors line-clamp-2">
+                        {title}
+                      </h4>
+
+                      {/* Specification Table */}
+                      <div className="space-y-1.5 text-[11px] text-gray-600 border-t border-gray-100 pt-3 mb-4">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Pojazd:</span>
+                          <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{vehicle}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Numer OE:</span>
+                          <span className="font-mono font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{oem}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Wersja:</span>
+                          <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{finish}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Compatibility Badge + Action Buttons */}
+                    <div>
+                      <div className="mb-4">
+                        <span
+                          className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${idx % 2 === 0
+                            ? "bg-green-50 text-green-700 border border-green-200"
+                            : "bg-amber-50 text-amber-700 border border-amber-200"
+                            }`}
+                        >
+                          <Check size={12} />
+                          <span>{idx % 2 === 0 ? "Dostępne dane dopasowania" : "Wymaga weryfikacji"}</span>
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                        <Link
+                          href={`/products`}
+                          className="flex-1 text-center py-2 text-xs font-bold text-gray-700 hover:text-[#DC2626] border border-gray-200 rounded hover:border-[#DC2626] transition-colors"
+                        >
+                          {t.recommended.details} &rarr;
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => setQuickInquiryModal(title)}
+                          className="flex-1 bg-[#DC2626] hover:bg-[#b91c1c] text-white py-2 text-xs font-bold rounded transition-colors text-center cursor-pointer shadow-sm truncate px-1"
+                        >
+                          {t.recommended.inquire}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              );
+            })
+          ) : (
+            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
+              <p>Brak produktów w bazie danych. Dodaj produkty w panelu administratora.</p>
             </div>
-          ))}
+          )}
         </div>
       </section>
 
@@ -1147,88 +995,70 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 3 Guide Article Cards from Figma / API */}
+        {/* 3 Guide Article Cards from API */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {(blogs && blogs.length > 0
-            ? blogs.slice(0, 3).map((blog: any, idx: number) => {
+          {blogsLoading ? (
+            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
+              <span className="inline-block animate-pulse">Ładowanie poradników z bazy danych...</span>
+            </div>
+          ) : blogs && blogs.length > 0 ? (
+            blogs.slice(0, 3).map((blog: any, idx: number) => {
               const dateStr = blog?.createdAt
                 ? new Date(blog.createdAt).toLocaleDateString("pl-PL", {
                   day: "2-digit",
                   month: "long",
                   year: "numeric",
                 })
-                : "14 Października 2026";
-              const cleanDesc = blog?.shortDescription || blog?.description?.replace(/<[^>]+>/g, "").slice(0, 110) + "...";
-              const img = blog?.image || blog?.thumbnail || [
-                "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-                "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
-                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-              ][idx % 3];
-              return {
-                id: String(blog?.id || blog?._id || idx),
-                title: blog?.title || "Poradnik doboru części",
-                desc: cleanDesc,
-                img,
-                date: dateStr,
-              };
-            })
-            : [
-              {
-                id: "g1",
-                title: "Jak poprawnie odczytać numer OE w autach marki BMW?",
-                desc: "Gdzie szukać tabliczek znamionowych i jak zweryfikować 11-cyfrowy kod części zamiennej.",
-                img: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-                date: "14 Października 2026",
-              },
-              {
-                id: "g2",
-                title: "BMW G20 a G21 — kompatybilność zderzaków i oświetlenia",
-                desc: "Porównanie wersji Sedan i Touring przed i po faceliftingu (LCI). Kluczowe różnice mocowań.",
-                img: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
-                date: "10 Października 2026",
-              },
-              {
-                id: "g3",
-                title: "Jak sprawdzić czy zderzak posiada otwory na czujniki PDC?",
-                desc: "Wymiary, oznaczenia fabryczne oraz fabryczne wytłoczenia przygotowane pod wycięcie sensorów.",
-                img: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-                date: "04 Października 2026",
-              },
-            ]
-          ).map((guide) => (
-            <div
-              key={guide.id}
-              className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between group hover:shadow-xl transition-all duration-300"
-            >
-              <div className="h-[200px] overflow-hidden bg-gray-900">
-                <img
-                  src={guide.img}
-                  alt={guide.title}
-                  className="w-full h-full object-cover filter brightness-90 group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block mb-2">
-                    {guide.date}
-                  </span>
-                  <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#DC2626] transition-colors line-clamp-2">
-                    {guide.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 leading-relaxed mb-4 line-clamp-3">
-                    {guide.desc}
-                  </p>
-                </div>
-                <Link
-                  href="/news"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 group-hover:text-[#DC2626] transition-colors"
+                : "—";
+              const cleanDesc =
+                blog?.shortDescription ||
+                blog?.description?.replace(/<[^>]+>/g, "").slice(0, 110) + "...";
+              const img =
+                blog?.image ||
+                blog?.thumbnail ||
+                "/placeholder-car.jpg";
+              const blogId = blog?.id || blog?._id || idx;
+
+              return (
+                <div
+                  key={blogId}
+                  className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between group hover:shadow-xl transition-all duration-300"
                 >
-                  <span>{t.guides.read}</span>
-                  <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
-                </Link>
-              </div>
+                  <div className="h-[200px] overflow-hidden bg-gray-900">
+                    <img
+                      src={img}
+                      alt={blog?.title || "Poradnik"}
+                      className="w-full h-full object-cover filter brightness-90 group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block mb-2">
+                        {dateStr}
+                      </span>
+                      <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#DC2626] transition-colors line-clamp-2">
+                        {blog?.title}
+                      </h3>
+                      <p className="text-xs text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                        {cleanDesc}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/news/${blogId}`}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 group-hover:text-[#DC2626] transition-colors"
+                    >
+                      <span>{t.guides.read}</span>
+                      <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
+              <p>Brak poradników w bazie danych. Dodaj wpisy w panelu administratora.</p>
             </div>
-          ))}
+          )}
         </div>
       </section>
 
