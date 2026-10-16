@@ -1078,16 +1078,16 @@ export default function HomePage() {
                       <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block mb-2 font-mono">
                         {tagAndDate}
                       </span>
-                      <h3 className="text-base font-extrabold text-gray-900 mb-3 leading-snug group-hover:text-[#DC2626] transition-colors line-clamp-2">
+                      <h3 className="text-base font-extrabold text-gray-900 mb-3 leading-snug group-hover:text-[#DC2626] transition-colors h-[48px] flex items-start">
                         {blog?.title}
                       </h3>
-                      <p className="text-xs text-gray-500 leading-relaxed mb-6 line-clamp-2">
+                      <p className="text-xs text-gray-500 leading-relaxed mb-6 min-h-[36px] line-clamp-2">
                         {cleanDesc}
                       </p>
                     </div>
                     <Link
                       href={`/news/${blogId}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 group-hover:text-[#DC2626] transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 group-hover:text-[#DC2626] transition-colors pt-2"
                     >
                       <span>{t.guides.read}</span>
                       <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
