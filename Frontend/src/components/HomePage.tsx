@@ -768,11 +768,10 @@ export default function HomePage() {
                 <div>
                   <div className="mb-4">
                     <div
-                      className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${
-                        prod.statusType === "success"
+                      className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${prod.statusType === "success"
                           ? "text-[#15803D]"
                           : "text-[#B45309]"
-                      }`}
+                        }`}
                     >
                       {prod.statusType === "success" ? (
                         <Check size={13} className="text-[#16A34A] stroke-[2.5]" />
@@ -1040,7 +1039,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 3 Guide Article Cards from API */}
+        {/* 3 Guide Article Cards from API / Exact Screenshot */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {blogsLoading ? (
             <div className="col-span-full py-12 text-center text-gray-400 text-sm">
@@ -1048,43 +1047,41 @@ export default function HomePage() {
             </div>
           ) : blogs && blogs.length > 0 ? (
             blogs.slice(0, 3).map((blog: any, idx: number) => {
-              const dateStr = blog?.createdAt
-                ? new Date(blog.createdAt).toLocaleDateString("en-US", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })
-                : "—";
+              const tagAndDate = blog?.author || "GUIDE • 14.05.2025";
               const cleanDesc =
                 blog?.shortDescription ||
-                blog?.description?.replace(/<[^>]+>/g, "").slice(0, 110) + "...";
+                "Learn about the data worth checking before sending a part inquiry.";
               const img =
                 blog?.image ||
                 blog?.thumbnail ||
-                "/placeholder-car.jpg";
+                (idx === 0
+                  ? "/734295950a53ab641f4c489e327584416018d44d.jpg"
+                  : idx === 1
+                  ? "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg"
+                  : "/1889c8da558725682709642aeaf212caab3ad5e6.jpg");
               const blogId = blog?.id || blog?._id || idx;
 
               return (
                 <div
                   key={blogId}
-                  className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between group hover:shadow-xl transition-all duration-300"
+                  className="bg-white rounded-none border border-gray-200 text-gray-900 flex flex-col justify-between group hover:shadow-2xl transition-all duration-300"
                 >
-                  <div className="h-[200px] overflow-hidden bg-gray-900">
+                  <div className="h-[230px] overflow-hidden bg-[#0d0d0d]">
                     <img
                       src={img}
                       alt={blog?.title || "Automotive Guide"}
-                      className="w-full h-full object-cover filter brightness-90 group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover filter brightness-[0.88] group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block mb-2">
-                        {dateStr}
+                      <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block mb-2 font-mono">
+                        {tagAndDate}
                       </span>
-                      <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#DC2626] transition-colors line-clamp-2">
+                      <h3 className="text-base font-extrabold text-gray-900 mb-3 leading-snug group-hover:text-[#DC2626] transition-colors line-clamp-2">
                         {blog?.title}
                       </h3>
-                      <p className="text-xs text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                      <p className="text-xs text-gray-500 leading-relaxed mb-6 line-clamp-2">
                         {cleanDesc}
                       </p>
                     </div>
@@ -1093,7 +1090,7 @@ export default function HomePage() {
                       className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 group-hover:text-[#DC2626] transition-colors"
                     >
                       <span>{t.guides.read}</span>
-                      <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
+                      <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </div>
                 </div>

@@ -239,16 +239,16 @@ const translations: Record<Language, Translations> = {
     guides: {
       kicker: "KNOWLEDGE BASE",
       title: "Automotive guides",
-      desc: "Articles and tips to help you identify the right body and lighting components.",
+      desc: "Practical tips to help identify the right part.",
       allGuides: "All guides",
-      read: "Read guide",
+      read: "Read the article",
     },
     bottomCta: {
-      kicker: "DEDICATED ADVISORY",
+      kicker: "NEED HELP?",
       title: "Looking for a specific carpart?",
-      desc: "Provide your part number, description, or vehicle VIN, and our specialists will verify availability with an instant offer.",
-      sendInquiry: "Send inquiry",
-      verifyVin: "Check VIN number",
+      desc: "Send vehicle data or OEM number, and our team will help identify the right component.",
+      sendInquiry: "Find a part",
+      verifyVin: "Contact up",
     },
   },
 };
