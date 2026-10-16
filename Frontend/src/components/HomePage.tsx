@@ -35,7 +35,7 @@ import { useLanguage } from "../utils/LanguageContext";
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const { list: products, loading: productsLoading, error: productsError } = useAppSelector((state) => state.products);
   const { list: categories, loading: categoriesLoading, error: categoriesError } = useAppSelector((state) => state.categories);
   const { list: blogs, loading: blogsLoading, error: blogsError } = useAppSelector((state) => state.blogs);
@@ -112,28 +112,8 @@ export default function HomePage() {
               <Mail size={13} className="text-[#DC2626]" />
               <span>kontakt@lampalzderzak.com</span>
             </a>
-            <div className="flex items-center gap-1.5 pl-3 border-l border-white/15 text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setLanguage("pl")}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === "pl"
-                  ? "bg-[#DC2626] text-white"
-                  : "text-gray-400 hover:text-white"
-                  }`}
-              >
-                PL
-              </button>
-              <span className="text-gray-600">/</span>
-              <button
-                type="button"
-                onClick={() => setLanguage("en")}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === "en"
-                  ? "bg-[#DC2626] text-white"
-                  : "text-gray-400 hover:text-white"
-                  }`}
-              >
-                EN
-              </button>
+            <div className="flex items-center gap-1.5 pl-3 border-l border-white/15 text-xs font-semibold text-gray-400">
+              <span className="text-white font-bold">EN</span>
             </div>
           </div>
         </div>
