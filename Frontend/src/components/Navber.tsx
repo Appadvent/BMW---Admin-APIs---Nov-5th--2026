@@ -22,6 +22,9 @@ const Navber = () => {
   const [isEnquiryPopupOpen, setIsEnquiryPopupOpen] = useState(false);
   const pathname = usePathname();
 
+  const isHomePage = pathname === "/";
+  if (isHomePage) return null;
+
   const isProductDetailPage = pathname === "/products/52" || (/^\/products\/[^\/]+$/.test(pathname));
   const isWhiteNav = isProductDetailPage && !isScrolled;
 
@@ -131,12 +134,9 @@ const Navber = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 ${isScrolled
-          ? "bg-[#10151C]/95 backdrop-blur-md shadow-lg shadow-black/30 border-b border-white/10 py-3.5"
-          : isWhiteNav
-            ? "bg-white py-5 shadow-none backdrop-blur-none border-b border-gray-200"
-            : "bg-gradient-to-b from-black/90 via-black/50 to-transparent py-5"
-          }`}
+        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 bg-white border-b border-gray-200 shadow-sm ${
+          isScrolled ? "py-3" : "py-4 sm:py-5"
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -146,12 +146,10 @@ const Navber = () => {
                 OEM
               </div>
               <div className="flex flex-col">
-                <span className={`font-extrabold text-lg md:text-xl tracking-tight leading-none flex items-center gap-1 ${
-                  isWhiteNav ? "text-[#10151C]" : "text-white"
-                }`}>
+                <span className="font-extrabold text-lg md:text-xl tracking-tight leading-none flex items-center gap-1 text-[#10151C]">
                   AUTOPARTS <span className="text-[#C82021]">OEM</span>
                 </span>
-                <span className="text-[10px] text-gray-400 font-semibold tracking-widest uppercase mt-0.5">
+                <span className="text-[10px] text-gray-500 font-semibold tracking-widest uppercase mt-0.5">
                   Replacement Parts
                 </span>
               </div>
@@ -179,9 +177,7 @@ const Navber = () => {
                         }}
                         className={`text-[15px] font-medium transition-colors duration-200 py-1 flex items-center gap-1.5 cursor-pointer bg-transparent border-none ${pathname.startsWith("/products") || isProductDropdownOpen
                           ? "text-[#C82021] font-semibold"
-                          : isWhiteNav
-                            ? "text-gray-800 hover:text-[#C82021]"
-                            : "text-gray-300 hover:text-[#C82021]"
+                          : "text-gray-800 hover:text-[#C82021]"
                           }`}
                       >
                         <span>{link.name}</span>
@@ -189,9 +185,7 @@ const Navber = () => {
                           size={14}
                           className={`transition-transform duration-200 ${isProductDropdownOpen
                             ? "rotate-180 text-[#C82021]"
-                            : isWhiteNav
-                              ? "text-gray-700"
-                              : "text-gray-400"
+                            : "text-gray-500"
                             }`}
                         />
                       </button>
@@ -274,9 +268,7 @@ const Navber = () => {
                     onClick={(e) => scrollToSection(e, link.href)}
                     className={`text-[15px] font-medium transition-colors duration-200 py-1 ${isActive
                       ? "text-[#C82021] font-semibold"
-                      : isWhiteNav
-                        ? "text-gray-800 hover:text-[#C82021]"
-                        : "text-gray-300 hover:text-[#C82021]"
+                      : "text-gray-800 hover:text-[#C82021]"
                       }`}
                   >
                     {link.name}
@@ -300,10 +292,7 @@ const Navber = () => {
             <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`p-2 rounded-lg focus:outline-none transition-colors ${isWhiteNav
-                  ? "text-gray-800 hover:text-black"
-                  : "text-gray-200 hover:text-white"
-                  }`}
+                className="p-2 rounded-lg focus:outline-none transition-colors text-gray-800 hover:text-black cursor-pointer"
                 aria-label="Toggle Navigation Menu"
               >
                 {isOpen ? <X size={26} /> : <Menu size={26} />}
@@ -320,14 +309,14 @@ const Navber = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="lg:hidden border-t border-white/10 bg-[#10151C]/98 backdrop-blur-xl shadow-2xl overflow-hidden"
+              className="lg:hidden border-t border-gray-200 bg-white/98 backdrop-blur-xl shadow-2xl overflow-hidden"
             >
               <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col space-y-2">
                 {navLinks.map((link) => {
                   if (link.href === "/products" || link.name === "Catalogue" || link.name === "Products") {
                     return (
                       <div key={link.name} className="flex flex-col">
-                        <div className="flex items-center justify-between text-[15px] font-medium text-gray-300 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-md transition-colors">
+                        <div className="flex items-center justify-between text-[15px] font-medium text-gray-800 hover:text-[#C82021] hover:bg-gray-100 px-3 py-2.5 rounded-md transition-colors">
                           <button
                             type="button"
                             onClick={() =>
@@ -342,7 +331,7 @@ const Navber = () => {
                             onClick={() =>
                               setIsMobileProductsOpen(!isMobileProductsOpen)
                             }
-                            className="p-1 text-gray-400 hover:text-[#C82021]"
+                            className="p-1 text-gray-500 hover:text-[#C82021]"
                           >
                             <ChevronDown
                               size={16}
@@ -372,7 +361,7 @@ const Navber = () => {
                                     key={catId}
                                     href={`/products?categoryId=${catId}`}
                                     onClick={() => setIsOpen(false)}
-                                    className="text-[13px] font-medium text-gray-300 hover:text-[#C82021] py-2 px-3 rounded block hover:bg-white/5 transition-colors"
+                                    className="text-[13px] font-medium text-gray-700 hover:text-[#C82021] py-2 px-3 rounded block hover:bg-gray-100 transition-colors"
                                   >
                                     {catName}
                                   </Link>
@@ -389,7 +378,7 @@ const Navber = () => {
                     <Link
                       key={link.name}
                       href={link.href}
-                      className="text-[15px] font-medium text-gray-300 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-md transition-colors"
+                      className="text-[15px] font-medium text-gray-800 hover:text-[#C82021] hover:bg-gray-100 px-3 py-2.5 rounded-md transition-colors"
                       onClick={(e) => scrollToSection(e, link.href)}
                     >
                       {link.name}

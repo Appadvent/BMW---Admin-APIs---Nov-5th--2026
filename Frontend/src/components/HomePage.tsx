@@ -1,2018 +1,1413 @@
 "use client";
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
+  Search,
   ArrowRight,
-  CheckCircle,
+  Check,
+  ChevronDown,
+  Layers,
   Phone,
   Mail,
-  Award,
-  Zap,
-  LayoutGrid,
-  Users,
-  ChevronLeft,
-  ChevronRight,
-  Download,
+  Truck,
+  Briefcase,
+  HelpCircle,
+  ExternalLink,
+  Shield,
+  FileText,
+  Sliders,
+  Send,
   Sparkles,
-  Volume2,
-  VolumeX,
-  Layers,
-  PackageOpen,
-  Newspaper,
-  AlertCircle,
+  Award,
+  Users,
+  Car,
+  Globe,
+  Headphones,
+  ShieldCheck,
+  Package,
 } from "lucide-react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import ProductCard from "./ProductCard";
-import CategoryCard from "./CategoryCard";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import AnimatedCounter from "./AnimatedCounter";
-import AnimatedText from "./AnimatedText";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchCategories } from "../redux/Slice/categorySlice";
 import { fetchProducts } from "../redux/Slice/productSlice";
 import { fetchAllBlogs } from "../redux/Slice/BlogSlice";
-import { fetchActiveBanners } from "../redux/Slice/bannerSlice";
-import { sendContact, resetContactState } from "../redux/Slice/contactSlice";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { sendContact } from "../redux/Slice/contactSlice";
+import { useLanguage } from "../utils/LanguageContext";
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
-  const mainRef = useRef<HTMLDivElement>(null);
-
-  // Selectors
-  const { list: categories } = useAppSelector((state) => state.categories);
+  const { language, setLanguage, t } = useLanguage();
   const { list: products } = useAppSelector((state) => state.products);
+  const { list: categories } = useAppSelector((state) => state.categories);
   const { list: blogs } = useAppSelector((state) => state.blogs);
-  const { list: bannerList, loading: bannerLoading } = useAppSelector((state) => state.banners);
-  const { loading: contactLoading, success: contactSuccess } = useAppSelector(
-    (state) => state.contact
-  );
 
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchProducts());
     dispatch(fetchAllBlogs({ page: 1, limit: 10 }));
-    dispatch(fetchActiveBanners());
   }, [dispatch]);
 
-  // Slider State
-  const [[currentSlide, direction], setSlideState] = useState([0, 0]);
-  const [isPaused, setIsPaused] = useState(false);
+  // Tab State in Search Widget
+  const [activeTab, setActiveTab] = useState<"vehicle" | "vin">("vehicle");
 
-  // Video Visibility & Playback control
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const heroRef = useRef<HTMLElement>(null);
-  const [isHeroInView, setIsHeroInView] = useState(true);
-  const prefersReducedMotion = useReducedMotion();
+  // Filter state for Vehicle Search
+  const [selectedBrand, setSelectedBrand] = useState("BMW");
+  const [selectedModel, setSelectedModel] = useState("");
+  const [selectedGen, setSelectedGen] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedCat, setSelectedCat] = useState("");
+  const [oemInput, setOemInput] = useState("");
+  const [vinInput, setVinInput] = useState("");
+  const [headerSearch, setHeaderSearch] = useState("");
 
-  // Dedicated Hero Banner Visibility Observer & Synchronous Scroll Controller
-  useEffect(() => {
-    const heroEl = heroRef.current;
-    if (!heroEl) return;
+  // VIN inquiry state
+  const [quickInquiryModal, setQuickInquiryModal] = useState<string | null>(null);
+  const [inquiryName, setInquiryName] = useState("");
+  const [inquiryPhone, setInquiryPhone] = useState("");
+  const [inquirySent, setInquirySent] = useState(false);
 
-    // Helper to evaluate if the hero is sufficiently visible in the viewport
-    const checkHeroVisibility = () => {
-      const rect = heroEl.getBoundingClientRect();
-      const heroHeight = rect.height || 600;
-      const visibleTop = Math.max(rect.top, 0);
-      const visibleBottom = Math.min(rect.bottom, window.innerHeight);
-      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
-      const visibleRatio = visibleHeight / heroHeight;
-
-      // Hero is considered visible if at least 30% of it is within the viewport and rect.bottom > 120
-      const isVisible = visibleRatio >= 0.3 && rect.bottom > 120 && rect.top < window.innerHeight - 120;
-
-      setIsHeroInView(isVisible);
-      if (!isVisible && videoRef.current && !videoRef.current.paused) {
-        videoRef.current.pause();
-      }
-    };
-
-    // IntersectionObserver specifically for the Hero section
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const inView = entry.isIntersecting && entry.intersectionRatio >= 0.3;
-        setIsHeroInView(inView);
-        if (!inView && videoRef.current && !videoRef.current.paused) {
-          videoRef.current.pause();
-        }
-      },
-      { threshold: [0, 0.15, 0.3, 0.5, 0.75, 1.0] }
-    );
-
-    observer.observe(heroEl);
-
-    // Synchronous scroll listener ensures instant pause the moment user scrolls past hero
-    const handleScroll = () => {
-      checkHeroVisibility();
-    };
-
-    // Handle tab switching
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (videoRef.current && !videoRef.current.paused) {
-          videoRef.current.pause();
-        }
-      } else {
-        checkHeroVisibility();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    // Initial check on mount
-    checkHeroVisibility();
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
-
-  // Dynamic Hero Slides mapped strictly from API (No hardcoded fallback array to prevent flash of wrong banner)
-  const heroSlides = useMemo(() => {
-    if (!bannerList || bannerList.length === 0) {
-      return [];
-    }
-    return bannerList.map((banner: any, idx: number) => {
-      const words = (banner.heading || "").split(" ");
-      const mid = Math.ceil(words.length / 2);
-      const titlePart = words.slice(0, mid).join(" ");
-      const highlightPart = words.slice(mid).join(" ");
-
-      return {
-        id: banner.id,
-        bgMediaType: banner.bgMediaType || "IMAGE",
-        bgMedia: banner.bgMedia,
-        tag: banner.label || "",
-        heading: banner.heading || "",
-        title: titlePart || banner.heading,
-        highlight: highlightPart || "",
-        description: banner.description || "",
-        textAlignment: (banner.textAlignment || "LEFT").toLowerCase(),
-        primaryBtnText: banner.primaryBtnText || "Explore Our Products",
-        primaryBtnLink: banner.primaryBtnLink || "/products",
-        secondaryBtnText: banner.secondaryBtnText || "Contact Us",
-        secondaryBtnLink: banner.secondaryBtnLink || "#contact",
-        sideImage: banner.sideImage || "",
-        sideImagePosition: banner.sideImagePosition === "LEFT" ? "left" : "right",
-        alt: banner.heading || `Hero Slide ${idx + 1}`,
-      };
-    });
-  }, [bannerList]);
-
-  // Safe Slide index calculation
-  const safeSlide = heroSlides.length > 0 ? currentSlide % heroSlides.length : 0;
-
-  // ONLY play video & sound when the current slide is a VIDEO AND the hero banner is in viewport
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || heroSlides.length === 0) return;
-
-    const currentSlideData = heroSlides[safeSlide];
-    const isVideoSlide = currentSlideData?.bgMediaType === "VIDEO";
-
-    if (isVideoSlide && isHeroInView && !document.hidden) {
-      video.muted = false;
-      video.volume = 1;
-      if (video.ended) {
-        video.currentTime = 0;
-      }
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // If browser restricts unmuted autoplay before user interaction, play muted first
-          video.muted = true;
-          video.play().catch(() => { });
-        });
-      }
-    } else {
-      if (!video.paused) {
-        video.pause();
-      }
-      video.muted = true;
-    }
-  }, [safeSlide, isHeroInView, heroSlides]);
-
-  // Unmute and ensure audio plays as soon as user interacts anywhere on page (if current slide is video)
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      if (heroSlides.length === 0) return;
-      const video = videoRef.current;
-      const isVideoSlide = heroSlides[safeSlide]?.bgMediaType === "VIDEO";
-      if (video && isVideoSlide && isHeroInView && !document.hidden) {
-        video.muted = false;
-        video.volume = 1;
-        if (video.paused) {
-          video.play().catch(() => { });
-        }
-      }
-    };
-
-    window.addEventListener("click", handleUserInteraction, { passive: true });
-    window.addEventListener("touchstart", handleUserInteraction, { passive: true });
-    window.addEventListener("scroll", handleUserInteraction, { passive: true });
-
-    return () => {
-      window.removeEventListener("click", handleUserInteraction);
-      window.removeEventListener("touchstart", handleUserInteraction);
-      window.removeEventListener("scroll", handleUserInteraction);
-    };
-  }, [safeSlide, isHeroInView, heroSlides]);
-
-  const paginate = (newDirection: number) => {
-    if (heroSlides.length <= 1) return;
-    setSlideState(([prev]) => {
-      const next = (prev + newDirection + heroSlides.length) % heroSlides.length;
-      return [next, newDirection];
-    });
-  };
-
-  // Mobile / Touch Swipe Handling for Banner Slider
-  const touchStartXRef = useRef<number | null>(null);
-  const touchStartYRef = useRef<number | null>(null);
-
-  const handleTouchStart = (e: React.TouchEvent | React.PointerEvent) => {
-    const clientX = "touches" in e ? e.touches[0]?.clientX : (e as React.PointerEvent).clientX;
-    const clientY = "touches" in e ? e.touches[0]?.clientY : (e as React.PointerEvent).clientY;
-    if (clientX === undefined) return;
-    touchStartXRef.current = clientX;
-    touchStartYRef.current = clientY;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent | React.PointerEvent) => {
-    if (touchStartXRef.current === null) return;
-    const clientX =
-      "changedTouches" in e
-        ? e.changedTouches[0]?.clientX
-        : (e as React.PointerEvent).clientX;
-    const clientY =
-      "changedTouches" in e
-        ? e.changedTouches[0]?.clientY
-        : (e as React.PointerEvent).clientY;
-
-    if (clientX === undefined) return;
-
-    const diffX = touchStartXRef.current - clientX;
-    const diffY = (touchStartYRef.current ?? 0) - (clientY ?? 0);
-
-    // Check if horizontal movement is dominant
-    const isHorizontal = Math.abs(diffX) > Math.abs(diffY) * 0.75;
-    const minSwipeDistance = 30; // 30px threshold
-
-    if (isHorizontal && Math.abs(diffX) >= minSwipeDistance) {
-      if (diffX > 0) {
-        // Swiped Left -> Next Slide
-        paginate(1);
-      } else {
-        // Swiped Right -> Previous Slide
-        paginate(-1);
-      }
-    }
-
-    touchStartXRef.current = null;
-    touchStartYRef.current = null;
-  };
-
-  // Auto-play slider only when hero is active, visible, and has more than 1 slide
-  useEffect(() => {
-    if (isPaused || !isHeroInView || heroSlides.length <= 1) return;
-    const interval = setInterval(() => {
-      paginate(1);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [isPaused, isHeroInView, safeSlide, heroSlides.length]);
-
-  // Contact form state & validation
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    category: "General Inquiry",
-    message: "",
-  });
-
-  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
-
-  const validateField = (fieldName: string, value: string): string => {
-    switch (fieldName) {
-      case "name":
-        if (!value.trim()) return "Full name is required";
-        if (value.trim().length < 2) return "Name must be at least 2 characters";
-        if (value.trim().length > 60) return "Name cannot exceed 60 characters";
-        if (!/^[a-zA-Z\s.'-]+$/.test(value.trim())) {
-          return "Name should only contain alphabets, spaces, and hyphens";
-        }
-        return "";
-
-      case "email":
-        if (!value.trim()) return "Email address is required";
-        if (value.length > 100) return "Email cannot exceed 100 characters";
-        // Strict RFC standard email regex
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(value.trim())) {
-          return "Please enter a valid email address (e.g. name@domain.com)";
-        }
-        return "";
-
-      case "phone":
-        if (!value.trim()) return "Phone number is required";
-        const cleanPhone = value.replace(/[\s-+()]/g, "");
-        if (cleanPhone.length < 7 || cleanPhone.length > 15) {
-          return "Please enter a valid phone number";
-        }
-        return "";
-
-      case "message":
-        if (!value.trim()) return "Message is required";
-        if (value.trim().length < 10) return "Message must be at least 10 characters";
-        if (value.length > 1000) return "Message cannot exceed 1000 characters";
-        return "";
-
-      default:
-        return "";
-    }
-  };
-
-  const handleContactChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    let { name, value } = e.target;
-
-    if (name === "phone") {
-      value = value.replace(/[^0-9]/g, "");
-      if (value.length > 10) return;
-    } else if (name === "name") {
-      if (value.length > 60) return;
-    } else if (name === "email") {
-      if (value.length > 100) return;
-    } else if (name === "message") {
-      if (value.length > 1000) return;
-    }
-
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (touched[name]) {
-      const error = validateField(name, value);
-      setFormErrors((prev) => ({ ...prev, [name]: error }));
-    }
-  };
-
-  const handleBlur = (
-    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setTouched((prev) => ({ ...prev, [name]: true }));
-    const error = validateField(name, value);
-    setFormErrors((prev) => ({ ...prev, [name]: error }));
-  };
-
-  const validateAll = (): boolean => {
-    const errors: { [key: string]: string } = {};
-    const nameErr = validateField("name", formData.name);
-    const emailErr = validateField("email", formData.email);
-    const phoneErr = validateField("phone", formData.phone);
-    const messageErr = validateField("message", formData.message);
-
-    if (nameErr) errors.name = nameErr;
-    if (emailErr) errors.email = emailErr;
-    if (phoneErr) errors.phone = phoneErr;
-    if (messageErr) errors.message = messageErr;
-
-    setFormErrors(errors);
-    setTouched({
-      name: true,
-      email: true,
-      phone: true,
-      message: true,
-    });
-
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateAll()) {
-      return;
-    }
-    dispatch(sendContact(formData));
-  };
-
-  // Auto-reset form after successful submission
-  useEffect(() => {
-    if (contactSuccess) {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        category: "General Inquiry",
-        message: "",
-      });
-      setFormErrors({});
-      setTouched({});
-      const timer = setTimeout(() => {
-        dispatch(resetContactState());
-      }, 7000);
-      return () => clearTimeout(timer);
-    }
-  }, [contactSuccess, dispatch]);
-
-  // Filter products by Tag for dedicated homepage sections
-  const bestsellers = useMemo(() => {
-    if (!products || products.length === 0) return [];
-    const tagged = products.filter(
-      (p: any) => p.tag && p.tag.toLowerCase().replace(/[\s-_]+/g, "") === "bestseller"
+    if (!inquiryPhone) return;
+    dispatch(
+      sendContact({
+        name: inquiryName || "Customer",
+        email: "website-rfq@lampalzderzak.pl",
+        phone: inquiryPhone,
+        category: "Part Inquiry",
+        message: `Inquiry regarding: ${quickInquiryModal || "General Part"}`,
+      })
     );
-    return tagged.length > 0 ? tagged.slice(0, 5) : products.slice(0, 5);
-  }, [products]);
-
-  const featuredProducts = useMemo(() => {
-    if (!products || products.length === 0) return [];
-    const tagged = products.filter(
-      (p: any) => p.tag && p.tag.toLowerCase().replace(/[\s-_]+/g, "") === "featured"
-    );
-    return tagged.length > 0 ? tagged.slice(0, 4) : products.slice(0, 4);
-  }, [products]);
-
-  const getProductCount = (categoryName: string) => {
-    return products?.filter((p: any) => {
-      const catName = p.category?.title || p.category?.name || p.category || p.categoryName;
-      return catName === categoryName;
-    }).length || 0;
+    setInquirySent(true);
+    setTimeout(() => {
+      setQuickInquiryModal(null);
+      setInquirySent(false);
+      setInquiryName("");
+      setInquiryPhone("");
+    }, 2500);
   };
-
-  const displayCategories = categories && categories.length > 0 ? categories.slice(0, 4) : [];
-  const displayBlogs = blogs && blogs.length > 0 ? blogs.slice(0, 3) : [];
-
-  // =========================================================================
-  // GSAP SCROLLTRIGGER ANIMATIONS WITH BIDIRECTIONAL REPLAY
-  // =========================================================================
-  useGSAP(
-    () => {
-      // 1. Categories Section Animation
-      const catHeader = mainRef.current?.querySelector(".gsap-cat-header");
-      const catCards = mainRef.current?.querySelectorAll(".gsap-cat-card");
-
-      if (catHeader && catCards && catCards.length > 0) {
-        const catTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#products",
-            start: "top 88%",
-            once: true,
-          },
-        });
-
-        catTl
-          .fromTo(
-            catHeader,
-            { opacity: 0, y: 35 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-          )
-          .fromTo(
-            catCards,
-            { opacity: 0, y: 45, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.55,
-              stagger: 0.1,
-              ease: "power2.out",
-            },
-            "-=0.3"
-          );
-      }
-
-      // 2. Bestsellers Section Animation
-      const bestHeader = mainRef.current?.querySelector(".gsap-best-header");
-      const bestCards = mainRef.current?.querySelectorAll(".gsap-best-card");
-
-      if (bestHeader && bestCards && bestCards.length > 0) {
-        const bestTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#bestsellers",
-            start: "top 88%",
-            once: true,
-          },
-        });
-
-        bestTl
-          .fromTo(
-            bestHeader,
-            { opacity: 0, y: 35 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-          )
-          .fromTo(
-            bestCards,
-            { opacity: 0, y: 45, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.55,
-              stagger: 0.1,
-              ease: "power2.out",
-            },
-            "-=0.3"
-          );
-      }
-
-      // 3. About Section (Split Horizon Animation)
-      const aboutImg = mainRef.current?.querySelector(".gsap-about-img");
-      const aboutContent = mainRef.current?.querySelector(".gsap-about-content");
-      const aboutFeatures = mainRef.current?.querySelectorAll(".gsap-about-feature");
-
-      if (aboutImg && aboutContent) {
-        const aboutTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#about-section",
-            start: "top 85%",
-            once: true,
-          },
-        });
-
-        aboutTl
-          .fromTo(
-            aboutImg,
-            { opacity: 0, x: -45, scale: 0.96 },
-            { opacity: 1, x: 0, scale: 1, duration: 0.7, ease: "power2.out" }
-          )
-          .fromTo(
-            aboutContent,
-            { opacity: 0, x: 45 },
-            { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" },
-            "-=0.5"
-          );
-        if (aboutFeatures && aboutFeatures.length > 0) {
-          aboutTl.fromTo(
-            aboutFeatures,
-            { opacity: 0, y: 25, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.45,
-              stagger: 0.08,
-              ease: "power2.out",
-            },
-            "-=0.35"
-          );
-        }
-      }
-
-      // 4. Featured Products Section
-      const featHeader = mainRef.current?.querySelector(".gsap-feat-header");
-      const featCards = mainRef.current?.querySelectorAll(".gsap-feat-card");
-
-      if (featHeader && featCards && featCards.length > 0) {
-        const featTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#featured",
-            start: "top 88%",
-            once: true,
-          },
-        });
-
-        featTl
-          .fromTo(
-            featHeader,
-            { opacity: 0, y: 35 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-          )
-          .fromTo(
-            featCards,
-            { opacity: 0, y: 45, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.55,
-              stagger: 0.1,
-              ease: "power2.out",
-            },
-            "-=0.3"
-          );
-      }
-
-      // 5. Global Presence Section
-      const presenceHeader = mainRef.current?.querySelector(".gsap-presence-header");
-      const presenceStats = mainRef.current?.querySelectorAll(".gsap-presence-stat");
-      const presenceMap = mainRef.current?.querySelector(".gsap-presence-map");
-
-      if (presenceHeader && presenceStats && presenceMap) {
-        const presTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#presence",
-            start: "top 85%",
-            once: true,
-          },
-        });
-
-        presTl
-          .fromTo(
-            presenceHeader,
-            { opacity: 0, y: 35 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-          )
-          .fromTo(
-            presenceStats,
-            { opacity: 0, y: 35, scale: 0.95 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.5,
-              stagger: 0.08,
-              ease: "power2.out",
-            },
-            "-=0.3"
-          )
-          .fromTo(
-            presenceMap,
-            { opacity: 0, scale: 0.95, y: 25 },
-            { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "power2.out" },
-            "-=0.2"
-          );
-      }
-
-      // 6. News & Media Section
-      const newsHeader = mainRef.current?.querySelector(".gsap-news-header");
-      const newsCards = mainRef.current?.querySelectorAll(".gsap-news-card");
-
-      if (newsHeader && newsCards && newsCards.length > 0) {
-        const newsTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#news",
-            start: "top 88%",
-            once: true,
-          },
-        });
-
-        newsTl
-          .fromTo(
-            newsHeader,
-            { opacity: 0, y: 35 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-          )
-          .fromTo(
-            newsCards,
-            { opacity: 0, y: 45, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.55,
-              stagger: 0.1,
-              ease: "power2.out",
-            },
-            "-=0.3"
-          );
-      }
-
-      // 7. Product Catalogue Banner Section
-      const catBannerText = mainRef.current?.querySelector(".gsap-catalogue-text");
-      const catBannerImg = mainRef.current?.querySelector(".gsap-catalogue-img");
-
-      if (catBannerText && catBannerImg) {
-        const catBannerTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#catalogue",
-            start: "top 85%",
-            once: true,
-          },
-        });
-
-        catBannerTl
-          .fromTo(
-            catBannerText,
-            { opacity: 0, x: -40, scale: 0.96 },
-            { opacity: 1, x: 0, scale: 1, duration: 0.65, ease: "power2.out" }
-          )
-          .fromTo(
-            catBannerImg,
-            { opacity: 0, x: 40, scale: 0.96 },
-            { opacity: 1, x: 0, scale: 1, duration: 0.65, ease: "power2.out" },
-            "-=0.45"
-          );
-      }
-
-      // 8. Contact Form Section ("Let's Build Something Better Together")
-      const contactInfo = mainRef.current?.querySelector(".gsap-contact-info");
-      const contactCard = mainRef.current?.querySelector(".gsap-contact-card");
-
-      if (contactInfo && contactCard) {
-        const contactTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#contact",
-            start: "top 90%",
-            once: true,
-          },
-        });
-
-        contactTl
-          .fromTo(
-            contactInfo,
-            { opacity: 0, x: -40 },
-            { opacity: 1, x: 0, duration: 0.65, ease: "power2.out" }
-          )
-          .fromTo(
-            contactCard,
-            { opacity: 0, x: 40, y: 20, scale: 0.96 },
-            { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.65, ease: "power2.out" },
-            "-=0.45"
-          );
-      }
-
-      ScrollTrigger.refresh();
-    },
-    { scope: mainRef, dependencies: [categories, products, blogs] }
-  );
 
   return (
-    <main ref={mainRef} className="w-full min-h-screen overflow-x-hidden bg-white">
+    <main className="min-h-screen bg-[#070707] text-[#FFFFFF] font-sans antialiased selection:bg-[#DC2626] selection:text-white">
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION */}
+      {/* 1. TOP UTILITY BAR (Exact Figma: Black bg, white/gray text, contact info) */}
       {/* ========================================================================= */}
-      <section
-        ref={heroRef}
-        className="relative w-full bg-[#10151C] text-white overflow-hidden min-h-[580px] sm:min-h-[660px] lg:min-h-[740px] flex items-center justify-center pt-20 sm:pt-24 pb-14 sm:pb-16 select-none touch-pan-y"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        {heroSlides.length === 0 ? (
-          /* Luxury Dark Shimmer Skeleton while banners are loading (Prevents flash of wrong content) */
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[460px] sm:min-h-[480px] lg:min-h-[520px] flex items-center justify-center animate-pulse">
-            <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center space-y-4 sm:space-y-6">
-              {/* Badge placeholder */}
-              <div className="h-6 w-44 sm:w-56 rounded-full bg-white/10" />
-              {/* Title lines placeholder */}
-              <div className="h-9 sm:h-12 lg:h-14 w-4/5 max-w-xl rounded-lg bg-white/10" />
-              <div className="h-9 sm:h-12 lg:h-14 w-3/5 max-w-md rounded-lg bg-white/10" />
-              {/* Description placeholder */}
-              <div className="h-4 w-11/12 max-w-lg rounded bg-white/10 mt-2" />
-              <div className="h-4 w-full md:w-3/4 max-w-sm rounded bg-white/10" />
-              {/* Buttons placeholder */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 pt-4 sm:pt-6 w-full max-w-xs sm:max-w-none justify-center">
-                <div className="h-12 w-full sm:w-44 rounded-md bg-[#C82021]/40" />
-                <div className="h-12 w-full sm:w-36 rounded-md bg-white/10" />
-              </div>
-            </div>
+      <div className="w-full bg-[#0d0d0d] border-b border-white/5 text-[12px] text-gray-300 py-2.5">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-4">
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-1.5 font-medium text-gray-300">
+              <Truck size={14} className="text-[#DC2626]" />
+              <span>{t.topBar.delivery}</span>
+            </span>
+            <span className="hidden md:flex items-center gap-1.5 text-gray-400">
+              <Briefcase size={14} className="text-[#DC2626]" />
+              <span>{t.topBar.b2b} <strong className="text-white ml-1">+48 000 000 000</strong></span>
+            </span>
           </div>
-        ) : (
-          <>
-            {/* Slide-specific Background Media & Gradients */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-              {heroSlides.map((slide: any, idx: number) => {
-                const isCurrent = safeSlide === idx;
-                const isVideo = slide.bgMediaType === "VIDEO";
 
-                return (
-                  <div
-                    key={slide.id || idx}
-                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isCurrent ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                      } ${!isVideo ? "bg-cover bg-center" : ""}`}
-                    style={!isVideo ? { backgroundImage: `url(${slide.bgMedia})` } : undefined}
-                  >
-                    {isVideo ? (
-                      <video
-                        ref={isCurrent ? videoRef : undefined}
-                        src={slide.bgMedia}
-                        loop
-                        playsInline
-                        preload="auto"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background:
-                            "linear-gradient(105deg, rgba(14, 29, 39, 0.93) 7.74%, rgba(14, 29, 39, 0.62) 54.23%, rgba(14, 29, 39, 0) 92.26%)",
-                        }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Navigation Arrows */}
-            {heroSlides.length > 1 && (
-              <>
-                <button
-                  onClick={() => paginate(-1)}
-                  className="hidden sm:flex absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 bg-white/10 hover:bg-[#C82021] hover:text-white hover:border-[#C82021] text-white rounded-full items-center justify-center border border-white/15 backdrop-blur-md transition-all duration-200 active:scale-90 shadow-lg cursor-pointer"
-                  aria-label="Previous Slide"
-                >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-[22px] md:h-[22px]" />
-                </button>
-                <button
-                  onClick={() => paginate(1)}
-                  className="hidden sm:flex absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 bg-white/10 hover:bg-[#C82021] hover:text-white hover:border-[#C82021] text-white rounded-full items-center justify-center border border-white/15 backdrop-blur-md transition-all duration-200 active:scale-90 shadow-lg cursor-pointer"
-                  aria-label="Next Slide"
-                >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-[22px] md:h-[22px]" />
-                </button>
-              </>
-            )}
-
-            {/* Main Hero Container */}
-            <div
-              className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[460px] sm:min-h-[480px] lg:min-h-[520px] flex items-center justify-center touch-pan-y"
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-              onPointerDown={handleTouchStart}
-              onPointerUp={handleTouchEnd}
+          <div className="flex items-center gap-5 text-[12px] text-gray-300">
+            <a
+              href="mailto:kontakt@lampalzderzak.com"
+              className="hidden sm:flex items-center gap-1.5 hover:text-white transition-colors"
             >
-              <AnimatePresence initial={false} custom={direction} mode="wait">
-                <motion.div
-                  key={safeSlide}
-                  custom={direction}
-                  initial={{ x: direction > 0 ? 40 : -40, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: direction > 0 ? -40 : 40, opacity: 0 }}
-                  transition={{ duration: 0.55, ease: "easeOut" }}
-                  className="w-full min-h-[460px] sm:min-h-[480px] lg:min-h-0 flex items-center justify-center touch-pan-y"
-                >
-                  {!heroSlides[safeSlide]?.sideImage ? (
-                    /* Full-Width Centered/Aligned Slide Layout (No Side Image) */
-                    <div
-                      className={`w-full max-w-5xl mx-auto flex flex-col py-2 sm:py-8 lg:py-12 px-2 sm:px-4 ${heroSlides[safeSlide]?.textAlignment === "left"
-                        ? "items-start text-left"
-                        : heroSlides[safeSlide]?.textAlignment === "right"
-                          ? "items-end text-right"
-                          : "items-center text-center"
-                        }`}
-                    >
-                      {heroSlides[safeSlide]?.tag && (
-                        <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm max-w-full mb-3 sm:mb-5">
-                          <Sparkles size={14} className="text-[#C82021] shrink-0" />
-                          <span className="text-[10px] tracking-[0.14em] sm:tracking-[0.18em] text-[#C82021] font-bold uppercase truncate">
-                            {heroSlides[safeSlide].tag}
-                          </span>
-                        </div>
-                      )}
-
-                      <h1
-                        style={{ fontFamily: "var(--font-manrope), 'Manrope', sans-serif" }}
-                        className="text-xl md:text-2xl sm:text-4xl xl:text-[62px] font-extrabold leading-tight tracking-tight text-white mb-3 sm:mb-6"
-                      >
-                        {heroSlides[safeSlide]?.title}{" "}
-                        {heroSlides[safeSlide]?.highlight && (
-                          <span className="text-[#C82021]">{heroSlides[safeSlide].highlight}</span>
-                        )}
-                      </h1>
-
-                      {heroSlides[safeSlide]?.description && (
-                        <p className="text-gray-300 text-lg max-w-2xl leading-relaxed mb-6 sm:mb-10">
-                          {heroSlides[safeSlide].description}
-                        </p>
-                      )}
-
-                      <div
-                        className={`inline-flex flex-col sm:flex-row items-stretch gap-3 sm:gap-4 w-[85%] max-w-[300px] sm:w-auto sm:max-w-none ${heroSlides[safeSlide]?.textAlignment === "left"
-                          ? "justify-start"
-                          : heroSlides[safeSlide]?.textAlignment === "right"
-                            ? "justify-end"
-                            : "justify-center"
-                          }`}
-                      >
-                        {heroSlides[safeSlide]?.primaryBtnText && (
-                          <Link
-                            href={heroSlides[safeSlide].primaryBtnLink || "/products"}
-                            className="inline-flex items-center justify-center gap-2 btn-automotive-primary text-white px-7 py-3.5 rounded-md text-[15px] font-semibold hover:-translate-y-0.5 active:scale-95 transition-all duration-200 group cursor-pointer"
-                          >
-                            <span>{heroSlides[safeSlide].primaryBtnText}</span>
-                            <ArrowRight
-                              size={18}
-                              className="transition-transform group-hover:translate-x-1 shrink-0"
-                            />
-                          </Link>
-                        )}
-                        {heroSlides[safeSlide]?.secondaryBtnText && (
-                          <a
-                            href={heroSlides[safeSlide].secondaryBtnLink || "#contact"}
-                            style={{
-                              fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                              fontWeight: 700,
-                              fontSize: "14px",
-                              lineHeight: "21px",
-                              letterSpacing: "0.56px",
-                              textAlign: "center",
-                            }}
-                            className="inline-flex items-center justify-center border border-white/25 bg-transparent text-white px-5 sm:px-7 py-3 sm:py-3.5 rounded-md hover:bg-white hover:text-[#10151C] hover:-translate-y-0.5 active:scale-95 transition-all duration-200 cursor-pointer"
-                          >
-                            <span>{heroSlides[safeSlide].secondaryBtnText}</span>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    /* Split Column Layout (With Side Image) */
-                    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 sm:gap-10 lg:gap-12 items-center py-2 sm:py-6 lg:py-0 px-2 sm:px-4 lg:px-0">
-                      {/* Left/Content Column */}
-                      <div
-                        className={`lg:col-span-7 flex flex-col space-y-3 sm:space-y-6 lg:space-y-7 z-20 ${heroSlides[safeSlide]?.sideImagePosition === "left"
-                          ? "lg:order-2"
-                          : "lg:order-1"
-                          } ${heroSlides[safeSlide]?.textAlignment === "center"
-                            ? "items-center text-center"
-                            : heroSlides[safeSlide]?.textAlignment === "right"
-                              ? "items-end text-right"
-                              : "items-center sm:items-start text-center sm:text-left"
-                          }`}
-                      >
-                        {heroSlides[safeSlide]?.tag && (
-                          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm max-w-full">
-                            <Sparkles size={14} className="text-[#C82021] shrink-0" />
-                            <span className="text-[10px] tracking-[0.14em] sm:tracking-[0.18em] text-[#C82021] font-bold uppercase truncate">
-                              {heroSlides[safeSlide].tag}
-                            </span>
-                          </div>
-                        )}
-
-                        <h1
-                          style={{ fontFamily: "var(--font-manrope), 'Manrope', sans-serif" }}
-                          className="text-xl md:text-2xl lg:text-[68px] font-extrabold leading-tight lg:leading-[1.12] tracking-tight"
-                        >
-                          {heroSlides[safeSlide]?.title} <br className="hidden sm:inline" />
-                          {heroSlides[safeSlide]?.highlight && (
-                            <span className="text-[#C82021]">{heroSlides[safeSlide].highlight}</span>
-                          )}
-                        </h1>
-
-                        {heroSlides[safeSlide]?.description && (
-                          <p className="text-gray-300 text-lg max-w-xl leading-relaxed">
-                            {heroSlides[safeSlide].description}
-                          </p>
-                        )}
-
-                        <div
-                          className={`inline-flex flex-col sm:flex-row items-stretch gap-3 sm:gap-4 pt-1 sm:pt-2 w-[85%] max-w-[300px] sm:w-auto sm:max-w-none ${heroSlides[safeSlide]?.textAlignment === "center"
-                            ? "justify-center"
-                            : heroSlides[safeSlide]?.textAlignment === "right"
-                              ? "justify-end"
-                              : "justify-center sm:justify-start"
-                            }`}
-                        >
-                          {heroSlides[safeSlide]?.primaryBtnText && (
-                            <Link
-                              href={heroSlides[safeSlide].primaryBtnLink || "/products"}
-                              className="inline-flex items-center justify-center gap-2 btn-automotive-primary text-white px-7 py-3.5 rounded-md text-[15px] font-semibold hover:-translate-y-0.5 active:scale-95 transition-all duration-200 group cursor-pointer"
-                            >
-                              <span>{heroSlides[safeSlide].primaryBtnText}</span>
-                              <ArrowRight
-                                size={18}
-                                className="transition-transform group-hover:translate-x-1 shrink-0"
-                              />
-                            </Link>
-                          )}
-                          {heroSlides[safeSlide]?.secondaryBtnText && (
-                            <a
-                              href={heroSlides[safeSlide].secondaryBtnLink || "#contact"}
-                              style={{
-                                fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                                fontWeight: 700,
-                                fontSize: "14px",
-                                lineHeight: "21px",
-                                letterSpacing: "0.56px",
-                                textAlign: "center",
-                              }}
-                              className="inline-flex items-center justify-center border border-white/25 bg-transparent text-white px-5 sm:px-7 py-3 sm:py-3.5 rounded-md hover:bg-white hover:text-[#10151C] hover:-translate-y-0.5 active:scale-95 transition-all duration-200 cursor-pointer"
-                            >
-                              <span>{heroSlides[safeSlide].secondaryBtnText}</span>
-                            </a>
-                          )}
-                        </div>
-
-                        {/* Hero Stats with Dynamic AnimatedCounter */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 md:gap-6 pt-3 sm:pt-6 lg:pt-8 border-t border-white/10 mt-2 sm:mt-6 lg:mt-8 w-full max-w-sm sm:max-w-none">
-                          <div>
-                            <p className="text-lg font-bold text-[#C82021]">
-                              <AnimatedCounter value="800+" duration={1.8} />
-                            </p>
-                            <p className="text-[10px] text-gray-400 uppercase mt-0.5 sm:mt-1 tracking-wider">
-                              OEM Parts in Catalogue
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-lg font-bold text-[#C82021]">
-                              <AnimatedCounter value="100%" duration={1.8} />
-                            </p>
-                            <p className="text-[10px] text-gray-400 uppercase mt-0.5 sm:mt-1 tracking-wider">
-                              VIN Verification
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-lg font-bold text-[#C82021]">
-                              <AnimatedCounter value="24h" duration={2.2} />
-                            </p>
-                            <p className="text-[10px] text-gray-400 uppercase mt-0.5 sm:mt-1 tracking-wider">
-                              24h RFQ Response
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Side Image Showcase Visual */}
-                      <div
-                        className={`hidden sm:flex lg:col-span-5 justify-center mt-4 lg:mt-0 ${heroSlides[safeSlide]?.sideImagePosition === "left"
-                          ? "lg:order-1 lg:justify-start"
-                          : "lg:order-2 lg:justify-end"
-                          }`}
-                      >
-                        <div className="relative w-full max-w-[240px] sm:max-w-[320px] lg:max-w-[360px] xl:max-w-[420px] aspect-[4/5] rounded-[120px] sm:rounded-[180px] lg:rounded-[220px] p-1.5 sm:p-2 bg-gradient-to-b from-[#C82021]/30 via-white/10 to-transparent border border-white/10 shadow-2xl overflow-hidden group">
-                          <div className="w-full h-full rounded-[114px] sm:rounded-[172px] lg:rounded-[212px] overflow-hidden bg-[#151C23] relative">
-                            <img
-                              src={heroSlides[safeSlide].sideImage}
-                              alt={heroSlides[safeSlide].alt}
-                              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Slide Pagination Dots */}
-            {heroSlides.length > 1 && (
-              <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-2.5 z-30 bg-black/30 backdrop-blur-md px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-white/10">
-                {heroSlides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSlideState([idx, idx > safeSlide ? 1 : -1])}
-                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${safeSlide === idx ? "w-7 bg-[#C82021]" : "w-2 bg-white/40 hover:bg-white/70"
-                      }`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Sound Toggle (Slide 0) - Disabled */}
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 2. EXPLORE OUR PRODUCT CATEGORIES */}
-      {/* ========================================================================= */}
-      <section id="products" className="bg-[#F8F7F4] py-8 md:py-20 sm:py-24 border-b border-gray-200/60 scroll-mt-16 sm:scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="gsap-cat-header mb-12 text-left">
-            <p
-              style={{
-                fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                fontWeight: 700,
-                fontSize: "11px",
-                lineHeight: "16.5px",
-                letterSpacing: "1.98px",
-                color: "#C82021",
-              }}
-              className="uppercase mb-2"
-            >
-              PARTS CATALOGUE
-            </p>
-            <AnimatedText
-              text="Genuine OEM Parts Categories"
-              variant="typewriter-char"
-              as="h2"
-              trigger="#products"
-              duration={0.45}
-              stagger={0.02}
-              style={{
-                fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                fontWeight: 700,
-              }}
-              className="text-xl md:text-3xl font-bold text-[#10151C] tracking-tight"
-            />
-            <AnimatedText
-              style={{ fontFamily: "var(--font-inter), 'Manrope', regular" }}
-              text="Genuine OEM plastic body panels, bumper assemblies, shells, headlights, and lenses for BMW, Mercedes-Benz, Audi, and Range Rover. Verified by VIN."
-              variant="smooth-paragraph"
-              as="p"
-              trigger="#products"
-              duration={0.5}
-              stagger={0.015}
-              className="text-gray-600 mt-3 max-w-2xl text-base leading-relaxed"
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {displayCategories?.map((cat: any, idx: number) => (
-              <CategoryCard
-                key={idx}
-                cat={cat}
-                idx={idx}
-                className="gsap-cat-card"
-                href={cat?.id ? `/products?categoryId=${cat.id}` : "/products"}
-                productCount={getProductCount(cat?.name || cat?.title)}
-              />
-            ))}
-            {(!displayCategories || displayCategories.length === 0) && (
-              <div className="col-span-full py-8 md:py-16 px-6 text-center bg-gray-50/70 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-2xl bg-[#C82021]/10 border border-[#C82021]/25 flex items-center justify-center mb-4 text-[#C82021]">
-                  <Layers size={26} />
-                </div>
-                <h3 className="text-lg font-bold text-[#10151C] mb-1.5">No Categories Available</h3>
-                <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">
-                  Categories are currently being updated. Please check back shortly.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 3. OUR BESTSELLERS */}
-      {/* ========================================================================= */}
-      <section id="bestsellers" className="bg-white py-8 md:py-20 sm:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="gsap-best-header flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
-            <div>
-              <p
-                style={{
-                  fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "11px",
-                  lineHeight: "16.5px",
-                  letterSpacing: "1.98px",
-                  color: "#C82021",
-                }}
-                className="uppercase mb-2"
+              <Mail size={13} className="text-[#DC2626]" />
+              <span>kontakt@lampalzderzak.com</span>
+            </a>
+            <div className="flex items-center gap-1.5 pl-3 border-l border-white/15 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setLanguage("pl")}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === "pl"
+                  ? "bg-[#DC2626] text-white"
+                  : "text-gray-400 hover:text-white"
+                  }`}
               >
-                TOP REQUESTED PARTS
-              </p>
-              <AnimatedText
-                text="Popular OEM Replacement Components"
-                variant="typewriter-char"
-                as="h2"
-                trigger="#bestsellers"
-                duration={0.45}
-                stagger={0.02}
-                style={{
-                  fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                  fontWeight: 700,
-                }}
-                className="text-xl md:text-3xl font-bold text-[#10151C] tracking-tight"
-              />
-            </div>
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-1.5 btn-automotive-outline px-5 py-2.5 rounded-lg text-xs font-semibold active:scale-95 cursor-pointer"
-            >
-              <span>View All Parts</span>
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-            {bestsellers?.map((item: any, idx: number) => (
-              <div
-                key={item?._id || idx}
-                className="gsap-best-card bg-white rounded-[12px] border border-gray-200/80 shadow-[0px_4px_25px_rgba(0,0,0,0.06)] hover:shadow-[0px_12px_32px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 group cursor-pointer flex flex-col justify-between overflow-hidden"
+                PL
+              </button>
+              <span className="text-gray-600">/</span>
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === "en"
+                  ? "bg-[#DC2626] text-white"
+                  : "text-gray-400 hover:text-white"
+                  }`}
               >
-                <div>
-                  <div className="w-full h-[165px] overflow-hidden rounded-t-[11px] relative bg-gray-100">
-                    {item?.image || item?.images?.[0] || item?.thumbnail ? (
-                      <img
-                        src={item?.image || item?.images?.[0] || item?.thumbnail}
-                        alt={item?.name || item?.title || "Product"}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-1 bg-gray-100">
-                        <Car size={28} className="text-gray-300" />
-                        <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">OEM Part</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4 sm:p-5 pb-2">
-                    <p
-                      style={{
-                        fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                        fontWeight: 700,
-                        fontSize: "10px",
-                        lineHeight: "15px",
-                        letterSpacing: "1.5px",
-                        color: "#C82021",
-                      }}
-                      className="uppercase mb-1"
-                    >
-                      {item?.category?.title || item?.category?.name || item?.categoryName || item?.category || "OEM AUTOMOTIVE PART"}
-                    </p>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                        fontWeight: 700,
-                        fontSize: "15px",
-                        lineHeight: "22px",
-                        letterSpacing: "0px",
-                      }}
-                      className="text-[#10151C] mb-3 group-hover:text-[#C82021] transition-colors line-clamp-2"
-                    >
-                      {item?.title || item?.name || "Product Name"}
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="px-4 sm:px-5 pb-5 pt-0">
-                  <a
-                    href="#contact"
-                    style={{
-                      fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                      fontWeight: 600,
-                      fontSize: "12px",
-                      lineHeight: "18px",
-                      letterSpacing: "0.48px",
-                      color: "#C82021",
-                    }}
-                    className="inline-flex items-center cursor-pointer hover:underline"
-                  >
-                    <span>Request Quote</span>
-                    <ArrowRight
-                      size={14}
-                      className="ml-1.5 transition-transform duration-200 group-hover:translate-x-1.5"
-                    />
-                  </a>
-                </div>
-              </div>
-            ))}
-            {(!bestsellers || bestsellers.length === 0) && (
-              <div className="col-span-full py-8 md:py-16 px-6 text-center bg-gray-50/70 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-2xl bg-[#C82021]/10 border border-[#C82021]/25 flex items-center justify-center mb-4 text-[#C82021]">
-                  <Sparkles size={26} />
-                </div>
-                <h3 className="text-lg font-bold text-[#10151C] mb-1.5">No Bestsellers Available</h3>
-                <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">
-                  Our curated bestselling collection is currently updating. Please check back shortly.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 4. ABOUT / FOR THE SPACES YOU CARE ABOUT */}
-      {/* ========================================================================= */}
-      <section
-        id="about-section"
-        className="bg-[#373736] text-white py-8 md:py-20 sm:py-24 overflow-hidden relative"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-10 lg:gap-14 items-start">
-            {/* Left Image Showcase */}
-            <div className="gsap-about-img lg:col-span-6 rounded-[16px] overflow-hidden relative group shadow-2xl w-full h-[380px] sm:h-[460px] lg:h-full lg:min-h-[520px]">
-              <img
-                src="/images/automotive/workshop.jpg"
-                alt="Automotive OEM Replacement Parts Installation & Fitting"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = "/images/automotive/warehouse.jpg";
-                }}
-              />
-            </div>
-
-            {/* Right Feature Highlights */}
-            <div className="gsap-about-content lg:col-span-6 flex flex-col justify-between space-y-6 lg:pl-2">
-              <div>
-                <p
-                  style={{
-                    fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                    fontWeight: 700,
-                    fontSize: "11px",
-                    lineHeight: "16.5px",
-                    letterSpacing: "1.98px",
-                    color: "#C82021",
-                  }}
-                  className="uppercase mb-3"
-                >
-                  ABOUT OUR OEM CENTRE
-                </p>
-                <AnimatedText
-                  text="Complete OEM Body & Lighting Solutions."
-                  variant="typewriter-char"
-                  as="h2"
-                  trigger="#about-section"
-                  duration={0.45}
-                  stagger={0.02}
-                  style={{
-                    fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                    fontWeight: 700,
-                    fontSize: "36px",
-                    lineHeight: "44px",
-                    letterSpacing: "-0.02em",
-                  }}
-                  className="text-white mb-4"
-                />
-                <AnimatedText
-                  text="Specialized distributor of genuine OEM plastic body panels, complete bumper assemblies, shells, headlights, and lenses for BMW, Mercedes-Benz, Audi, and Range Rover."
-                  variant="smooth-paragraph"
-                  as="p"
-                  trigger="#about-section"
-                  duration={0.5}
-                  stagger={0.012}
-                  style={{
-                    fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                    fontWeight: 400,
-                    fontSize: "13px",
-                    lineHeight: "22px",
-                  }}
-                  className="text-gray-400 max-w-xl mb-3"
-                />
-                <p
-                  style={{
-                    fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                    fontWeight: 400,
-                    fontSize: "13px",
-                    lineHeight: "22px",
-                  }}
-                  className="text-gray-400 max-w-xl"
-                >
-                  Every part in our catalogue features verified OEM numbers and is cross-referenced for fitment using the vehicle's unique 17-digit VIN. We support body shops, dealerships, and individual vehicle owners.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-7 pt-2">
-                {[
-                  {
-                    icon: <Award className="text-[#C82021]" size={18} />,
-                    title: "OEM Authenticity",
-                    desc: "Genuine factory parts meeting manufacturer standards for BMW, Audi, Mercedes-Benz.",
-                  },
-                  {
-                    icon: <Users className="text-[#C82021]" size={18} />,
-                    title: "VIN Fitment Check",
-                    desc: "Guaranteed 100% factory fitment to the specific vehicle chassis.",
-                  },
-                  {
-                    icon: <Zap className="text-[#C82021]" size={18} />,
-                    title: "Rapid Availability",
-                    desc: "Extensive inventory of bumpers and lighting ready for immediate dispatch.",
-                  },
-                  {
-                    icon: <CheckCircle className="text-[#C82021]" size={18} />,
-                    title: "B2B Workshop Support",
-                    desc: "Dedicated RFQ processing and technical advisory for collision centers.",
-                  },
-                ].map((feature, idx) => (
-                  <div key={idx} className="gsap-about-feature bg-transparent">
-                    <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center mb-3 text-[#C82021]">
-                      {feature.icon}
-                    </div>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                        fontWeight: 700,
-                        fontSize: "15px",
-                        lineHeight: "22px",
-                      }}
-                      className="text-white mb-1 tracking-wide"
-                    >
-                      {feature.title}
-                    </h3>
-                    <p
-                      style={{
-                        fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                        fontWeight: 400,
-                        fontSize: "13px",
-                        lineHeight: "20px",
-                      }}
-                      className="text-gray-400 pr-2"
-                    >
-                      {feature.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-2">
-                <Link
-                  href="/about"
-                  style={{
-                    fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                    fontWeight: 600,
-                    fontSize: "13px",
-                  }}
-                  className="inline-flex items-center gap-2 btn-automotive-primary text-white px-6 py-2.5 rounded-[8px] active:scale-95 transition-all duration-200 cursor-pointer"
-                >
-                  <span>Learn More</span>
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
+                EN
+              </button>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* ========================================================================= */}
-      {/* 5. FEATURED PRODUCTS SECTION */}
+      {/* 2. HEADER / NAVBAR (Exact Figma: White background, Logo, Links, Wide Search) */}
       {/* ========================================================================= */}
-      <section id="featured" className="bg-white py-8 md:py-20 sm:py-24 border-b border-gray-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="gsap-feat-header flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
-            <div>
-              <p
-                style={{
-                  fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "11px",
-                  lineHeight: "16.5px",
-                  letterSpacing: "1.98px",
-                  color: "#C82021",
-                }}
-                className="uppercase mb-2"
-              >
-                FEATURED PARTS
-              </p>
-              <AnimatedText
-                text="Featured Body Panels & Lighting"
-                variant="typewriter-char"
-                as="h2"
-                trigger="#featured"
-                duration={0.45}
-                stagger={0.02}
-                style={{
-                  fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                  fontWeight: 700,
-                }}
-                className="text-xl md:text-3xl font-bold text-[#10151C] tracking-tight"
-              />
-            </div>
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-1.5 btn-automotive-outline px-5 py-2.5 rounded-lg text-xs font-semibold hover:scale-95 cursor-pointer"
-            >
-              <span>View All Parts</span>
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {featuredProducts?.map((item: any, idx: number) => (
-              <ProductCard key={item?._id || idx} prod={item} idx={idx} className="gsap-feat-card" showTag={false} />
-            ))}
-            {(!featuredProducts || featuredProducts.length === 0) && (
-              <div className="col-span-full py-8 md:py-16 px-6 text-center bg-gray-50/70 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-2xl bg-[#C82021]/10 border border-[#C82021]/25 flex items-center justify-center mb-4 text-[#C82021]">
-                  <PackageOpen size={26} />
-                </div>
-                <h3 className="text-lg font-bold text-[#10151C] mb-1.5">No Featured Products Available</h3>
-                <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">
-                  Featured collections are currently refreshing. Please check back shortly.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 6. GLOBAL PRESENCE & DYNAMIC NUMBER COUNTERS */}
-      {/* ========================================================================= */}
-      <section id="presence" className="bg-[#373736] text-white py-8 md:py-20 sm:py-24 overflow-hidden relative scroll-mt-16 sm:scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="gsap-presence-header text-center mb-16">
-            <p className="text-[#C82021] font-bold text-xs uppercase tracking-[0.16em] mb-2">
-              TRUSTED BY REPAIR CENTERS
-            </p>
-            <AnimatedText
-              text="OEM Parts Distribution Across North America & Europe"
-              variant="typewriter-char"
-              as="h2"
-              trigger="#presence"
-              duration={0.45}
-              stagger={0.02}
-              style={{
-                fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                fontWeight: 700,
-              }}
-              className="text-xl md:text-3xl font-bold tracking-tight text-white block mb-4"
-            />
-            <AnimatedText
-              text="We partner with authorized repair facilities, independent collision shops, and trade specialists requiring uncompromising OEM quality."
-              variant="smooth-paragraph"
-              as="p"
-              trigger="#presence"
-              duration={0.5}
-              stagger={0.015}
-              className="text-gray-400 max-w-5xl mx-auto text-base leading-relaxed block"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 text-center mb-16 divide-y md:divide-y-0 md:divide-x divide-white/10">
-            {[
-              { val: "800+", label: "Parts in Catalogue" },
-              { val: "100%", label: "VIN Fitment Rate" },
-              { val: "4", label: "Premium Marques" },
-              { val: "24h", label: "RFQ Turnaround" },
-            ].map((stat, idx) => (
-              <div
-                key={idx}
-                className="gsap-presence-stat p-6 transition-colors"
-              >
-                <p className="text-xl md:text-3xl font-bold text-[#C82021] mb-1.5">
-                  <AnimatedCounter value={stat.val} duration={2.0} />
-                </p>
-                <p className="text-xs text-gray-400 uppercase tracking-wider">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="gsap-presence-map relative w-full rounded-none sm:rounded-2xl overflow-hidden">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm py-2 sm:py-3 transition-all">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 md:gap-8">
+          {/* Logo with Emblem */}
+          <Link href="/" className="flex items-center shrink-0 group">
             <img
-              src="/Map.png"
-              alt="Global Operations Map"
-              className="w-full h-[300px] sm:h-auto object-cover opacity-75 hover:opacity-90 transition-opacity duration-300 mx-auto max-w-full scale-100"
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.style.display = "none";
-              }}
+              src="/d4399531705f2cd5cbd3dc79bab27b7f083023f8.png"
+              alt="Lampalzderzak.pl"
+              className="h-12 w-auto sm:h-14 object-contain transition-transform group-hover:scale-105"
             />
-          </div>
-        </div>
-      </section>
+          </Link>
 
-      {/* ========================================================================= */}
-      {/* 7. LATEST NEWS & MEDIA */}
-      {/* ========================================================================= */}
-      <section id="news" className="bg-[#F4F3F0] py-8 md:py-20 sm:py-24 border-b border-gray-200/60 scroll-mt-16 sm:scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="gsap-news-header flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
-            <div>
-              <p
-                style={{
-                  fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "11px",
-                  lineHeight: "16.5px",
-                  letterSpacing: "1.98px",
-                  color: "#C82021",
-                }}
-                className="uppercase mb-2"
-              >
-                NEWS &amp; INSIGHTS
-              </p>
-              <AnimatedText
-                text="Latest News & Media"
-                variant="typewriter-char"
-                as="h2"
-                trigger="#news"
-                duration={0.45}
-                stagger={0.02}
-                style={{
-                  fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                  fontWeight: 700,
-                }}
-                className="text-xl md:text-3xl font-bold text-[#10151C] tracking-tight"
-              />
-            </div>
-            <Link
-              href="/news"
-              className="inline-flex items-center gap-1.5 btn-automotive-outline px-5 py-2.5 rounded-lg text-xs font-semibold active:scale-95 cursor-pointer"
-            >
-              <span>View All News</span>
-              <ArrowRight size={14} />
+          {/* Navigation Links: All Products, About Us, Contact us */}
+          <nav className="hidden lg:flex items-center gap-7 text-[14px] font-semibold text-gray-800 shrink-0">
+            <Link href="/products" className="hover:text-[#DC2626] transition-colors">
+              {t.nav.allProducts}
             </Link>
-          </div>
+            <Link href="/about" className="hover:text-[#DC2626] transition-colors">
+              {t.nav.aboutUs}
+            </Link>
+            <Link href="/contact-us" className="hover:text-[#DC2626] transition-colors">
+              {t.nav.contactUs}
+            </Link>
+          </nav>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-            {displayBlogs?.map((news: any, idx: number) => (
-              <Link
-                key={news?.id || idx}
-                href={`/news/${news?.id || ""}`}
-                className="gsap-news-card bg-white rounded-[12px] overflow-hidden border border-gray-200/80 shadow-[0px_4px_25px_rgba(0,0,0,0.06)] hover:shadow-[0px_12px_32px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 group flex flex-col justify-between cursor-pointer h-[432px] block"
-              >
-                <div className="overflow-hidden">
-                  <div className="h-[200px] overflow-hidden rounded-t-[11px] bg-gray-100 relative flex items-center justify-center">
-                    {news?.image || news?.coverImage ? (
-                      <img
-                        src={news.image || news.coverImage}
-                        alt={news?.title || "News"}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <Newspaper size={36} className="text-gray-400" />
-                    )}
-                  </div>
-                  <div className="p-6 pb-2">
-                    <div className="text-[10px] sm:text-[11px] font-bold mb-2.5 text-[#C82021] tracking-[0.16em] uppercase">
-                      {news?.publishedDate
-                        ? new Date(news.publishedDate).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })
-                        : news?.createdAt
-                          ? new Date(news.createdAt).toLocaleDateString("en-US", {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          })
-                          : ""}
-                    </div>
-                    <h3 className="font-bold text-[#10151C] text-base mb-2 line-clamp-2 group-hover:text-[#C82021] transition-colors leading-snug">
-                      {news?.title}
-                    </h3>
-                    {news?.description && (
-                      <div
-                        className="text-gray-500 text-xs line-clamp-2 mb-2 leading-relaxed [&_p]:inline [&_p]:m-0 [&_span]:inline"
-                        dangerouslySetInnerHTML={{
-                          __html: news.description,
-                        }}
-                      />
-                    )}
-                    {news?.author && (
-                      <p className="text-[11px] text-gray-400 font-medium">
-                        By <span className="text-gray-600 font-semibold">{news.author}</span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="px-6 pb-6 pt-0">
-                  <div
-                    style={{
-                      fontFamily: "var(--font-inter), 'Inter', sans-serif",
-                      fontWeight: 600,
-                      fontSize: "12px",
-                      lineHeight: "18px",
-                      letterSpacing: "0.48px",
-                      color: "#C82021",
-                    }}
-                    className="inline-flex items-center"
-                  >
-                    <span>Read More</span>
-                    <ArrowRight
-                      size={14}
-                      className="ml-1.5 transition-transform duration-200 group-hover:translate-x-1.5"
-                    />
-                  </div>
-                </div>
-              </Link>
-            ))}
-            {(!displayBlogs || displayBlogs.length === 0) && (
-              <div className="col-span-full py-8 md:py-16 px-6 text-center bg-gray-50/70 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-2xl bg-[#C82021]/10 border border-[#C82021]/25 flex items-center justify-center mb-4 text-[#C82021]">
-                  <Newspaper size={26} />
-                </div>
-                <h3 className="text-lg font-bold text-[#10151C] mb-1.5">No News &amp; Articles Available</h3>
-                <p className="text-gray-500 text-sm max-w-md mx-auto leading-relaxed">
-                  Latest news and media publications are currently being updated. Please check back shortly.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 8. PRODUCT CATALOGUE BANNER */}
-      {/* ========================================================================= */}
-      <section id="catalogue" className="bg-[#373736] py-8 md:py-20 sm:py-24 text-white overflow-hidden relative scroll-mt-16 sm:scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-10 lg:gap-14 items-center">
-            <motion.div
-              className="gsap-catalogue-text lg:col-span-6 space-y-6"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              variants={{
-                hidden: { opacity: prefersReducedMotion ? 1 : 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.1 }
+          {/* Wide Search Bar with Red "Search parts" Button matching Screenshot */}
+          <div className="flex-1 max-w-2xl">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (headerSearch.trim()) {
+                  window.location.href = `/products?search=${encodeURIComponent(headerSearch.trim())}`;
+                } else {
+                  window.location.href = "/products";
                 }
               }}
+              className="flex items-stretch border border-gray-300 rounded-md overflow-hidden bg-white shadow-sm focus-within:border-[#DC2626] transition-colors"
             >
-              <motion.p
-                variants={{
-                  hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
-                }}
-                className="text-[#C82021] font-bold text-xs uppercase tracking-[0.16em]"
-              >
-                PARTS CATALOGUE
-              </motion.p>
-              <motion.h2
-                variants={{
-                  hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
-                }}
-                className="text-xl md:text-3xl font-bold leading-tight"
-              >
-                Genuine OEM <br className="hidden sm:block" /> Parts Catalogue.
-              </motion.h2>
-              <motion.p
-                variants={{
-                  hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
-                }}
-                className="text-gray-300 text-base leading-relaxed max-w-xl"
-              >
-                Browse our complete range of bumper assemblies, shells, headlights, and lenses for BMW, Mercedes-Benz, Audi, and Range Rover with verified OEM part numbers.
-              </motion.p>
-              <motion.div
-                variants={{
-                  hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
-                }}
-              >
-                <a
-                  href="/products"
-                  className="inline-flex items-center gap-2.5 btn-automotive-primary text-white px-7 py-3.5 rounded-md text-sm font-semibold hover:-translate-y-0.5 active:scale-95 transition-all duration-200 cursor-pointer"
-                >
-                  <Download size={18} />
-                  <span>Browse Online Catalogue</span>
-                </a>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              className="gsap-catalogue-img lg:col-span-6 rounded-2xl overflow-hidden shadow-2xl border border-white/10 group"
-              initial={prefersReducedMotion ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.96, y: 15 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            >
-              <img
-                src="/images/automotive/collection.jpg"
-                alt="Automotive OEM Replacement Parts Catalogue Showcase — Bumpers, Headlights, Housings"
-                className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = "/images/automotive/warehouse.jpg";
-                }}
+              <input
+                type="text"
+                value={headerSearch}
+                onChange={(e) => setHeaderSearch(e.target.value)}
+                placeholder={t.nav.searchPlaceholder}
+                className="w-full px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none bg-transparent"
               />
-            </motion.div>
+              <button
+                type="submit"
+                className="bg-[#DC2626] hover:bg-[#b91c1c] text-white px-5 sm:px-6 py-2.5 flex items-center gap-2 text-sm font-bold tracking-wide transition-colors shrink-0 cursor-pointer shadow-sm"
+              >
+                <Search size={16} />
+                <span className="hidden sm:inline">{t.nav.searchButton}</span>
+              </button>
+            </form>
           </div>
         </div>
-      </section>
+      </header>
 
       {/* ========================================================================= */}
-      {/* 9. CONTACT / LET'S BUILD SOMETHING BETTER TOGETHER */}
+      {/* 3. HERO SECTION (Figma Car background, Headings, VIN badges) */}
       {/* ========================================================================= */}
-      <section id="contact" className="bg-white py-8 md:py-20 sm:py-24 scroll-mt-16 sm:scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-12 lg:gap-14 items-center">
-            {/* Left Contact Info */}
-            <div className="gsap-contact-info lg:col-span-6 space-y-6">
-              <p className="text-[#C82021] font-bold text-xs uppercase tracking-[0.16em]">
-                REQUEST A QUOTE
-              </p>
-              <h2
-                style={{
-                  fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
-                  fontWeight: 700,
-                }}
-                className="text-xl md:text-3xl lg:text-[42px] font-bold text-[#10151C] leading-tight"
+      <section className="relative overflow-hidden pt-10 sm:pt-16 pb-20 sm:pb-28 border-b border-white/10">
+        {/* Background Image: BMW M4 Grey Car directly from public assets */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/76f1295d1c66c026e83fe0b88ecfaad88654837c.png"
+            alt="BMW Sports Coupe"
+            className="w-full h-full object-cover object-top filter brightness-[0.45] contrast-125"
+          />
+          {/* Gradients to blend seamless dark look */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070707] via-[#070707]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#070707] via-[#070707]/70 to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl pt-4 sm:pt-10">
+            {/* Top Red Subheading Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#DC2626]/20 border border-[#DC2626]/40 text-[#DC2626] text-[11px] font-bold tracking-[0.16em] uppercase mb-4">
+              <Sparkles size={13} />
+              <span>{t.hero.kicker}</span>
+            </div>
+
+            {/* Main Hero Headline (Word to Word from Figma) */}
+            <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-white tracking-tight leading-[1.1] mb-5">
+              The right part. <br />
+              A reliable choice.
+            </h1>
+
+            {/* Description Paragraph */}
+            <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-8 max-w-xl">
+              {t.hero.desc}
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-10">
+              <Link
+                href="/products"
+                className="bg-[#DC2626] hover:bg-[#b91c1c] text-white px-6 py-3 rounded-md text-sm font-bold flex items-center gap-2 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 transition-all cursor-pointer"
               >
-                Parts Quotation &amp; <br className="hidden sm:block" /> VIN Fitment Check.
-              </h2>
-              <p className="text-gray-600 text-base leading-relaxed max-w-lg">
-                Send your vehicle VIN or required part number (BMW, Mercedes-Benz, Audi, Range Rover). Our technical specialists will verify factory fitment and prepare a quotation free of charge.
-              </p>
+                <span>{t.hero.browseParts}</span>
+                <ArrowRight size={16} />
+              </Link>
+              <a
+                href="#vin-search"
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-md text-sm font-bold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-sm"
+              >
+                <span>{t.hero.checkVin}</span>
+              </a>
+            </div>
 
-              <div className="space-y-6 pt-2">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-[#F8FAFC] border border-gray-100 rounded-lg flex items-center justify-center text-[#C82021] shrink-0">
-                    <Mail size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400 font-medium mb-0.5">
-                      Email Support
-                    </p>
-                    <p className="font-bold text-base text-[#10151C]">support@autoparts-oem.com</p>
-                  </div>
-                </div>
+          </div>
 
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-[#F8FAFC] border border-gray-100 rounded-lg flex items-center justify-center text-[#C82021] shrink-0">
-                    <Phone size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400 font-medium mb-0.5">
-                      Phone / Hotline
-                    </p>
-                    <p className="font-bold text-base text-[#10151C]">+1 800 555 0199</p>
-                  </div>
-                </div>
+          {/* ===================================================================== */}
+          {/* VEHICLE / VIN FILTER WIDGET (Image 2: Exact Layout from Screenshot) */}
+          {/* ===================================================================== */}
+          <div id="vin-search" className="mt-12 sm:mt-16">
+            {/* Trust Badges immediately above the white card on dark background */}
+            <div className="flex flex-wrap items-center gap-7 text-[13px] font-semibold text-gray-200 mb-3 px-1">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={17} className="text-[#DC2626]" />
+                <span>{t.hero.trust1}</span>
               </div>
-
-              <div className="pt-2">
-                <a
-                  href="https://wa.me/18005550199"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 bg-[#298C51] text-white px-6 py-3 rounded-md text-sm font-bold hover:bg-green-700 hover:shadow-green-900/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 cursor-pointer"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.005-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
-                  </svg>
-                  <span>Quick WhatsApp Inquiry</span>
-                </a>
+              <div className="flex items-center gap-2">
+                <Globe size={17} className="text-[#DC2626]" />
+                <span>{t.hero.trust2}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Headphones size={17} className="text-[#DC2626]" />
+                <span>{t.hero.trust3}</span>
               </div>
             </div>
 
-            {/* Right Contact Form Card */}
-            <div className="gsap-contact-card lg:col-span-6">
-              <div className="bg-[#F8FAFC] border border-gray-100 rounded-[16px] p-7 sm:p-9 shadow-sm">
-                <h3 className="text-xl font-bold text-[#10151C] mb-2">
-                  Request for Quotation (RFQ)
-                </h3>
-                <p className="text-xs text-gray-500 mb-6">
-                  Submit your inquiry below — our technical team will verify fitment and respond with a formal quotation.
-                </p>
+            {/* White Floating Card with Top Red Accent Border */}
+            <div className="bg-white rounded-sm shadow-2xl p-5 sm:p-7 text-gray-900 border-t-[3px] border-[#DC2626]">
+              {/* Widget Tabs */}
+              <div className="flex items-center gap-8 border-b border-gray-200 pb-3 mb-6">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("vehicle")}
+                  className={`text-sm font-bold pb-2 relative transition-colors cursor-pointer flex items-center gap-2 ${activeTab === "vehicle" ? "text-[#DC2626]" : "text-gray-600 hover:text-gray-900"
+                    }`}
+                >
+                  <Car size={17} className={activeTab === "vehicle" ? "text-[#DC2626]" : "text-gray-500"} />
+                  <span>{t.searchWidget.tabVehicle}</span>
+                  {activeTab === "vehicle" && (
+                    <span className="absolute -bottom-3 left-0 right-0 h-[3px] bg-[#DC2626]" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("vin")}
+                  className={`text-sm font-bold pb-2 relative transition-colors cursor-pointer flex items-center gap-2 ${activeTab === "vin" ? "text-[#DC2626]" : "text-gray-600 hover:text-gray-900"
+                    }`}
+                >
+                  <ShieldCheck size={17} className={activeTab === "vin" ? "text-[#DC2626]" : "text-gray-500"} />
+                  <span>{t.searchWidget.tabVin}</span>
+                  {activeTab === "vin" && (
+                    <span className="absolute -bottom-3 left-0 right-0 h-[3px] bg-[#DC2626]" />
+                  )}
+                </button>
+              </div>
 
-                {contactSuccess && (
-                  <div className="mb-5 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center space-x-2.5 text-sm">
-                    <CheckCircle size={18} className="shrink-0" />
-                    <span>Your request has been submitted successfully! We will contact you shortly.</span>
-                  </div>
-                )}
-
-                <form className="space-y-4" onSubmit={handleContactSubmit} noValidate>
+              {/* Tab 1: Exact 6 Columns from Image 2 */}
+              {activeTab === "vehicle" ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 items-end">
+                  {/* Col 1: VEHICLE BRAND */}
                   <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <label className="block text-xs font-bold text-[#10151C]">
-                        Full Name / Company *
-                      </label>
-                      <span className="text-[11px] text-gray-400">
-                        {formData.name.length}/60
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      name="name"
-                      maxLength={60}
-                      value={formData.name}
-                      onChange={handleContactChange}
-                      onBlur={handleBlur}
-                      placeholder="e.g. John Smith / Auto Repair LLC"
-                      className={`w-full border rounded-lg px-3.5 py-2.5 text-sm focus:outline-none transition-all bg-white ${touched.name && formErrors.name
-                        ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                        : "border-gray-300 focus:border-[#C82021]"
-                        }`}
-                    />
-                    {touched.name && formErrors.name && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
-                        <AlertCircle size={13} className="shrink-0" />
-                        <span>{formErrors.name}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <label className="block text-xs font-bold text-[#10151C]">
-                        Email Address *
-                      </label>
-                      <span className="text-[11px] text-gray-400">
-                        {formData.email.length}/100
-                      </span>
-                    </div>
-                    <input
-                      type="email"
-                      name="email"
-                      maxLength={100}
-                      value={formData.email}
-                      onChange={handleContactChange}
-                      onBlur={handleBlur}
-                      placeholder="contact@example.com"
-                      className={`w-full border rounded-lg px-3.5 py-2.5 text-sm focus:outline-none transition-all bg-white ${touched.email && formErrors.email
-                        ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                        : "border-gray-300 focus:border-[#C82021]"
-                        }`}
-                    />
-                    {touched.email && formErrors.email && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
-                        <AlertCircle size={13} className="shrink-0" />
-                        <span>{formErrors.email}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <label className="block text-xs font-bold text-[#10151C]">
-                        Phone Number *
-                      </label>
-                      <span className="text-[11px] text-gray-400">
-                        Digits only
-                      </span>
-                    </div>
-                    <input
-                      type="tel"
-                      name="phone"
-                      maxLength={15}
-                      value={formData.phone}
-                      onChange={handleContactChange}
-                      onBlur={handleBlur}
-                      placeholder="e.g. +1 555 123 4567"
-                      className={`w-full border rounded-lg px-3.5 py-2.5 text-sm focus:outline-none transition-all bg-white ${touched.phone && formErrors.phone
-                        ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                        : "border-gray-300 focus:border-[#C82021]"
-                        }`}
-                    />
-                    {touched.phone && formErrors.phone && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
-                        <AlertCircle size={13} className="shrink-0" />
-                        <span>{formErrors.phone}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#10151C] mb-1.5">
-                      Part Category / Inquiry Type
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                      {t.searchWidget.vehicleBrand}
                     </label>
                     <select
-                      name="category"
-                      value={formData.category}
-                      onChange={handleContactChange}
-                      className="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#C82021] transition-all bg-white text-gray-700 cursor-pointer"
+                      value={selectedBrand}
+                      onChange={(e) => setSelectedBrand(e.target.value)}
+                      className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#DC2626] cursor-pointer"
                     >
-                      <option value="General Inquiry">General Inquiry / Quotation</option>
-                      <option value="BMW OEM Bumper Assembly">BMW OEM Bumper Assembly</option>
-                      <option value="BMW OEM Bumper Shell">BMW OEM Bumper Shell</option>
-                      <option value="Headlight OEM BMW">Headlight OEM BMW</option>
-                      <option value="Lens and Housing - BMW / BENZ">Lens and Housing - BMW / BENZ</option>
-                      <option value="B2B Workshop Inquiry">B2B Workshop / Fleet Wholesale Inquiry</option>
+                      <option value="">{t.searchWidget.selectPlaceholder}</option>
+                      <option value="BMW">BMW</option>
+                      <option value="Mercedes-Benz">Mercedes-Benz</option>
+                      <option value="Audi">Audi</option>
+                      <option value="Range Rover">Range Rover</option>
                     </select>
                   </div>
 
+                  {/* Col 2: MODEL */}
                   <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <label className="block text-xs font-bold text-[#10151C]">
-                        Message / VIN or OEM Part Number *
-                      </label>
-                      <span className="text-[11px] text-gray-400">
-                        {formData.message.length}/1000
-                      </span>
-                    </div>
-                    <textarea
-                      name="message"
-                      maxLength={1000}
-                      value={formData.message}
-                      onChange={handleContactChange}
-                      onBlur={handleBlur}
-                      rows={5}
-                      placeholder="Provide vehicle make, model, year, VIN or required OEM part number (min. 10 characters)..."
-                      className={`w-full border rounded-lg px-3.5 py-2.5 text-sm focus:outline-none transition-all resize-none bg-white ${touched.message && formErrors.message
-                        ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                        : "border-gray-300 focus:border-[#C82021]"
-                        }`}
-                    />
-                    {touched.message && formErrors.message && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
-                        <AlertCircle size={13} className="shrink-0" />
-                        <span>{formErrors.message}</span>
-                      </p>
-                    )}
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                      {t.searchWidget.model}
+                    </label>
+                    <select
+                      value={selectedModel}
+                      onChange={(e) => setSelectedModel(e.target.value)}
+                      className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#DC2626] cursor-pointer"
+                    >
+                      <option value="">{t.searchWidget.selectPlaceholder}</option>
+                      <option value="Seria 3">Seria 3 / M3</option>
+                      <option value="Seria 4">Seria 4 / M4</option>
+                      <option value="Seria 5">Seria 5 / M5</option>
+                      <option value="Seria 7">Seria 7</option>
+                      <option value="X3">X3 / X3 M</option>
+                      <option value="X5">X5 / X5 M</option>
+                    </select>
                   </div>
 
-                  <button
-                    disabled={contactLoading}
-                    type="submit"
-                    className="w-full btn-automotive-primary text-white px-6 py-3 rounded-lg text-sm font-semibold active:scale-95 transition-all duration-200 mt-2 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-red-900/20"
-                  >
-                    {contactLoading ? (
-                      <span>Submitting inquiry...</span>
-                    ) : (
-                      <>
-                        <span>Submit Part Request (RFQ)</span>
-                        <ArrowRight size={16} />
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
+                  {/* Col 3: GENERATION */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                      {t.searchWidget.generation}
+                    </label>
+                    <select
+                      value={selectedGen}
+                      onChange={(e) => setSelectedGen(e.target.value)}
+                      className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#DC2626] cursor-pointer"
+                    >
+                      <option value="">{t.searchWidget.selectPlaceholder}</option>
+                      <option value="G20/G21">G20 / G21</option>
+                      <option value="G30/G31">G30 / G31</option>
+                      <option value="F30/F31">F30 / F31</option>
+                      <option value="F10/F11">F10 / F11</option>
+                      <option value="W205">W205</option>
+                      <option value="W213">W213</option>
+                    </select>
+                  </div>
+
+                  {/* Col 4: MODEL YEAR */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                      {t.searchWidget.modelYear}
+                    </label>
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#DC2626] cursor-pointer"
+                    >
+                      <option value="">{t.searchWidget.selectPlaceholder}</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                      <option value="2019">2019</option>
+                      <option value="2018">2018</option>
+                    </select>
+                  </div>
+
+                  {/* Col 5: CATEGORY */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                      {t.searchWidget.category}
+                    </label>
+                    <select
+                      value={selectedCat}
+                      onChange={(e) => setSelectedCat(e.target.value)}
+                      className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#DC2626] cursor-pointer"
+                    >
+                      <option value="">{t.searchWidget.selectPlaceholder}</option>
+                      <option value="Zderzaki">Zderzaki / Bumpers</option>
+                      <option value="Reflektory">Reflektory / Headlights</option>
+                      <option value="Atrapy">Grille / Atrapy</option>
+                      <option value="Klosze">Klosze / Housings</option>
+                    </select>
+                  </div>
+
+                  {/* Col 6: OEM / OE NUMBER */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                      {t.searchWidget.oemNumber}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={oemInput}
+                        onChange={(e) => setOemInput(e.target.value)}
+                        placeholder={t.searchWidget.oemPlaceholder}
+                        className="w-full bg-white border border-gray-300 rounded px-3 py-2.5 text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#DC2626]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Tab 2: VIN Number Check */
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                  <div className="md:col-span-3">
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                      {t.searchWidget.vinLabel}
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={17}
+                      value={vinInput}
+                      onChange={(e) => setVinInput(e.target.value.toUpperCase())}
+                      placeholder={t.searchWidget.vinPlaceholder}
+                      className="w-full bg-white border border-gray-300 rounded px-4 py-2.5 text-sm font-mono tracking-widest text-gray-800 focus:outline-none focus:border-[#DC2626]"
+                    />
+                  </div>
+                  <div>
+                    <Link
+                      href={`/contact-us?subject=Weryfikacja+VIN&vin=${encodeURIComponent(vinInput)}`}
+                      className="w-full bg-[#DC2626] hover:bg-[#b91c1c] text-white font-bold py-2.5 px-4 rounded text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md shadow-red-600/30"
+                    >
+                      <span>{t.searchWidget.vinVerifyBtn}</span>
+                      <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </section>
+
+      {/* ========================================================================= */}
+      {/* 4. SELECT VEHICLE BRAND (Parts by brand) */}
+      {/* ========================================================================= */}
+      <section className="py-14 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <p className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.18em] mb-1">
+              {t.brands.kicker}
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              {t.brands.title}
+            </h2>
+            <p className="text-gray-400 text-xs sm:text-sm mt-1">
+              {t.brands.desc}
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors group cursor-pointer"
+          >
+            <span>{t.brands.allBrands}</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
+          </Link>
+        </div>
+
+        {/* 4 Brand Showcase Cards (BMW, Mercedes-Benz, Audi, Range Rover) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[
+            {
+              id: "01",
+              name: "BMW",
+              desc: "Części karoseryjne do serii 1, 3, 4, 5, 7 oraz gamy X.",
+              img: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+              link: "/products?brand=BMW",
+            },
+            {
+              id: "02",
+              name: "Mercedes-Benz",
+              desc: "Elementy poszycia dla modeli osobowych i SUV (C, E, S, GLC, GLE).",
+              img: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
+              link: "/products?brand=Mercedes-Benz",
+            },
+            {
+              id: "03",
+              name: "Audi",
+              desc: "Nowoczesne elementy oświetlenia LED / Matrix oraz zderzaki S-Line.",
+              img: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
+              link: "/products?brand=Audi",
+            },
+            {
+              id: "04",
+              name: "Range Rover",
+              desc: "Komponenty nadwozia dla modeli Vogue, Sport, Velar i Evoque.",
+              img: "/7b38ef87e0ed90915af6670b2661616389757b59.jpg",
+              link: "/products?brand=Range+Rover",
+            },
+          ].map((brand) => (
+            <Link
+              key={brand.id}
+              href={brand.link}
+              className="group relative h-[360px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 flex flex-col justify-end p-6 cursor-pointer bg-[#111]"
+            >
+              <img
+                src={brand.img}
+                alt={brand.name}
+                className="absolute inset-0 w-full h-full object-cover filter brightness-[0.55] group-hover:scale-105 group-hover:brightness-[0.75] transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+              <div className="relative z-10">
+                <span className="text-[11px] font-mono font-bold text-[#DC2626] tracking-widest block mb-1">
+                  {brand.id}
+                </span>
+                <h3 className="text-xl font-extrabold text-white mb-1.5 group-hover:text-[#DC2626] transition-colors">
+                  {brand.name}
+                </h3>
+                <p className="text-gray-300 text-xs leading-relaxed mb-3 line-clamp-2">
+                  {brand.desc}
+                </p>
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-white group-hover:text-[#DC2626] transition-colors">
+                  <span>Przeglądaj markę</span>
+                  <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. PARTS BY CATEGORY (Discover category) */}
+      {/* ========================================================================= */}
+      <section className="py-14 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <p className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.18em] mb-1">
+              {t.categories.kicker}
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              {t.categories.title}
+            </h2>
+            <p className="text-gray-400 text-xs sm:text-sm mt-1">
+              {t.categories.desc}
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors group cursor-pointer"
+          >
+            <span>{t.categories.allCats}</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
+          </Link>
+        </div>
+
+        {/* Categories Grid (Figma / API: Headlights, Bumpers, Grilles, Body parts) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {categories && categories.length >= 4 ? (
+            categories.slice(0, 6).map((cat: any, idx: number) => {
+              const catId = cat?.id || cat?._id;
+              const isLarge = idx === 0 || idx === 1;
+              const fallbackImages = [
+                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
+                "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
+                "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
+                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
+                "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
+                "/30580dfd4addb8615661ae3077d481e5696b239e.jpg",
+              ];
+              const bgImg = cat?.image || cat?.thumbnail || fallbackImages[idx % fallbackImages.length];
+
+              return (
+                <Link
+                  key={catId || idx}
+                  href={`/products?categoryId=${catId}`}
+                  className={`${isLarge ? "md:col-span-2 sm:h-[280px]" : "h-[220px]"
+                    } relative h-[250px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-6 flex flex-col justify-end group bg-[#111] cursor-pointer`}
+                >
+                  <img
+                    src={bgImg}
+                    alt={cat?.name || "Kategoria części"}
+                    className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                  <div className="relative z-10">
+                    {isLarge && (
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] bg-[#DC2626]/20 px-2 py-0.5 rounded border border-[#DC2626]/40 mb-2 inline-block">
+                        {cat?.productCount ? `${cat.productCount} części w ofercie` : "Części OEM w ofercie"}
+                      </span>
+                    )}
+                    <h3 className={`${isLarge ? "text-xl sm:text-2xl font-extrabold" : "text-base font-bold"} text-white group-hover:text-[#DC2626] transition-colors mb-1`}>
+                      {cat?.name || cat?.title}
+                    </h3>
+                    {isLarge && cat?.description && (
+                      <p className="text-gray-300 text-xs max-w-md line-clamp-1 mb-2">
+                        {cat.description.replace(/<[^>]+>/g, "")}
+                      </p>
+                    )}
+                    <span className="text-xs font-bold text-white flex items-center gap-1 group-hover:text-[#DC2626]">
+                      Zobacz ofertę <ArrowRight size={13} />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })
+          ) : (
+            <>
+              {/* 1. Large Feature Card: Reflektory i Oświetlenie */}
+              <Link
+                href="/products?category=headlights"
+                className="md:col-span-2 relative h-[250px] sm:h-[280px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-6 flex flex-col justify-end group bg-[#111] cursor-pointer"
+              >
+                <img
+                  src="/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg"
+                  alt="Reflektory i Lampy"
+                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="relative z-10">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] bg-[#DC2626]/20 px-2 py-0.5 rounded border border-[#DC2626]/40 mb-2 inline-block">
+                    94 części w ofercie
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#DC2626] transition-colors mb-1">
+                    Reflektory i Lampy LED / Laser
+                  </h3>
+                  <p className="text-gray-300 text-xs max-w-md line-clamp-1 mb-2">
+                    Oryginalne reflektory adaptacyjne, wkłady, przetwornice i moduły skrętu.
+                  </p>
+                  <span className="text-xs font-bold text-white flex items-center gap-1 group-hover:text-[#DC2626]">
+                    Odkryj kategorię <ArrowRight size={13} />
+                  </span>
+                </div>
+              </Link>
+
+              {/* 2. Large Feature Card: Zderzaki Kompletne */}
+              <Link
+                href="/products?category=bumpers"
+                className="md:col-span-2 relative h-[250px] sm:h-[280px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-6 flex flex-col justify-end group bg-[#111] cursor-pointer"
+              >
+                <img
+                  src="/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg"
+                  alt="Zderzaki i poszycia"
+                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="relative z-10">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] bg-[#DC2626]/20 px-2 py-0.5 rounded border border-[#DC2626]/40 mb-2 inline-block">
+                    128 części w ofercie
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#DC2626] transition-colors mb-1">
+                    Zderzaki Przednie i Tylne
+                  </h3>
+                  <p className="text-gray-300 text-xs max-w-md line-clamp-1 mb-2">
+                    Zderzaki OEM w wersjach M-Pakiet, AMG Line oraz S-Line z otworami na PDC i kamery.
+                  </p>
+                  <span className="text-xs font-bold text-white flex items-center gap-1 group-hover:text-[#DC2626]">
+                    Odkryj kategorię <ArrowRight size={13} />
+                  </span>
+                </div>
+              </Link>
+
+              {/* 3. Atrapy i Grille */}
+              <Link
+                href="/products?category=grilles"
+                className="relative h-[220px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-5 flex flex-col justify-end group bg-[#111] cursor-pointer"
+              >
+                <img
+                  src="/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg"
+                  alt="Grille i atrapy"
+                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="relative z-10">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">
+                    52 części
+                  </span>
+                  <h4 className="text-base font-bold text-white group-hover:text-[#DC2626] transition-colors mb-1">
+                    Grille i Atrapy (Nerki)
+                  </h4>
+                  <span className="text-[11px] font-semibold text-gray-300 flex items-center gap-1 group-hover:text-white">
+                    Zobacz ofertę <ArrowRight size={11} />
+                  </span>
+                </div>
+              </Link>
+
+              {/* 4. Klosze i Obudowy */}
+              <Link
+                href="/products?category=lenses"
+                className="relative h-[220px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-5 flex flex-col justify-end group bg-[#111] cursor-pointer"
+              >
+                <img
+                  src="/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg"
+                  alt="Klosze reflektorów"
+                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="relative z-10">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">
+                    34 części
+                  </span>
+                  <h4 className="text-base font-bold text-white group-hover:text-[#DC2626] transition-colors mb-1">
+                    Klosze i Obudowy Reflektorów
+                  </h4>
+                  <span className="text-[11px] font-semibold text-gray-300 flex items-center gap-1 group-hover:text-white">
+                    Zobacz ofertę <ArrowRight size={11} />
+                  </span>
+                </div>
+              </Link>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 6. RECOMMENDED / BESTSELLING PARTS (Product Cards exactly like Figma) */}
+      {/* ========================================================================= */}
+      <section className="py-14 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <p className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.18em] mb-1">
+              {t.recommended.kicker}
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              {t.recommended.title}
+            </h2>
+            <p className="text-gray-400 text-xs sm:text-sm mt-1">
+              {t.recommended.desc}
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/15 px-4 py-2 rounded text-xs font-bold transition-colors cursor-pointer"
+          >
+            {t.recommended.allCatalog}
+          </Link>
+        </div>
+
+        {/* 4 Product Cards in Clean White Box style as shown in Figma */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {(products && products.length > 0
+            ? products.slice(0, 8).map((prod: any, idx: number) => {
+              const oem =
+                prod?.oemNumber ||
+                prod?.specifications?.find((s: any) =>
+                  s.name?.toLowerCase().includes("oem")
+                )?.value ||
+                "OEM-VERIFIED";
+              const vehicle =
+                prod?.model ||
+                prod?.specifications?.find((s: any) =>
+                  s.name?.toLowerCase().includes("model")
+                )?.value ||
+                "BMW / Mercedes / Audi";
+              const finish =
+                prod?.finish ||
+                prod?.specifications?.find((s: any) =>
+                  s.name?.toLowerCase().includes("finish") ||
+                  s.name?.toLowerCase().includes("version")
+                )?.value ||
+                prod?.category?.title ||
+                "OEM Specification";
+              const imgSrc =
+                prod?.image ||
+                prod?.images?.[0] ||
+                prod?.thumbnail ||
+                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg";
+              const brand = prod?.make || prod?.brand || "OEM";
+              const title = prod?.title || prod?.name || "Automotive Replacement Part";
+              const prodId = prod?.id || prod?._id || `p-${idx}`;
+
+              return {
+                id: String(prodId),
+                brand,
+                title,
+                img: imgSrc,
+                vehicle,
+                oem,
+                finish,
+                status: idx % 2 === 0 ? "Dostępne dane dopasowania" : "Wymaga weryfikacji",
+                statusType: idx % 2 === 0 ? "success" : "warning",
+              };
+            })
+            : [
+              {
+                id: "p1",
+                brand: "BMW",
+                title: "Reflektor LED BMW Seria 5 G30 / G31",
+                img: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
+                vehicle: "G30 / G31 (2017-2020)",
+                oem: "63 11 7 438 433",
+                finish: "Kompletny z modułem",
+                status: "Wymaga weryfikacji",
+                statusType: "warning",
+              },
+              {
+                id: "p2",
+                brand: "MERCEDES-BENZ",
+                title: "Zderzak przedni C-Klasa W206 AMG Line",
+                img: "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
+                vehicle: "W206 (2021-)",
+                oem: "A2068800100",
+                finish: "Do lakierowania (PDC)",
+                status: "Dostępne dane dopasowania",
+                statusType: "success",
+              },
+              {
+                id: "p3",
+                brand: "MERCEDES-BENZ",
+                title: "Grill / Atrapa chłodnicy E-Klasa W213 Panamericana",
+                img: "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
+                vehicle: "W213 (2016-2020)",
+                oem: "A2138880123",
+                finish: "Czarny połysk / Chrom",
+                status: "Wymaga weryfikacji",
+                statusType: "warning",
+              },
+              {
+                id: "p4",
+                brand: "AUDI",
+                title: "Reflektor Matrix LED Audi A6 C8 4K",
+                img: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
+                vehicle: "A6 C8 (2018-)",
+                oem: "4K0 941 033",
+                finish: "Wersja europejska",
+                status: "Dostępne dane dopasowania",
+                statusType: "success",
+              },
+            ]
+          ).slice(0, 4).map((prod) => (
+            <div
+              key={prod.id}
+              className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between hover:shadow-xl transition-all duration-300"
+            >
+              {/* Product Image */}
+              <div className="relative h-[200px] bg-[#111] overflow-hidden">
+                <img
+                  src={prod.img}
+                  alt={prod.title}
+                  className="w-full h-full object-cover filter brightness-90 hover:scale-105 transition-transform duration-500"
+                />
+                <span className="absolute top-3 left-3 bg-[#DC2626] text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider shadow">
+                  {prod.brand}
+                </span>
+              </div>
+
+              {/* Product Content Details */}
+              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900 leading-snug mb-3 hover:text-[#DC2626] transition-colors line-clamp-2">
+                    {prod.title}
+                  </h4>
+
+                  {/* Specification Table */}
+                  <div className="space-y-1.5 text-[11px] text-gray-600 border-t border-gray-100 pt-3 mb-4">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Pojazd:</span>
+                      <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{prod.vehicle}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Numer OE:</span>
+                      <span className="font-mono font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{prod.oem}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Wersja:</span>
+                      <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{prod.finish}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Compatibility Badge + Action Buttons */}
+                <div>
+                  <div className="mb-4">
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${prod.statusType === "success"
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-amber-50 text-amber-700 border border-amber-200"
+                        }`}
+                    >
+                      <Check size={12} />
+                      <span>{prod.status}</span>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                    <Link
+                      href={`/products`}
+                      className="flex-1 text-center py-2 text-xs font-bold text-gray-700 hover:text-[#DC2626] border border-gray-200 rounded hover:border-[#DC2626] transition-colors"
+                    >
+                      {t.recommended.details} &rarr;
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setQuickInquiryModal(prod.title)}
+                      className="flex-1 bg-[#DC2626] hover:bg-[#b91c1c] text-white py-2 text-xs font-bold rounded transition-colors text-center cursor-pointer shadow-sm truncate px-1"
+                    >
+                      {t.recommended.inquire}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 7. COMPATIBILITY & VIN MATCHING SECTION (Image 3: Exact from Screenshot) */}
+      {/* ========================================================================= */}
+      <section className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+          {/* Left: Car Inspection photo with bounding box & PDC / OEM badges */}
+          <div className="lg:col-span-6 relative rounded-sm overflow-hidden border border-white/10 shadow-2xl bg-[#0d0d0d] group">
+            <img
+              src="/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg"
+              alt="Compatibility Verification"
+              className="w-full h-[400px] sm:h-[480px] object-cover filter brightness-[0.78] contrast-110"
+            />
+            {/* White outline bounding frame around car front */}
+            <div className="absolute inset-5 sm:inset-8 border border-white/20 pointer-events-none" />
+
+            {/* Top Right Tag: PDC CHECK */}
+            <div className="absolute top-[32%] right-[16%] flex items-center bg-[#151515]/90 border border-white/15 backdrop-blur-md px-3 py-1.5 rounded-xs shadow-lg">
+              <span className="w-1 h-3.5 bg-[#DC2626] mr-2 inline-block rounded-xs" />
+              <span className="text-[11px] font-mono font-bold tracking-wider text-white">
+                PDC <span className="text-gray-400">CHECK</span>
+              </span>
+            </div>
+
+            {/* Bottom Left Tag: OEM MATCH */}
+            <div className="absolute bottom-[24%] left-[12%] flex items-center bg-[#151515]/90 border border-white/15 backdrop-blur-md px-3 py-1.5 rounded-xs shadow-lg">
+              <span className="w-1 h-3.5 bg-[#DC2626] mr-2 inline-block rounded-xs" />
+              <span className="text-[11px] font-mono font-bold tracking-wider text-white">
+                OEM <span className="text-[#DC2626]">MATCH</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Right: Checklist & Content from Screenshot 3 */}
+          <div className="lg:col-span-6 flex flex-col justify-center">
+            <span className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.2em] mb-2">
+              {t.matchSection.kicker}
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-white tracking-tight leading-[1.15] mb-4">
+              {t.matchSection.title}
+            </h2>
+            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mb-6">
+              {t.matchSection.desc}
+            </p>
+
+            {/* 2-Column Checklist from Screenshot 3 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 mb-8">
+              {t.matchSection.checkItems.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-[12px] sm:text-[13px] text-gray-200">
+                  <Check size={14} className="text-[#DC2626] shrink-0" strokeWidth={2.5} />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-5">
+              <Link
+                href="/contact-us?subject=VIN+Verification"
+                className="bg-[#DC2626] hover:bg-[#b91c1c] text-white px-7 py-3 rounded-xs text-xs sm:text-sm font-bold shadow-lg shadow-red-900/30 transition-all cursor-pointer"
+              >
+                {t.matchSection.verifyBtn}
+              </Link>
+              <Link
+                href="/contact-us"
+                className="text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
+              >
+                <span>{t.matchSection.contactAdvisor}</span>
+                <span className="text-sm font-mono">&rarr;</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 8. HOW IT WORKS (Image 4: Exact 4-Column Bordered Layout from Screenshot) */}
+      {/* ========================================================================= */}
+      <section className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="mb-12">
+          <p className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.2em] mb-1">
+            {t.howItWorks.kicker}
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            {t.howItWorks.title}
+          </h2>
+          <p className="text-gray-400 text-xs sm:text-sm mt-2">
+            {t.howItWorks.desc}
+          </p>
+        </div>
+
+        {/* 4 bordered step columns with vertical dividers */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border-r border-white/10">
+          {t.howItWorks.steps.map((item, idx) => (
+            <div
+              key={idx}
+              className="border-l border-white/10 p-6 sm:p-7 flex flex-col justify-start relative group"
+            >
+              <span className="text-xs font-mono font-bold text-[#DC2626] mb-8 block">
+                {item.num}
+              </span>
+              <h3 className="text-base sm:text-lg font-bold text-white mb-3">
+                {item.title}
+              </h3>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 9. B2B COOPERATION (Image 5: Exact from Screenshot) */}
+      {/* ========================================================================= */}
+      <section className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="relative rounded-sm overflow-hidden bg-[#161719] p-8 sm:p-14 border border-white/10">
+          {/* Faint large capital letters "LA" watermark on the right */}
+          <div className="absolute right-0 top-0 bottom-0 pointer-events-none flex items-center pr-6 sm:pr-12 select-none">
+            <span className="text-[160px] sm:text-[230px] font-black text-white/5 leading-none tracking-tighter">
+              LA
+            </span>
+          </div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="max-w-xl">
+              <span className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.2em] mb-2 block">
+                {t.b2b.kicker}
+              </span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight mb-3 leading-tight">
+                {t.b2b.title}
+              </h2>
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mb-6">
+                {t.b2b.desc}
+              </p>
+
+              {/* 3 tag outline boxes */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                {t.b2b.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="border border-white/20 bg-white/5 text-gray-300 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Buttons: Red "Become a partner" + Charcoal "Business inquiry" */}
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+              <Link
+                href="/contact-us?subject=Wspolpraca+B2B"
+                className="bg-[#DC2626] hover:bg-[#b91c1c] text-white px-8 py-3.5 rounded-xs text-xs sm:text-sm font-bold text-center shadow-lg shadow-red-900/30 transition-all cursor-pointer min-w-[200px]"
+              >
+                {t.b2b.partnerBtn}
+              </Link>
+              <Link
+                href="/contact-us"
+                className="bg-[#242629] hover:bg-[#2e3135] text-white border border-white/10 px-8 py-3.5 rounded-xs text-xs sm:text-sm font-bold text-center transition-all cursor-pointer min-w-[200px]"
+              >
+                {t.b2b.quoteBtn}
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* 3-Column Feature Strip (Red-highlighted section from screenshot) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 mt-8 pt-8 border-t border-white/10">
+          {/* Feature 1: Delivery in Poland */}
+          <div className="flex items-start gap-3.5 py-4 px-2 sm:px-6 border-b md:border-b-0 md:border-r border-white/10">
+            <Package size={20} className="text-[#DC2626] shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-bold text-white mb-1">
+                {t.b2b.features[0].title}
+              </h4>
+              <p className="text-xs text-gray-400">
+                {t.b2b.features[0].desc}
+              </p>
+            </div>
+          </div>
+
+          {/* Feature 2: European shipping */}
+          <div className="flex items-start gap-3.5 py-4 px-2 sm:px-6 border-b md:border-b-0 md:border-r border-white/10">
+            <Globe size={20} className="text-[#DC2626] shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-bold text-white mb-1">
+                {t.b2b.features[1].title}
+              </h4>
+              <p className="text-xs text-gray-400">
+                {t.b2b.features[1].desc}
+              </p>
+            </div>
+          </div>
+
+          {/* Feature 3: Assistance in matching */}
+          <div className="flex items-start gap-3.5 py-4 px-2 sm:px-6">
+            <Headphones size={20} className="text-[#DC2626] shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-bold text-white mb-1">
+                {t.b2b.features[2].title}
+              </h4>
+              <p className="text-xs text-gray-400">
+                {t.b2b.features[2].desc}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 10. AUTOMOTIVE GUIDES (Articles & Knowledge from Figma) */}
+      {/* ========================================================================= */}
+      <section className="py-14 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <p className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.18em] mb-1">
+              {t.guides.kicker}
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              {t.guides.title}
+            </h2>
+            <p className="text-gray-400 text-xs sm:text-sm mt-1">
+              {t.guides.desc}
+            </p>
+          </div>
+          <Link
+            href="/news"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors group cursor-pointer"
+          >
+            <span>{t.guides.allGuides}</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
+          </Link>
+        </div>
+
+        {/* 3 Guide Article Cards from Figma / API */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {(blogs && blogs.length > 0
+            ? blogs.slice(0, 3).map((blog: any, idx: number) => {
+              const dateStr = blog?.createdAt
+                ? new Date(blog.createdAt).toLocaleDateString("pl-PL", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })
+                : "14 Października 2026";
+              const cleanDesc = blog?.shortDescription || blog?.description?.replace(/<[^>]+>/g, "").slice(0, 110) + "...";
+              const img = blog?.image || blog?.thumbnail || [
+                "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+                "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
+                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
+              ][idx % 3];
+              return {
+                id: String(blog?.id || blog?._id || idx),
+                title: blog?.title || "Poradnik doboru części",
+                desc: cleanDesc,
+                img,
+                date: dateStr,
+              };
+            })
+            : [
+              {
+                id: "g1",
+                title: "Jak poprawnie odczytać numer OE w autach marki BMW?",
+                desc: "Gdzie szukać tabliczek znamionowych i jak zweryfikować 11-cyfrowy kod części zamiennej.",
+                img: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+                date: "14 Października 2026",
+              },
+              {
+                id: "g2",
+                title: "BMW G20 a G21 — kompatybilność zderzaków i oświetlenia",
+                desc: "Porównanie wersji Sedan i Touring przed i po faceliftingu (LCI). Kluczowe różnice mocowań.",
+                img: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
+                date: "10 Października 2026",
+              },
+              {
+                id: "g3",
+                title: "Jak sprawdzić czy zderzak posiada otwory na czujniki PDC?",
+                desc: "Wymiary, oznaczenia fabryczne oraz fabryczne wytłoczenia przygotowane pod wycięcie sensorów.",
+                img: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
+                date: "04 Października 2026",
+              },
+            ]
+          ).map((guide) => (
+            <div
+              key={guide.id}
+              className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between group hover:shadow-xl transition-all duration-300"
+            >
+              <div className="h-[200px] overflow-hidden bg-gray-900">
+                <img
+                  src={guide.img}
+                  alt={guide.title}
+                  className="w-full h-full object-cover filter brightness-90 group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block mb-2">
+                    {guide.date}
+                  </span>
+                  <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#DC2626] transition-colors line-clamp-2">
+                    {guide.title}
+                  </h3>
+                  <p className="text-xs text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                    {guide.desc}
+                  </p>
+                </div>
+                <Link
+                  href="/news"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 group-hover:text-[#DC2626] transition-colors"
+                >
+                  <span>{t.guides.read}</span>
+                  <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 11. BOTTOM CTA / LOOKING FOR A SPECIFIC CARPART? */}
+      {/* ========================================================================= */}
+      <section className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-2xl mx-auto">
+          <span className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.18em] mb-2 block">
+            {t.bottomCta.kicker}
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
+            Looking for a specific carpart?
+          </h2>
+          <p className="text-gray-300 text-sm leading-relaxed mb-8">
+            {t.bottomCta.desc}
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/contact-us"
+              className="bg-[#DC2626] hover:bg-[#b91c1c] text-white px-7 py-3.5 rounded text-sm font-bold shadow-lg shadow-red-900/40 transition-all cursor-pointer"
+            >
+              {t.bottomCta.sendInquiry}
+            </Link>
+            <Link
+              href="/contact-us?subject=VIN+Verification"
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-7 py-3.5 rounded text-sm font-bold transition-all cursor-pointer"
+            >
+              {t.bottomCta.verifyVin}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Part Inquiry Modal Popup */}
+      {quickInquiryModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#141414] border border-white/15 rounded-xl max-w-md w-full p-6 text-white relative shadow-2xl">
+            <button
+              onClick={() => setQuickInquiryModal(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-lg font-bold"
+            >
+              &times;
+            </button>
+            <h3 className="text-lg font-bold text-white mb-2">Zapytaj o dostępność części</h3>
+            <p className="text-xs text-gray-300 mb-4 bg-white/5 p-3 rounded border border-white/10">
+              <strong className="text-white block">{quickInquiryModal}</strong>
+              Wprowadź swój numer telefonu, aby nasz konsultant potwierdził dostępność i cenę.
+            </p>
+
+            {inquirySent ? (
+              <div className="bg-green-900/40 border border-green-500/50 p-4 rounded text-center text-xs text-green-300">
+                Dziękujemy! Skontaktujemy się z Tobą w ciągu kilku minut.
+              </div>
+            ) : (
+              <form onSubmit={handleInquirySubmit} className="space-y-3.5">
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-300 mb-1">
+                    Imię i nazwisko / Firma
+                  </label>
+                  <input
+                    type="text"
+                    value={inquiryName}
+                    onChange={(e) => setInquiryName(e.target.value)}
+                    placeholder="np. Jan Kowalski"
+                    className="w-full bg-[#1e1e1e] border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DC2626]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-300 mb-1">
+                    Numer telefonu do kontaktu *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={inquiryPhone}
+                    onChange={(e) => setInquiryPhone(e.target.value)}
+                    placeholder="np. +48 000 000 000"
+                    className="w-full bg-[#1e1e1e] border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DC2626]"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-[#DC2626] hover:bg-[#b91c1c] text-white py-2.5 rounded font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                >
+                  Wyślij zapytanie
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+      {/* ========================================================================= */}
+      {/* 12. FIGMA FOOTER (Lampalzderzak.pl Complete Navigation & Legal) */}
+      {/* ========================================================================= */}
+      <footer className="w-full bg-[#0a0a0a] border-t border-white/10 pt-16 pb-12 text-gray-400 text-xs">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+            {/* Col 1: Brand & Bio */}
+            <div className="lg:col-span-2">
+              <Link href="/" className="flex items-center gap-3 mb-4 group">
+                <img
+                  src="/d4399531705f2cd5cbd3dc79bab27b7f083023f8.png"
+                  alt="Lampalzderzak.pl"
+                  className="w-10 h-10 object-contain drop-shadow"
+                />
+                <span className="text-lg font-black tracking-tight text-white uppercase leading-none">
+                  Lampa<span className="text-[#DC2626]">I</span>Zderzak<span className="text-[#DC2626] text-xs lowercase">.pl</span>
+                </span>
+              </Link>
+              <p className="text-xs text-gray-400 leading-relaxed max-w-sm mb-4">
+                Specjalistyczny dystrybutor oryginalnych części karoseryjnych, zderzaków, oświetlenia
+                i elementów poszycia do marek BMW, Mercedes-Benz, Audi oraz Range Rover.
+              </p>
+              <div className="flex flex-col gap-1 text-[11px] text-gray-400">
+                <span className="flex items-center gap-1.5">
+                  <Phone size={12} className="text-[#DC2626]" /> +48 000 000 000
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Mail size={12} className="text-[#DC2626]" /> kontakt@motorium.pl
+                </span>
+              </div>
+            </div>
+
+            {/* Col 2: Katalog marek */}
+            <div>
+              <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
+                Katalog marek
+              </h4>
+              <ul className="space-y-2 text-[12px]">
+                <li><Link href="/products?brand=BMW" className="hover:text-white transition-colors">BMW</Link></li>
+                <li><Link href="/products?brand=Mercedes-Benz" className="hover:text-white transition-colors">Mercedes-Benz</Link></li>
+                <li><Link href="/products?brand=Audi" className="hover:text-white transition-colors">Audi</Link></li>
+                <li><Link href="/products?brand=Range+Rover" className="hover:text-white transition-colors">Range Rover</Link></li>
+                <li><Link href="/products" className="hover:text-white transition-colors">Wszystkie modele</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 3: Kategorie */}
+            <div>
+              <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
+                Kategorie
+              </h4>
+              <ul className="space-y-2 text-[12px]">
+                <li><Link href="/products?category=bumpers" className="hover:text-white transition-colors">Zderzaki i poszycia</Link></li>
+                <li><Link href="/products?category=headlights" className="hover:text-white transition-colors">Reflektory LED</Link></li>
+                <li><Link href="/products?category=grilles" className="hover:text-white transition-colors">Grille i atrapy</Link></li>
+                <li><Link href="/products?category=lenses" className="hover:text-white transition-colors">Klosze i obudowy</Link></li>
+                <li><Link href="/products?category=splitters" className="hover:text-white transition-colors">Splittery i listwy</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 4: Informacje i Pomoc */}
+            <div>
+              <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">
+                Pomoc i Informacje
+              </h4>
+              <ul className="space-y-2 text-[12px]">
+                <li><Link href="/contact-us?subject=VIN+Verification" className="hover:text-white transition-colors">Weryfikacja po VIN</Link></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">O firmie</Link></li>
+                <li><Link href="/news" className="hover:text-white transition-colors">Baza wiedzy i poradniki</Link></li>
+                <li><Link href="/contact-us?subject=B2B" className="hover:text-white transition-colors">Współpraca warsztatowa</Link></li>
+                <li><Link href="/contact-us" className="hover:text-white transition-colors">Kontakt z doradcą</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Copyright & Disclaimer */}
+          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-500">
+            <p>&copy; {new Date().getFullYear()} Lampalzderzak.pl. Wszelkie prawa zastrzeżone.</p>
+            <div className="flex items-center gap-6">
+              <Link href="/about" className="hover:text-gray-300 transition-colors">Polityka prywatności</Link>
+              <Link href="/about" className="hover:text-gray-300 transition-colors">Regulamin serwisu</Link>
+              <span className="text-gray-400 font-semibold cursor-pointer">PL / EN</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
-

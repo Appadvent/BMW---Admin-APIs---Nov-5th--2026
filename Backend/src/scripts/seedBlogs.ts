@@ -1,99 +1,106 @@
 import prisma from "../config/db.config";
-import * as fs from "fs";
-import * as path from "path";
 
-const MAPPING_FILE = path.resolve(__dirname, "./minio_image_mapping.json");
-let minioMapping: Record<string, string> = {};
-if (fs.existsSync(MAPPING_FILE)) {
-  try {
-    minioMapping = JSON.parse(fs.readFileSync(MAPPING_FILE, "utf-8"));
-  } catch {}
-}
+async function main() {
+  console.log("Seeding real News & Media blogs...");
 
-const BUMPER_ASSY_URL =
-  minioMapping["bumper_assy_row_1.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1792056119575-bumper_assy_row_1.png";
+  // Ensure categories exist
+  const categories = [
+    { name: "PRODUCT LAUNCH", description: "Product launches and innovations" },
+    { name: "AWARD", description: "Industry awards and design recognitions" },
+    { name: "BUSINESS", description: "Corporate expansions and global partnerships" },
+    { name: "CERTIFICATION", description: "Quality, safety, and testing certifications" },
+  ];
 
-const HEADLIGHT_URL =
-  minioMapping["headlight_bmw_row_2.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1792056123162-headlight_bmw_row_2.png";
+  const categoryMap: { [key: string]: number } = {};
 
-const BUMPER_SHELL_URL =
-  minioMapping["bumper_shell_row_1.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1792056121191-bumper_shell_row_1.png";
+  for (const cat of categories) {
+    const existing = await prisma.category.findFirst({
+      where: { name: cat.name },
+    });
+    if (existing) {
+      categoryMap[cat.name] = existing.id;
+    } else {
+      const created = await prisma.category.create({
+        data: { name: cat.name, description: cat.description },
+      });
+      categoryMap[cat.name] = created.id;
+    }
+  }
 
-const LENS_HOUSING_URL =
-  minioMapping["headlight_bmw_row_3.png"] ||
-  "https://minioapi.appadvent.in/i-mag/products/1792056123400-headlight_bmw_row_3.png";
+  // Clear existing blogs to avoid duplicate seed runs
+  await prisma.blog.deleteMany({});
 
-export async function seedBlogs() {
-  console.log("Seeding 4 Automotive OEM Media Posts into Blog table with MinIO URLs...");
-
-  // Clear existing blogs
-  await (prisma as any).blog.deleteMany({});
-
-  const mediaPosts = [
+  const blogsData = [
     {
-      title: "Genuine OEM vs. Aftermarket Body Panels: What Collision Repair Centers Need to Know",
-      description: `In high-end automotive collision repair, precision is non-negotiable. Modern luxury marques like BMW, Mercedes-Benz, and Audi engineer their exterior components using proprietary thermoplastic polyolefin (TPO) and polycarbonate composites. 
+      title: "EUTORIIA Launches Smart Lock Collection at ArchBuild 2026",
+      description: `Our newest smart locking systems were unveiled at the ArchBuild Asia-Pacific Expo, drawing widespread interest from architects and developers.
 
-While aftermarket replica bumper assemblies and shells may appear visually similar, subtle dimensional variances of even 1-2 millimeters can cause misaligned shut lines, improper radar cruise calibration, and failing ultrasonic park assist (PDC) sensors.
+EUTORIIA unveiled its next-generation Smart Lock Pro collection at the ArchBuild Asia-Pacific Expo held in Singapore this September. The launch attracted significant attention from leading architects, interior designers, and property developers across the region.
 
-Our distribution centre supplies only verified OEM bumper assemblies and structural fascias complete with intact mounting brackets, washer nozzle provisions, and original factory markings. Every component is cross-referenced with the vehicle's unique 17-digit VIN before dispatch, guaranteeing flawless installation for professional workshops.`,
-      image: BUMPER_ASSY_URL,
-      author: "Technical Logistics Division",
-      publishedDate: new Date(),
+The Smart Lock Pro collection introduces quad-mode access — fingerprint recognition, PIN code, RFID card, and Bluetooth app control — in a form factor that integrates seamlessly with contemporary door designs. The range is available in three finishes: Matte Black, Brushed Gold, and Satin Stainless.
+
+"We designed the Smart Lock Pro to answer a clear market need: security that does not compromise on aesthetics," said the company's Head of Product Development. "The response from the architecture community at ArchBuild has confirmed that this is exactly what the market was looking for."
+
+The collection is now available for order across our distribution network in South Asia, Southeast Asia, and the Middle East.`,
+      image: "/83ff01111d7e0e26bc28cd18afe9cb715caacb28.jpg",
+      categoryId: categoryMap["PRODUCT LAUNCH"],
+      author: "EUTORIIA Editorial",
+      publishedDate: new Date("2026-09-12"),
     },
     {
-      title: "Adaptive LED & Laser Headlight Technologies: Structural Anatomy and Replacement Protocols",
-      description: `Automotive lighting has transformed from simple illumination into sophisticated optical computing systems. Contemporary BMW Adaptive LED and Laserlicht headlamps feature multi-element matrix beam modules, stepper motor actuators, and integrated cooling channels.
+      title: "Glass Fittings Range Wins Red Dot Design Award",
+      description: `The Glide Pro series received the prestigious Red Dot Design Award for innovation in architectural hardware solutions.
 
-When vehicle front-ends sustain impact, headlights frequently suffer fractured mounting ears, cracked housing seals, or shattered front lenses. Repair facilities must verify whether internal optical arrays remain calibrated or whether complete headlamp replacement is mandated.
+EUTORIIA's premier architectural glass fitting series, the Glide Pro, has been officially awarded the internationally acclaimed Red Dot Design Award for Product Design.
 
-We maintain a curated inventory of genuine OEM headlamp units and UV-hardcoated replacement lenses. Our technician team inspects mounting geometry, lens clarity, and electrical pin connectors to ensure workshops receive plug-and-play lighting solutions with zero coding complications.`,
-      image: HEADLIGHT_URL,
-      author: "Lighting Systems Specialist",
-      publishedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+Evaluated by an independent jury of 40 international design experts, the Glide Pro stood out for its ultra-slim profile, concealed hydraulic dampening mechanism, and frictionless gliding performance on heavy tempered glass panels.
+
+"This recognition affirms our continuous commitment to merging high mechanical performance with minimalist visual harmony," noted the lead industrial designer.`,
+      image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&auto=format&fit=crop&q=80",
+      categoryId: categoryMap["AWARD"],
+      author: "Design Studio",
+      publishedDate: new Date("2026-08-03"),
     },
     {
-      title: "Streamlining B2B Parts Procurement for European Body Shops & Collision Specialists",
-      description: `Workshop turnaround times directly impact repair shop profitability and insurance claim cycle efficiency. Waiting weeks for oversized body panels or receiving parts with damaged mounting tabs creates severe scheduling bottlenecks.
+      title: "Expanding Distribution Network Across Southeast Asia",
+      description: `We are proud to announce new distribution partnerships across Thailand, Malaysia, and Vietnam, strengthening our regional footprint.
 
-To solve this, our B2B procurement network offers dedicated Request for Quotation (RFQ) processing with 24-hour response times. Workshops can submit part numbers or vehicle VINs via our streamlined web portal, receiving verified condition reports, high-resolution photography, and guaranteed delivery estimates.
+As part of our continuous international growth strategy, EUTORIIA has finalized distribution and service agreements with three premier building material conglomerates in Southeast Asia.
 
-All bumpers, fascias, and optical housings are protected in custom shock-absorbing automotive transit crating, preventing shipping deformation and ensuring components arrive ready for preparation, painting, and fitting.`,
-      image: BUMPER_SHELL_URL,
-      author: "B2B Workshop Services",
-      publishedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+The expansion will see dedicated experience centers opening in Bangkok, Kuala Lumpur, and Ho Chi Minh City over the next two quarters, providing architects and builders immediate local access to our comprehensive architectural and hardware collections.`,
+      image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800&auto=format&fit=crop&q=80",
+      categoryId: categoryMap["BUSINESS"],
+      author: "Corporate Relations",
+      publishedDate: new Date("2026-06-28"),
     },
     {
-      title: "Extending Automotive Component Lifecycles: High-Grade Lens Replacement & Housing Restoration",
-      description: `Replacing an entire high-specification matrix LED headlamp assembly can cost thousands of euros when only the polycarbonate outer cover has experienced stone chipping, oxidation, or cosmetic scratching.
+      title: "Aqua Pure RO System Receives International Safety Certification",
+      description: `Our water purification range has achieved CE and ISI dual certification, affirming the highest standards of safety and performance.
 
-Modern automotive restoration standards now support professional headlamp de-lensing and re-sealing using factory-grade butyl adhesives and precision-molded polycarbonate replacement lenses.
+EUTORIIA's residential and commercial water purification lineup has successfully completed all laboratory compliance verifications, achieving dual CE and ISI quality certifications.
 
-Our inventory includes precision-matched left and right outer lenses and internal housing shells engineered for BMW F-Series, G-Series, and Mercedes-Benz E-Class/C-Class models. Featuring anti-UV surface hardcoats and optical-grade transparency, these replacement lenses restore factory light distribution and beam throw at a fraction of the cost of new complete units.`,
-      image: LENS_HOUSING_URL,
-      author: "Restoration & Materials Team",
-      publishedDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+Featuring multi-stage reverse osmosis, UV-C sterilisation, and intelligent mineral retention, the Aqua Pure range is engineered for both reliability and energy efficiency.`,
+      image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&auto=format&fit=crop&q=80",
+      categoryId: categoryMap["CERTIFICATION"],
+      author: "Quality & Compliance",
+      publishedDate: new Date("2026-05-15"),
     },
   ];
 
-  for (const post of mediaPosts) {
-    await (prisma as any).blog.create({
-      data: post,
+  for (const blog of blogsData) {
+    await prisma.blog.create({
+      data: blog,
     });
   }
 
-  console.log("Successfully seeded 4 Automotive OEM Media Posts with MinIO URLs!");
+  console.log("Successfully seeded 4 real blogs!");
 }
 
-if (require.main === module) {
-  seedBlogs()
-    .catch((e) => {
-      console.error("Seed blogs error:", e);
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
-}
+main()
+  .catch((e) => {
+    console.error("Error seeding blogs:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 
 const FacebookIcon = () => (
@@ -32,6 +33,9 @@ const LinkedinIcon = () => (
 );
 
 const Footer = () => {
+  const pathname = usePathname();
+  if (pathname === "/") return null;
+
   return (
     <footer className="bg-[#0F172A] text-slate-400 pt-14 pb-8 border-t border-slate-800 font-sans">
       <div className="max-w-[1256px] mx-auto px-4 sm:px-6 lg:px-8">
