@@ -921,12 +921,7 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
         <div className="relative rounded-sm overflow-hidden bg-[#161719] p-8 sm:p-14 border border-white/10">
-          {/* Faint large capital letters "LA" watermark on the right */}
-          <div className="absolute right-0 top-0 bottom-0 pointer-events-none flex items-center pr-6 sm:pr-12 select-none">
-            <span className="text-[200px] sm:text-[320px] font-black text-white/5 leading-none tracking-[0.2em]">
-              LA
-            </span>
-          </div>
+
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-xl">
@@ -954,16 +949,23 @@ export default function HomePage() {
             </div>
 
             {/* Right Buttons: Red "Become a partner" + Charcoal "Business inquiry" */}
-            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+            <div className="relative flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 lg:w-[260px] justify-center py-4">
+              {/* Giant "LA" watermark right behind the buttons */}
+              <div className="absolute inset-0 pointer-events-none flex items-center justify-center select-none overflow-visible">
+                <span className="text-[260px] sm:text-[340px] font-black text-white/[0.045] leading-none tracking-normal translate-y-1">
+                  LA
+                </span>
+              </div>
+
               <Link
                 href="/contact-us?subject=Wspolpraca+B2B"
-                className="bg-[#DC2626] hover:bg-[#b91c1c] text-white px-8 py-3.5 rounded-xs text-xs sm:text-sm font-bold text-center shadow-lg shadow-red-900/30 transition-all cursor-pointer min-w-[200px]"
+                className="relative z-10 bg-[#DC2626] hover:bg-[#b91c1c] text-white px-8 py-3.5 rounded-xs text-xs sm:text-sm font-bold text-center shadow-lg shadow-red-900/30 transition-all cursor-pointer min-w-[200px]"
               >
                 {t.b2b.partnerBtn}
               </Link>
               <Link
                 href="/contact-us"
-                className="bg-[#242629] hover:bg-[#2e3135] text-white border border-white/10 px-8 py-3.5 rounded-xs text-xs sm:text-sm font-bold text-center transition-all cursor-pointer min-w-[200px]"
+                className="relative z-10 bg-[#242629] hover:bg-[#2e3135] text-white border border-white/10 px-8 py-3.5 rounded-xs text-xs sm:text-sm font-bold text-center transition-all cursor-pointer min-w-[200px]"
               >
                 {t.b2b.quoteBtn}
               </Link>
