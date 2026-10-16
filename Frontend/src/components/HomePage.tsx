@@ -197,13 +197,12 @@ export default function HomePage() {
         <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl pt-4 sm:pt-10">
             {/* Top Red Subheading Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#DC2626]/20 border border-[#DC2626]/40 text-[#DC2626] text-[11px] font-bold tracking-[0.16em] uppercase mb-4">
-              <Sparkles size={13} />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded text-white text-[11px] font-bold tracking-[0.16em] uppercase mb-4">
               <span>{t.hero.kicker}</span>
             </div>
 
             {/* Main Hero Headline (Word to Word from Figma) */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-white tracking-tight leading-[1.1] mb-5">
+            <h1 className="text-4xl sm:text-5xl lg:text-[70px] font-extrabold text-white tracking-tight leading-[1.1] mb-5">
               The right part. <br />
               A reliable choice.
             </h1>
@@ -520,7 +519,7 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. PARTS BY CATEGORY (Discover category) */}
+      {/* 5. PARTS BY CATEGORY (Exact Figma Layout: 2 Large Top, 4 Small Bottom) */}
       {/* ========================================================================= */}
       <section className="py-14 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
@@ -528,10 +527,10 @@ export default function HomePage() {
             <p className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.18em] mb-1">
               {t.categories.kicker}
             </p>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               {t.categories.title}
             </h2>
-            <p className="text-gray-400 text-xs sm:text-sm mt-1">
+            <p className="text-gray-400 text-xs sm:text-sm mt-1.5">
               {t.categories.desc}
             </p>
           </div>
@@ -544,62 +543,110 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Categories Grid (Figma / API: Headlights, Bumpers, Grilles, Body parts) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {categoriesLoading ? (
-            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <span className="inline-block animate-pulse">Loading categories from database...</span>
-            </div>
-          ) : categories && categories.length > 0 ? (
-            categories.slice(0, 6).map((cat: any, idx: number) => {
-              const catId = cat?.id || cat?._id;
-              const isLarge = idx === 0 || idx === 1;
-              const bgImg = cat?.image || cat?.thumbnail || "/placeholder-car.jpg";
-
-              return (
-                <Link
-                  key={catId || idx}
-                  href={`/products?categoryId=${catId}`}
-                  className={`${isLarge ? "md:col-span-2 sm:h-[280px]" : "h-[220px]"
-                    } relative h-[250px] rounded-lg overflow-hidden border border-white/10 hover:border-[#DC2626]/60 transition-all duration-300 p-6 flex flex-col justify-end group bg-[#111] cursor-pointer`}
-                >
-                  <img
-                    src={bgImg}
-                    alt={cat?.name || "Parts category"}
-                    className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                  <div className="relative z-10">
-                    {isLarge && (
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#DC2626] bg-[#DC2626]/20 px-2 py-0.5 rounded border border-[#DC2626]/40 mb-2 inline-block">
-                        {cat?.productCount ? `${cat.productCount} parts available` : "OEM parts in stock"}
-                      </span>
-                    )}
-                    <h3 className={`${isLarge ? "text-xl sm:text-2xl font-extrabold" : "text-base font-bold"} text-white group-hover:text-[#DC2626] transition-colors mb-1`}>
-                      {cat?.name || cat?.title}
-                    </h3>
-                    {isLarge && cat?.description && (
-                      <p className="text-gray-300 text-xs max-w-md line-clamp-1 mb-2">
-                        {cat.description.replace(/<[^>]+>/g, "")}
-                      </p>
-                    )}
-                    <span className="text-xs font-bold text-white flex items-center gap-1 group-hover:text-[#DC2626]">
-                      Explore parts <ArrowRight size={13} />
-                    </span>
+        {/* Categories Asymmetric Grid: Row 1 (2 Large Cards), Row 2 (4 Smaller Cards) */}
+        <div className="space-y-4">
+          {/* Row 1: 2 Big Highlight Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              {
+                title: "Complete bumpers",
+                desc: "114 parts • DEMO DATA",
+                img: "/734295950a53ab641f4c489e327584416018d44d.jpg",
+                link: "/products?category=bumpers",
+              },
+              {
+                title: "Headlights",
+                desc: "164 parts • DEMO DATA",
+                img: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+                link: "/products?category=headlights",
+              },
+            ].map((cat, idx) => (
+              <Link
+                key={idx}
+                href={cat.link}
+                className="group relative h-[280px] sm:h-[320px] rounded-sm overflow-hidden border border-white/10 hover:border-[#DC2626]/70 transition-all duration-300 flex flex-col justify-end p-6 sm:p-8 bg-[#0d0d0d] cursor-pointer"
+              >
+                <img
+                  src={cat.img}
+                  alt={cat.title}
+                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.55] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="relative z-10">
+                  <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest block mb-1">
+                    {cat.desc}
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 group-hover:text-[#DC2626] transition-colors">
+                    {cat.title}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-gray-300 group-hover:text-white transition-colors">
+                    <span>Discover category</span>
+                    <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
                   </div>
-                </Link>
-              );
-            })
-          ) : (
-            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <p>No categories found in database. Add categories in the admin dashboard.</p>
-            </div>
-          )}
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Row 2: 4 Smaller Feature Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                title: "Grilles",
+                desc: "72 PARTS • DEMO DATA",
+                img: "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
+                link: "/products?category=grilles",
+              },
+              {
+                title: "Exterior trims",
+                desc: "92 PARTS • DEMO DATA",
+                img: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
+                link: "/products?category=trims",
+              },
+              {
+                title: "Front splitters",
+                desc: "34 PARTS • DEMO DATA",
+                img: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
+                link: "/products?category=splitters",
+              },
+              {
+                title: "Body elements",
+                desc: "118 PARTS • DEMO DATA",
+                img: "/65743bae6004f15c86ba5c7172a8a08e3daa5382.jpg",
+                link: "/products?category=body",
+              },
+            ].map((cat, idx) => (
+              <Link
+                key={idx}
+                href={cat.link}
+                className="group relative h-[210px] sm:h-[230px] rounded-sm overflow-hidden border border-white/10 hover:border-[#DC2626]/70 transition-all duration-300 flex flex-col justify-end p-5 bg-[#0d0d0d] cursor-pointer"
+              >
+                <img
+                  src={cat.img}
+                  alt={cat.title}
+                  className="absolute inset-0 w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 group-hover:brightness-[0.7] transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+                <div className="relative z-10">
+                  <span className="text-[9px] font-mono text-gray-400 uppercase tracking-widest block mb-1">
+                    {cat.desc}
+                  </span>
+                  <h3 className="text-lg font-bold text-white mb-1.5 group-hover:text-[#DC2626] transition-colors">
+                    {cat.title}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-300 group-hover:text-white transition-colors">
+                    <span>Discover category</span>
+                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform text-[#DC2626]" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 6. RECOMMENDED / BESTSELLING PARTS (Product Cards exactly like Figma) */}
+      {/* 6. MOST SELLING PARTS (Exact Figma Card Layout & Styling) */}
       {/* ========================================================================= */}
       <section className="py-14 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
@@ -607,138 +654,156 @@ export default function HomePage() {
             <p className="text-[#DC2626] font-bold text-[11px] uppercase tracking-[0.18em] mb-1">
               {t.recommended.kicker}
             </p>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               {t.recommended.title}
             </h2>
-            <p className="text-gray-400 text-xs sm:text-sm mt-1">
+            <p className="text-gray-400 text-xs sm:text-sm mt-1.5">
               {t.recommended.desc}
             </p>
           </div>
           <Link
             href="/products"
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/15 px-4 py-2 rounded text-xs font-bold transition-colors cursor-pointer"
+            className="bg-white text-gray-900 hover:bg-gray-100 font-bold px-5 py-2.5 rounded-sm text-xs transition-colors cursor-pointer self-start sm:self-auto shadow-sm"
           >
             {t.recommended.allCatalog}
           </Link>
         </div>
 
-        {/* 4 Product Cards in Clean White Box style as shown in Figma */}
+        {/* 4 Product Cards in Clean White Box style as shown in Screenshot */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {productsLoading ? (
-            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <span className="inline-block animate-pulse">Loading parts from database...</span>
-            </div>
-          ) : products && products.length > 0 ? (
-            products.slice(0, 4).map((prod: any, idx: number) => {
-              const oem =
-                prod?.oemNumber ||
-                prod?.specifications?.find((s: any) =>
-                  s.name?.toLowerCase().includes("oem")
-                )?.value ||
-                "—";
-              const vehicle =
-                prod?.model ||
-                prod?.specifications?.find((s: any) =>
-                  s.name?.toLowerCase().includes("model")
-                )?.value ||
-                "—";
-              const finish =
-                prod?.finish ||
-                prod?.specifications?.find((s: any) =>
-                  s.name?.toLowerCase().includes("finish") ||
-                  s.name?.toLowerCase().includes("version")
-                )?.value ||
-                prod?.category?.title ||
-                "—";
-              const imgSrc =
-                prod?.image ||
-                prod?.images?.[0] ||
-                prod?.thumbnail ||
-                "/placeholder-car.jpg";
-              const brand = prod?.make || prod?.brand || "OEM";
-              const title = prod?.title || prod?.name || "Automotive Replacement Part";
-              const prodId = prod?.id || prod?._id || `p-${idx}`;
+          {[
+            {
+              id: 1,
+              tag: "BMW",
+              title: "Front bumper BMW Series 3 G20",
+              img: "/734295950a53ab641f4c489e327584416018d44d.jpg",
+              vehicle: "G20 - 2019-2022",
+              number: "OEM: sample data",
+              finish: "Primed",
+              statusText: "COMPATIBILITY DATA AVAILABLE",
+              statusType: "success",
+            },
+            {
+              id: 2,
+              tag: "BMW",
+              title: "LED headlight BMW Series 5 G30",
+              img: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+              vehicle: "G30 / G31 - 2017-2020",
+              number: "OE: sample data",
+              finish: "Complete",
+              statusText: "REQUIRES VERIFICATION",
+              statusType: "warning",
+            },
+            {
+              id: 3,
+              tag: "MERCEDES-BENZ",
+              title: "Front bumper C-Class W205",
+              img: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
+              vehicle: "W205 - 2021+",
+              number: "OEM: sample data",
+              finish: "To be painted",
+              statusText: "COMPATIBILITY DATA AVAILABLE",
+              statusType: "success",
+            },
+            {
+              id: 4,
+              tag: "MERCEDES-BENZ",
+              title: "Grille E-Class W213",
+              img: "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
+              vehicle: "W213 - 2016-2020",
+              number: "OE: sample data",
+              finish: "Gloss black",
+              statusText: "REQUIRES VERIFICATION",
+              statusType: "warning",
+            },
+          ].map((prod) => (
+            <div
+              key={prod.id}
+              className="bg-white rounded-none border border-gray-200 text-gray-900 flex flex-col justify-between hover:shadow-2xl transition-all duration-300"
+            >
+              {/* Product Visual Photo */}
+              <div className="relative h-[220px] bg-[#0c0c0c] overflow-hidden group">
+                <img
+                  src={prod.img}
+                  alt={prod.title}
+                  className="w-full h-full object-cover filter brightness-[0.85] group-hover:scale-105 transition-transform duration-500"
+                />
+                {/* Visualization label at bottom left of image */}
+                <span className="absolute bottom-2 left-2 bg-black/70 text-gray-300 text-[8px] font-mono tracking-widest uppercase px-1.5 py-0.5 rounded-xs">
+                  VISUALIZATION
+                </span>
+              </div>
 
-              return (
-                <div
-                  key={prodId}
-                  className="bg-white rounded-lg overflow-hidden border border-gray-200 text-gray-900 flex flex-col justify-between hover:shadow-xl transition-all duration-300"
-                >
-                  {/* Product Image */}
-                  <div className="relative h-[200px] bg-[#111] overflow-hidden">
-                    <img
-                      src={imgSrc}
-                      alt={title}
-                      className="w-full h-full object-cover filter brightness-90 hover:scale-105 transition-transform duration-500"
-                    />
-                    <span className="absolute top-3 left-3 bg-[#DC2626] text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider shadow">
-                      {brand}
-                    </span>
-                  </div>
+              {/* Product Details Section */}
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  {/* Brand Tag Kicker */}
+                  <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block mb-1">
+                    {prod.tag}
+                  </span>
 
-                  {/* Product Content Details */}
-                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900 leading-snug mb-3 hover:text-[#DC2626] transition-colors line-clamp-2">
-                        {title}
-                      </h4>
+                  {/* Title */}
+                  <h4 className="text-[14px] font-extrabold text-gray-900 leading-snug mb-4 hover:text-[#DC2626] transition-colors line-clamp-2">
+                    {prod.title}
+                  </h4>
 
-                      {/* Specification Table */}
-                      <div className="space-y-1.5 text-[11px] text-gray-600 border-t border-gray-100 pt-3 mb-4">
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Vehicle:</span>
-                          <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{vehicle}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">OE Number:</span>
-                          <span className="font-mono font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{oem}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Finish:</span>
-                          <span className="font-semibold text-gray-800 truncate ml-2 max-w-[150px]">{finish}</span>
-                        </div>
-                      </div>
+                  {/* Technical Specs Table */}
+                  <div className="space-y-2 text-[11px] border-t border-gray-100 pt-3 mb-4">
+                    <div className="flex justify-between items-center text-gray-500">
+                      <span>Vehicle:</span>
+                      <span className="font-medium text-gray-800 text-right">{prod.vehicle}</span>
                     </div>
-
-                    {/* Compatibility Badge + Action Buttons */}
-                    <div>
-                      <div className="mb-4">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${idx % 2 === 0
-                            ? "bg-green-50 text-green-700 border border-green-200"
-                            : "bg-amber-50 text-amber-700 border border-amber-200"
-                            }`}
-                        >
-                          <Check size={12} />
-                          <span>{idx % 2 === 0 ? "Fitment verified" : "Requires VIN Check"}</span>
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
-                        <Link
-                          href={`/products`}
-                          className="flex-1 text-center py-2 text-xs font-bold text-gray-700 hover:text-[#DC2626] border border-gray-200 rounded hover:border-[#DC2626] transition-colors"
-                        >
-                          {t.recommended.details} &rarr;
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => setQuickInquiryModal(title)}
-                          className="flex-1 bg-[#DC2626] hover:bg-[#b91c1c] text-white py-2 text-xs font-bold rounded transition-colors text-center cursor-pointer shadow-sm truncate px-1"
-                        >
-                          {t.recommended.inquire}
-                        </button>
-                      </div>
+                    <div className="flex justify-between items-center text-gray-500">
+                      <span>Number:</span>
+                      <span className="font-mono font-medium text-gray-800 text-right">{prod.number}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-gray-500">
+                      <span>Finish:</span>
+                      <span className="font-medium text-gray-800 text-right">{prod.finish}</span>
                     </div>
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            <div className="col-span-full py-12 text-center text-gray-400 text-sm">
-              <p>No products found in database. Add products in the admin dashboard.</p>
+
+                {/* Compatibility Badge + Bottom Action Buttons */}
+                <div>
+                  <div className="mb-4">
+                    <div
+                      className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${
+                        prod.statusType === "success"
+                          ? "text-[#15803D]"
+                          : "text-[#B45309]"
+                      }`}
+                    >
+                      {prod.statusType === "success" ? (
+                        <Check size={13} className="text-[#16A34A] stroke-[2.5]" />
+                      ) : (
+                        <ShieldCheck size={13} className="text-[#D97706] stroke-[2.5]" />
+                      )}
+                      <span>{prod.statusText}</span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons: Details -> and Inquire about the part */}
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <Link
+                      href="/products"
+                      className="text-xs font-bold text-gray-700 hover:text-[#DC2626] transition-colors flex items-center gap-1 px-1"
+                    >
+                      <span>Details</span>
+                      <ArrowRight size={13} />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setQuickInquiryModal(prod.title)}
+                      className="flex-1 bg-white hover:bg-gray-50 text-gray-800 text-[11px] font-bold py-2 px-2 border border-gray-300 rounded-xs transition-colors cursor-pointer text-center truncate shadow-2xs"
+                    >
+                      Inquire about the part
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
+          ))}
         </div>
       </section>
 

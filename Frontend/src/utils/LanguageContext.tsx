@@ -123,9 +123,9 @@ const translations: Record<Language, Translations> = {
       searchButton: "Search parts",
     },
     hero: {
-      kicker: "OEM REPLACEMENT PARTS",
+      kicker: "PREMIUM REPLACEMENT PARTS",
       title: "The right part. A reliable choice.",
-      desc: "High-quality replacement bumpers, headlights, grilles, and exterior parts for BMW, Mercedes-Benz, Audi, and Range Rover.",
+      desc: "Discover high-quality replacement bumpers, headlights, grilles, and exterior parts for BMW, Mercedes-Benz, Audi, and Range Rover.",
       browseParts: "Find your parts",
       checkVin: "Verify by VIN",
       trust1: "Assistance in matching",
@@ -149,23 +149,23 @@ const translations: Record<Language, Translations> = {
       vinVerifyBtn: "Verify VIN",
     },
     brands: {
-      kicker: "VEHICLE BRANDS",
+      kicker: "PREMIUM BRANDS",
       title: "Select vehicle brand",
       desc: "Search parts by model, generation, and production year.",
       allBrands: "All brands",
       explore: "Browse brand",
     },
     categories: {
-      kicker: "PRODUCT CATEGORIES",
+      kicker: "CATEGORIES",
       title: "Parts by category",
-      desc: "Browse parts tailored to specific vehicle specifications.",
+      desc: "External components tailored to specific vehicle specifications.",
       allCats: "All categories",
       discover: "Discover category",
     },
     recommended: {
-      kicker: "FEATURED COMPONENTS",
-      title: "Recommended parts",
-      desc: "Popular products. Availability and matching require confirmation via VIN.",
+      kicker: "SELECTED FROM THE CATALOG",
+      title: "Most selling parts",
+      desc: "Sample catalog items. Availability and matching require confirmation.",
       allCatalog: "See catalog",
       details: "Details",
       inquire: "Inquire about the part",
@@ -270,7 +270,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     <LanguageContext.Provider
       value={{
         language: "en",
-        setLanguage: () => {},
+        setLanguage: () => { },
         t: translations.en,
       }}
     >
