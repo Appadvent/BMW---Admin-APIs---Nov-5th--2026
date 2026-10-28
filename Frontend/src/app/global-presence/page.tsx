@@ -150,9 +150,9 @@ export default function GlobalPresence() {
   ];
 
   return (
-    <div ref={containerRef} className="w-full bg-white min-h-screen">
+    <div ref={containerRef} className="w-full bg-[#0B0F19] text-[#F8FAFC] min-h-screen">
       {/* Hero Section */}
-      <section className="relative w-full bg-[#1b2229] text-white pt-40 pb-20 flex flex-col justify-center overflow-hidden">
+      <section className="relative w-full bg-[#0E1524] text-white pt-40 pb-20 flex flex-col justify-center overflow-hidden border-b border-[#26354A]">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -160,72 +160,72 @@ export default function GlobalPresence() {
             alt="Automotive OEM Logistics and Distribution"
             layout="fill"
             objectFit="cover"
-            className="opacity-25"
+            className="opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1b2229]/20 to-[#1b2229]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0E1524]/40 to-[#0B0F19]"></div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full" >
-          <p className="text-[11px] font-bold text-[#C82021] tracking-[0.2em] mb-4 uppercase">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-xs font-semibold mb-4 tracking-wider uppercase">
             Global Presence
-          </p>
-          <h1 className="gsap-header text-3xl sm:text-4xl md:text-[52px] font-extrabold mb-4 sm:mb-6 tracking-tight leading-tight">
-            Our Global Footprint
+          </div>
+          <h1 className="gsap-header text-3xl sm:text-4xl md:text-[52px] font-extrabold mb-4 sm:mb-6 tracking-tight leading-tight text-white">
+            Our Global Distribution Footprint
           </h1>
-          <p className="text-gray-300 text-sm md:text-base max-w-xl leading-relaxed">
-            Trusted by body shops, repair specialists, and fleet distributors across 25+ countries spanning six continents.
+          <p className="text-slate-300 text-sm md:text-base max-w-xl leading-relaxed">
+            Trusted by body shops, collision repair specialists, and fleet distributors across 25+ countries spanning North America, Europe, and Asia-Pacific.
           </p>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section id="stats-section" className="w-full bg-[#172631] text-white py-8 md:py-10 border-t border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-gray-700 text-center">
+      <section id="stats-section" className="w-full bg-[#161F30] text-white py-8 md:py-10 border-b border-[#26354A]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-[#26354A] text-center">
           <div className="gsap-stat-item pt-6 md:pt-0">
-            <h3 className="text-3xl md:text-4xl font-bold text-[#C82021] mb-2">
+            <h3 className="text-3xl md:text-4xl font-bold text-[#00C2CB] mb-2">
               <AnimatedCounter value="25+" duration={2.0} />
             </h3>
-            <p className="text-xs text-gray-400 tracking-wide">Countries Served</p>
+            <p className="text-xs text-slate-400 tracking-wide uppercase">Countries Served</p>
           </div>
           <div className="gsap-stat-item pt-6 md:pt-0">
-            <h3 className="text-3xl md:text-4xl font-bold text-[#C82021] mb-2">
+            <h3 className="text-3xl md:text-4xl font-bold text-[#00C2CB] mb-2">
               <AnimatedCounter value="500+" duration={2.0} />
             </h3>
-            <p className="text-xs text-gray-400 tracking-wide">Business Partners</p>
+            <p className="text-xs text-slate-400 tracking-wide uppercase">Business Partners</p>
           </div>
           <div className="gsap-stat-item pt-6 md:pt-0">
-            <h3 className="text-3xl md:text-4xl font-bold text-[#C82021] mb-2">
+            <h3 className="text-3xl md:text-4xl font-bold text-[#00C2CB] mb-2">
               <AnimatedCounter value="10,000+" duration={2.0} />
             </h3>
-            <p className="text-xs text-gray-400 tracking-wide">OEM Parts Supplied</p>
+            <p className="text-xs text-slate-400 tracking-wide uppercase">OEM Parts Supplied</p>
           </div>
           <div className="gsap-stat-item pt-6 md:pt-0">
-            <h3 className="text-3xl md:text-4xl font-bold text-[#C82021] mb-2">
+            <h3 className="text-3xl md:text-4xl font-bold text-[#00C2CB] mb-2">
               <AnimatedCounter value="30+" duration={2.0} />
             </h3>
-            <p className="text-xs text-gray-400 tracking-wide">Years of Expertise</p>
+            <p className="text-xs text-slate-400 tracking-wide uppercase">Years of Expertise</p>
           </div>
         </div>
       </section>
 
       {/* Distribution Network Section */}
-      <section id="map-section" className="w-full bg-[#373736] text-white py-8 md:py-20">
+      <section id="map-section" className="w-full bg-[#0B0F19] text-white py-12 md:py-20 border-b border-[#26354A]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-[11px] font-bold text-[#C82021] tracking-[0.2em] mb-4 uppercase">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-xs font-semibold mb-4 tracking-wider uppercase">
             Distribution Network
-          </p>
-          <h2 className="gsap-header text-2xl sm:text-3xl md:text-[42px] font-extrabold mb-3 sm:mb-4 leading-tight">
+          </div>
+          <h2 className="gsap-header text-2xl sm:text-3xl md:text-[40px] font-extrabold mb-3 sm:mb-4 leading-tight text-white">
             Where We Operate
           </h2>
-          <p className="text-[#FFFFFF8C] text-[16px] font-regular mb-12">
-            Active distribution and partnership in the following regions:
+          <p className="text-slate-400 text-[15px] max-w-xl mx-auto mb-12">
+            Active distribution and partner networks supplying genuine body parts and headlights.
           </p>
 
-          <div className="gsap-presence-map relative w-full rounded-none sm:rounded-2xl overflow-hidden">
+          <div className="gsap-presence-map relative w-full rounded-2xl overflow-hidden bg-[#161F30] border border-[#26354A] p-4">
             <img
               src="/Map.png"
               alt="Global Operations Map"
-              className="w-full h-[300px] sm:h-auto object-cover opacity-75 hover:opacity-90 transition-opacity duration-300 mx-auto max-w-full scale-100"
+              className="w-full h-[300px] sm:h-auto object-cover opacity-85 hover:opacity-100 transition-opacity duration-300 mx-auto max-w-full"
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.style.display = "none";
@@ -233,66 +233,69 @@ export default function GlobalPresence() {
             />
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Offices Section */}
-      <section id="offices-section" className="w-full bg-white text-[#1f2937] py-8 md:py-20" >
+      <section id="offices-section" className="w-full bg-[#0B0F19] text-[#F8FAFC] py-12 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
-            <p className="text-[11px] font-bold text-[#C82021] tracking-[0.2em] mb-4 uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-xs font-semibold mb-3 tracking-wider uppercase">
               Offices
-            </p>
-            <h2 className="gsap-header text-2xl sm:text-3xl md:text-[38px] font-extrabold text-[#172631] leading-tight">
-              Regional Offices
+            </div>
+            <h2 className="gsap-header text-2xl sm:text-3xl md:text-[38px] font-extrabold text-white leading-tight">
+              Regional Operations &amp; Hubs
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {offices.map((office, index) => (
-              <div key={index} className="gsap-office-card bg-[#F8FAFC] rounded-xl p-8 hover:shadow-lg transition-shadow duration-300 border border-gray-100">
-                <div className="w-6 h-0.5 bg-[#C82021] rounded-full mb-4"></div>
-                <p className="text-[10px] font-bold text-[#C82021] tracking-[0.1em] mb-1 uppercase">
+              <div key={index} className="gsap-office-card bg-[#161F30] rounded-xl p-6 sm:p-8 hover:border-[#00C2CB]/50 transition-all duration-300 border border-[#26354A]">
+                <div className="w-6 h-0.5 bg-[#00C2CB] rounded-full mb-4"></div>
+                <p className="text-[10px] font-bold text-[#00C2CB] tracking-[0.1em] mb-1 uppercase">
                   {office.region}
                 </p>
-                <h3 className="text-[20px] font-extrabold text-[#172631]">{office.city}</h3>
-                <p className="text-[13px] text-[#64748B] font-semibold mb-6">{office.country}</p>
+                <h3 className="text-[20px] font-extrabold text-white">{office.city}</h3>
+                <p className="text-[13px] text-slate-400 font-semibold mb-6">{office.country}</p>
 
-                <p className="text-[13px] text-[#59636B] font-regular mb-8 h-12 leading-relaxed">
+                <p className="text-[13px] text-slate-300 font-regular mb-8 h-12 leading-relaxed">
                   {office.address}
                 </p>
 
                 <div className="flex flex-col gap-3">
-                  <a href={`mailto:${office.email}`} className="flex items-center gap-2 text-[12px] text-[#172631] font-medium hover:text-[#C82021] transition-colors">
-                    <Mail size={14} className="text-gray-400" />
+                  <a href={`mailto:${office.email}`} className="flex items-center gap-2 text-[12px] text-slate-300 font-medium hover:text-[#00C2CB] transition-colors">
+                    <Mail size={14} className="text-[#00C2CB]" />
                     {office.email}
                   </a>
-                  <a href={`tel:${office.phoneLink}`} className="flex items-center gap-2 text-[12px] text-[#172631] font-medium hover:text-[#C82021] transition-colors">
-                    <Phone size={14} className="text-gray-400" />
+                  <a href={`tel:${office.phoneLink}`} className="flex items-center gap-2 text-[12px] text-slate-300 font-medium hover:text-[#00C2CB] transition-colors">
+                    <Phone size={14} className="text-[#00C2CB]" />
                     {office.phone}
                   </a>
                 </div>
               </div>
             ))}
           </div>
-        </div >
-      </section >
+        </div>
+      </section>
 
       {/* Partner With Us Section */}
-      <section id="partner-section" className="w-full bg-[#F8FAFC] text-center py-10 md:py-24 px-4 sm:px-6 lg:px-8">
+      <section id="partner-section" className="w-full bg-[#0E1524] border-t border-[#26354A] text-center py-12 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="gsap-partner-content max-w-2xl mx-auto flex flex-col items-center">
-          <p className="text-[11px] font-bold text-[#C82021] tracking-[0.2em] mb-4 uppercase">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-xs font-semibold mb-4 tracking-wider uppercase">
             Partner With Us
-          </p>
-          <h2 className="gsap-header text-2xl sm:text-3xl md:text-[36px] font-extrabold text-[#172631] mb-4 sm:mb-6 leading-tight">
+          </div>
+          <h2 className="gsap-header text-2xl sm:text-3xl md:text-[36px] font-extrabold text-white mb-4 leading-tight">
             Expand Into New Markets
           </h2>
-          <p className="text-[#59636B] text-sm md:text-[15px] font-normal mb-8 md:mb-10 max-w-xl leading-relaxed">
+          <p className="text-slate-300 text-sm md:text-[15px] font-normal mb-8 max-w-xl leading-relaxed">
             Interested in distributing our OEM replacement parts in your region? We are actively seeking new channel partners across all automotive markets.
           </p>
-          <button className="bg-[#C82021] hover:bg-[#A01819] text-[#FFFFFF] font-bold py-3 px-6 md:px-8 rounded-md flex items-center gap-2 transition-colors duration-300 text-[14px] cursor-pointer">
-            Become a Channel Partner
+          <a
+            href="/contact-us"
+            className="bg-[#00C2CB] hover:bg-[#00B0B8] text-[#0B0F19] font-bold py-3.5 px-8 rounded-xl flex items-center gap-2 transition-all duration-300 text-sm shadow-lg shadow-cyan-500/10 cursor-pointer"
+          >
+            <span>Become a Channel Partner</span>
             <ArrowRight size={16} />
-          </button>
+          </a>
         </div>
       </section>
     </div>

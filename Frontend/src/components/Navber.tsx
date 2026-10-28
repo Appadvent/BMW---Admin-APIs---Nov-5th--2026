@@ -1,52 +1,40 @@
 "use client";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
   X,
-  ChevronRight,
+  Search,
   ChevronDown,
-  ShieldCheck,
+  Shield,
+  Phone,
+  Mail,
+  Car,
+  Layers,
   ArrowRight,
+  Send,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import EnquiryPopup from "./EnquiryPopup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchCategories } from "../redux/Slice/categorySlice";
-import { fetchProducts } from "../redux/Slice/productSlice";
 
-const Navber = () => {
+export default function Navber() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isEnquiryPopupOpen, setIsEnquiryPopupOpen] = useState(false);
-  const pathname = usePathname();
-
-  const isHomePage = pathname === "/";
-  if (isHomePage) return null;
-
-  const isProductDetailPage = pathname === "/products/52" || (/^\/products\/[^\/]+$/.test(pathname));
-  const isWhiteNav = isProductDetailPage && !isScrolled;
-
-  const dispatch = useAppDispatch();
-  const { list: categories } = useAppSelector((state) => state.categories);
-  const { list: products } = useAppSelector((state) => state.products);
-
-  // Desktop Dropdown State
-  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isPartsDropdownOpen, setIsPartsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Mobile Dropdown Accordion State
-  const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { list: categories } = useAppSelector((state) => state.categories);
 
   useEffect(() => {
     if (!categories || categories.length === 0) {
       dispatch(fetchCategories());
     }
-    if (!products || products.length === 0) {
-      dispatch(fetchProducts());
-    }
-  }, [dispatch, categories?.length, products?.length]);
+  }, [dispatch, categories?.length]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,359 +44,206 @@ const Navber = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push("/products");
+    }
+  };
+
   const navLinks = [
-    { name: "Catalogue", href: "/products" },
-    { name: "About Us", href: "/about" },
-    { name: "VIN Check", href: "/contact-us?subject=VIN+Verification" },
-    { name: "News & Media", href: "/news" },
-    { name: "Contact", href: "/contact-us" },
+    { name: "Parts", href: "/products", hasDropdown: true },
+    { name: "Replacement by brand", href: "/products?brand=BMW" },
+    { name: "Search by OEM", href: "/products" },
+    { name: "For workshops", href: "/about" },
+    { name: "Blog", href: "/news" },
+    { name: "Contact us", href: "/contact-us" },
   ];
-
-  // Filter product categories (active 4 OEM categories)
-  const productCategories = useMemo(() => {
-    if (!categories || categories.length === 0) return [];
-    return categories.filter((cat: any) => {
-      const hasProds = (cat._count?.products ?? 0) > 0 || (cat.products?.length ?? 0) > 0;
-      const isBlogOnly = (cat._count?.blogs ?? 0) > 0 && !hasProds;
-      return !isBlogOnly;
-    });
-  }, [categories]);
-
-  const handleMouseEnter = () => {
-    if (dropdownTimeoutRef.current) {
-      clearTimeout(dropdownTimeoutRef.current);
-    }
-    setIsProductDropdownOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    dropdownTimeoutRef.current = setTimeout(() => {
-      setIsProductDropdownOpen(false);
-    }, 200);
-  };
-
-  const scrollToSection = (
-    e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
-    href: string
-  ) => {
-    setIsOpen(false);
-    setIsProductDropdownOpen(false);
-    if (href.startsWith("/#")) {
-      const targetId = href.replace("/#", "");
-      if (pathname === "/" || pathname === "") {
-        e.preventDefault();
-        setTimeout(() => {
-          const elem = document.getElementById(targetId);
-          if (elem) {
-            const navHeight = 70;
-            const elementPosition =
-              elem.getBoundingClientRect().top + window.pageYOffset - navHeight;
-            window.scrollTo({
-              top: elementPosition,
-              behavior: "smooth",
-            });
-          }
-        }, 120);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash) {
-      const targetId = window.location.hash.replace("#", "");
-      setTimeout(() => {
-        const elem = document.getElementById(targetId);
-        if (elem) {
-          const navHeight = 70;
-          const elementPosition =
-            elem.getBoundingClientRect().top + window.pageYOffset - navHeight;
-          window.scrollTo({
-            top: elementPosition,
-            behavior: "smooth",
-          });
-        }
-      }, 150);
-    }
-  }, [pathname]);
 
   return (
     <>
+
+      {/* Main Header matching Figma Component */}
       <header
-        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 bg-white border-b border-gray-200 shadow-sm ${
-          isScrolled ? "py-3" : "py-4 sm:py-5"
+        className={`sticky top-0 z-50 w-full transition-all duration-300 bg-[#0B0F19]/95 backdrop-blur-md border-b border-[#26354A] shadow-lg shadow-black/40 ${
+          isScrolled ? "py-2.5" : "py-3.5"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            {/* Automotive OEM Brand Mark */}
-            <Link href="/" className="flex items-center space-x-3 group select-none">
-              <div className="w-10 h-10 rounded-lg bg-[#C82021] flex items-center justify-center text-white font-extrabold text-base tracking-tighter shadow-md shadow-red-900/30 group-hover:scale-105 transition-transform">
-                OEM
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 lg:gap-8">
+          {/* Authentic Brand Logo from Figma */}
+          <Link href="/" className="flex items-center shrink-0 group select-none">
+            <img
+              src="/d4399531705f2cd5cbd3dc79bab27b7f083023f8.png"
+              alt="LampaIZderzak.pl"
+              className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+          </Link>
+
+          {/* Search Bar */}
+          <div className="hidden lg:flex flex-1 max-w-sm xl:max-w-md">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="w-full flex items-center bg-[#161F30] border border-[#26354A] rounded-lg overflow-hidden focus-within:border-[#00C2CB] transition-colors"
+            >
+              <div className="pl-3.5 text-slate-400">
+                <Search size={15} />
               </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-lg md:text-xl tracking-tight leading-none flex items-center gap-1 text-[#10151C]">
-                  AUTOPARTS <span className="text-[#C82021]">OEM</span>
-                </span>
-                <span className="text-[10px] text-gray-500 font-semibold tracking-widest uppercase mt-0.5">
-                  Replacement Parts
-                </span>
-              </div>
-            </Link>
-
-            {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center space-x-8">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-
-                // MULTI-CATEGORY DIRECT DROPDOWN (NO SUBCATEGORIES)
-                if (link.href === "/products" || link.name === "Catalogue" || link.name === "Products") {
-                  return (
-                    <div
-                      key={link.name}
-                      className="relative"
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                    >
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setIsProductDropdownOpen((prev) => !prev);
-                        }}
-                        className={`text-[15px] font-medium transition-colors duration-200 py-1 flex items-center gap-1.5 cursor-pointer bg-transparent border-none ${pathname.startsWith("/products") || isProductDropdownOpen
-                          ? "text-[#C82021] font-semibold"
-                          : "text-gray-800 hover:text-[#C82021]"
-                          }`}
-                      >
-                        <span>{link.name}</span>
-                        <ChevronDown
-                          size={14}
-                          className={`transition-transform duration-200 ${isProductDropdownOpen
-                            ? "rotate-180 text-[#C82021]"
-                            : "text-gray-500"
-                            }`}
-                        />
-                      </button>
-
-                      {/* Direct Category Dropdown Panel */}
-                      <AnimatePresence>
-                        {isProductDropdownOpen && (
-                          <div className="absolute top-full -left-4 pt-3 z-50">
-                            <motion.div
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 6 }}
-                              transition={{ duration: 0.2, ease: "easeOut" }}
-                              className="bg-white shadow-2xl rounded-2xl border border-gray-100 py-3 min-w-[320px] max-w-[360px] text-gray-800"
-                            >
-                              <div className="px-5 py-2 border-b border-gray-100 mb-1 flex items-center justify-between">
-                                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                                  OEM Parts Categories
-                                </span>
-                                <span className="text-[11px] font-bold text-[#C82021]">
-                                  BMW • BENZ • AUDI
-                                </span>
-                              </div>
-
-                              <div className="py-1">
-                                {productCategories && productCategories.length > 0 ? (
-                                  productCategories.map((cat: any) => {
-                                    const catId = cat.id ?? cat._id;
-                                    const catName = cat.name || cat.title || "Category";
-
-                                    return (
-                                      <Link
-                                        key={catId}
-                                        href={`/products?categoryId=${catId}`}
-                                        onClick={() => setIsProductDropdownOpen(false)}
-                                        className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors group select-none cursor-pointer"
-                                      >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                          <span className="w-2 h-2 rounded-full bg-gray-300 group-hover:bg-[#C82021] transition-colors shrink-0" />
-                                          <span className="text-[14px] font-semibold text-gray-800 group-hover:text-[#C82021] transition-colors truncate">
-                                            {catName}
-                                          </span>
-                                        </div>
-                                        <ChevronRight
-                                          size={15}
-                                          className="text-gray-400 group-hover:text-[#C82021] group-hover:translate-x-1 transition-all shrink-0 ml-2"
-                                        />
-                                      </Link>
-                                    );
-                                  })
-                                ) : (
-                                  <div className="px-5 py-4 text-xs text-gray-400">
-                                    Loading categories...
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className="px-5 pt-3 pb-1 border-t border-gray-100 mt-1">
-                                <Link
-                                  href="/products"
-                                  onClick={() => setIsProductDropdownOpen(false)}
-                                  className="text-xs font-bold text-[#C82021] hover:underline flex items-center justify-between"
-                                >
-                                  <span>View Complete Catalogue</span>
-                                  <ArrowRight size={13} />
-                                </Link>
-                              </div>
-                            </motion.div>
-                          </div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    onClick={(e) => scrollToSection(e, link.href)}
-                    className={`text-[15px] font-medium transition-colors duration-200 py-1 ${isActive
-                      ? "text-[#C82021] font-semibold"
-                      : "text-gray-800 hover:text-[#C82021]"
-                      }`}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Right Action Button */}
-            <div className="hidden sm:flex items-center space-x-5">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by part, OEM, VIN..."
+                className="w-full px-3 py-2 text-xs text-white placeholder-slate-400 bg-transparent focus:outline-none"
+              />
               <button
-                onClick={() => setIsEnquiryPopupOpen(true)}
-                className="inline-flex items-center gap-2 bg-[#C82021] hover:bg-[#A01819] text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md shadow-red-900/20 active:scale-95 transition-all duration-200 cursor-pointer"
+                type="submit"
+                className="px-3.5 py-2 text-xs font-bold text-[#00C2CB] hover:text-[#00E5FF] transition-colors"
               >
-                <ShieldCheck size={16} />
-                <span>Request Quote (RFQ)</span>
+                Search
               </button>
-            </div>
-
-            {/* Mobile Menu Toggle */}
-            <div className="lg:hidden flex items-center">
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-lg focus:outline-none transition-colors text-gray-800 hover:text-black cursor-pointer"
-                aria-label="Toggle Navigation Menu"
-              >
-                {isOpen ? <X size={26} /> : <Menu size={26} />}
-              </button>
-            </div>
+            </form>
           </div>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden xl:flex items-center gap-6 text-[13px] font-semibold text-slate-300 shrink-0">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+
+              if (link.hasDropdown) {
+                return (
+                  <div
+                    key={link.name}
+                    className="relative"
+                    onMouseEnter={() => {
+                      if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+                      setIsPartsDropdownOpen(true);
+                    }}
+                    onMouseLeave={() => {
+                      dropdownTimeoutRef.current = setTimeout(() => {
+                        setIsPartsDropdownOpen(false);
+                      }, 200);
+                    }}
+                  >
+                    <Link
+                      href={link.href}
+                      className={`flex items-center gap-1 py-1 hover:text-[#00C2CB] transition-colors ${
+                        pathname.startsWith("/products") ? "text-[#00C2CB] font-bold" : ""
+                      }`}
+                    >
+                      <span>{link.name}</span>
+                      <ChevronDown size={14} className={`transition-transform duration-200 ${isPartsDropdownOpen ? "rotate-180 text-[#00C2CB]" : ""}`} />
+                    </Link>
+
+                    {/* Categories Dropdown Panel */}
+                    {isPartsDropdownOpen && (
+                      <div className="absolute top-full -left-2 pt-2 z-50 w-72">
+                        <div className="bg-[#161F30] border border-[#26354A] rounded-xl shadow-2xl p-3 space-y-1">
+                          <Link
+                            href="/products"
+                            className="block px-3 py-2 rounded-lg text-xs font-bold text-white hover:bg-[#0B0F19] hover:text-[#00C2CB] transition-all"
+                          >
+                            All Categories
+                          </Link>
+                          {categories?.map((cat: any) => (
+                            <Link
+                              key={cat.id || cat._id}
+                              href={`/products?categoryId=${cat.id || cat._id}`}
+                              className="block px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-[#0B0F19] hover:text-[#00C2CB] transition-all"
+                            >
+                              {cat.name || cat.title}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`hover:text-[#00C2CB] transition-colors ${
+                    isActive ? "text-[#00C2CB] font-bold" : ""
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Right Action: Language and Quote / Profile */}
+          <div className="hidden sm:flex items-center gap-4 shrink-0">
+            <div className="flex items-center gap-1 text-xs font-semibold text-slate-300 hover:text-white cursor-pointer transition-colors">
+              <span>EN</span>
+              <ChevronDown size={13} className="text-slate-400" />
+            </div>
+            <Link
+              href="/contact-us"
+              className="bg-[#00C2CB] hover:bg-[#00E5FF] text-[#0B0F19] font-bold text-xs py-2 px-3.5 rounded-lg flex items-center gap-1.5 shadow-md shadow-cyan-900/20 transition-all cursor-pointer hover:-translate-y-0.5"
+            >
+              <span>Request Quote</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="xl:hidden p-2 text-slate-300 hover:text-white bg-[#161F30] border border-[#26354A] rounded-lg transition-colors cursor-pointer"
+            aria-label="Toggle navigation"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
 
-        {/* Mobile Menu Dropdown */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="lg:hidden border-t border-gray-200 bg-white/98 backdrop-blur-xl shadow-2xl overflow-hidden"
-            >
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col space-y-2">
-                {navLinks.map((link) => {
-                  if (link.href === "/products" || link.name === "Catalogue" || link.name === "Products") {
-                    return (
-                      <div key={link.name} className="flex flex-col">
-                        <div className="flex items-center justify-between text-[15px] font-medium text-gray-800 hover:text-[#C82021] hover:bg-gray-100 px-3 py-2.5 rounded-md transition-colors">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setIsMobileProductsOpen(!isMobileProductsOpen)
-                            }
-                            className="flex-1 text-left cursor-pointer"
-                          >
-                            {link.name}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setIsMobileProductsOpen(!isMobileProductsOpen)
-                            }
-                            className="p-1 text-gray-500 hover:text-[#C82021]"
-                          >
-                            <ChevronDown
-                              size={16}
-                              className={`transition-transform duration-200 ${isMobileProductsOpen
-                                ? "rotate-180 text-[#C82021]"
-                                : ""
-                                }`}
-                            />
-                          </button>
-                        </div>
+        {/* Mobile Dropdown Menu */}
+        {isOpen && (
+          <div className="xl:hidden bg-[#0B0F19] border-t border-[#26354A] px-4 pt-4 pb-6 mt-2 space-y-4">
+            <form onSubmit={handleSearchSubmit} className="flex items-center bg-[#161F30] border border-[#26354A] rounded-lg p-2">
+              <Search size={16} className="text-slate-400 mr-2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search parts, OEM, VIN..."
+                className="w-full text-xs text-white placeholder-slate-400 bg-transparent focus:outline-none"
+              />
+            </form>
 
-                        {/* Mobile Direct Categories (No Subcategories) */}
-                        <AnimatePresence>
-                          {isMobileProductsOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="pl-4 pr-2 space-y-1 overflow-hidden py-1"
-                            >
-                              {productCategories?.map((cat: any) => {
-                                const catId = cat.id ?? cat._id;
-                                const catName = cat.name || cat.title;
+            <nav className="flex flex-col space-y-2 text-sm font-medium text-slate-300">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`py-2 px-3 rounded-lg hover:bg-[#161F30] hover:text-[#00C2CB] transition-colors ${
+                    pathname === link.href ? "bg-[#161F30] text-[#00C2CB] font-bold" : ""
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
 
-                                return (
-                                  <Link
-                                    key={catId}
-                                    href={`/products?categoryId=${catId}`}
-                                    onClick={() => setIsOpen(false)}
-                                    className="text-[13px] font-medium text-gray-700 hover:text-[#C82021] py-2 px-3 rounded block hover:bg-gray-100 transition-colors"
-                                  >
-                                    {catName}
-                                  </Link>
-                                );
-                              })}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      className="text-[15px] font-medium text-gray-800 hover:text-[#C82021] hover:bg-gray-100 px-3 py-2.5 rounded-md transition-colors"
-                      onClick={(e) => scrollToSection(e, link.href)}
-                    >
-                      {link.name}
-                    </Link>
-                  );
-                })}
-
-                <div className="pt-3">
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      setIsEnquiryPopupOpen(true);
-                    }}
-                    className="flex items-center justify-center gap-2 bg-[#C82021] hover:bg-[#A01819] text-white px-4 py-3 rounded-lg text-sm font-bold w-full active:scale-98 transition-all cursor-pointer shadow-md shadow-red-900/20"
-                  >
-                    <ShieldCheck size={16} />
-                    <span>Request Quote (RFQ)</span>
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            <div className="pt-2 border-t border-[#26354A]">
+              <Link
+                href="/contact-us"
+                onClick={() => setIsOpen(false)}
+                className="w-full bg-[#00C2CB] hover:bg-[#00E5FF] text-[#0B0F19] font-bold text-xs py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-all text-center"
+              >
+                <span>Request a Quote</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
-      <EnquiryPopup
-        isOpen={isEnquiryPopupOpen}
-        onClose={() => setIsEnquiryPopupOpen(false)}
-      />
     </>
   );
-};
-
-export default Navber;
+}

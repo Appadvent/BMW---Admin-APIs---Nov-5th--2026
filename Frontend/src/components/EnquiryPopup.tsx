@@ -188,30 +188,30 @@ export default function EnquiryPopup({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto border border-gray-100"
+          className="relative w-full max-w-xl bg-[#161F30] rounded-2xl shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto border border-[#26354A] text-white"
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-800 transition-colors bg-gray-100 hover:bg-gray-200 rounded-full cursor-pointer"
+            className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors bg-[#0E1524] hover:bg-[#1E293B] border border-[#26354A] rounded-full cursor-pointer"
           >
             <X size={18} />
           </button>
 
           <div className="mb-6">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#C82021] bg-red-50 border border-red-200 px-2.5 py-1 rounded">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#00C2CB] bg-[#00C2CB]/10 border border-[#00C2CB]/30 px-2.5 py-1 rounded">
               VIN Verification &amp; OEM Quotation
             </span>
-            <h2 className="text-xl md:text-2xl font-bold text-[#172631] mt-2 mb-1">
+            <h2 className="text-xl md:text-2xl font-bold text-white mt-2 mb-1">
               Request for Quotation (RFQ)
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-slate-400">
               Provide vehicle details and part numbers. Our technical specialists will verify factory catalog fitment and respond with an official quotation.
             </p>
           </div>
 
           {contactSuccess && (
-            <div className="mb-5 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center space-x-2.5 text-sm">
-              <CheckCircle size={18} className="shrink-0" />
+            <div className="mb-5 p-4 bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 rounded-lg flex items-center space-x-2.5 text-sm">
+              <CheckCircle size={18} className="shrink-0 text-emerald-400" />
               <span>Your inquiry has been submitted successfully! Our technical team will contact you shortly.</span>
             </div>
           )}
@@ -219,7 +219,7 @@ export default function EnquiryPopup({
           <form className="space-y-4" onSubmit={handleContactSubmit} noValidate>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-800 mb-1">
+                <label className="block text-xs font-bold text-slate-200 mb-1">
                   Full Name / Company *
                 </label>
                 <input
@@ -230,19 +230,19 @@ export default function EnquiryPopup({
                   onChange={handleContactChange}
                   onBlur={handleBlur}
                   placeholder="e.g. John Smith / Auto Repair LLC"
-                  className={`w-full px-3.5 py-2 rounded-lg border text-sm transition-all bg-gray-50/50 ${
+                  className={`w-full px-3.5 py-2 rounded-lg border text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                     touched.name && formErrors.name
                       ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-gray-300 focus:border-[#C82021] focus:bg-white"
+                      : "border-[#26354A] focus:border-[#00C2CB]"
                   }`}
                 />
                 {touched.name && formErrors.name && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>
+                  <p className="text-red-400 text-xs mt-1">{formErrors.name}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-800 mb-1">
+                <label className="block text-xs font-bold text-slate-200 mb-1">
                   Phone Number *
                 </label>
                 <input
@@ -252,21 +252,21 @@ export default function EnquiryPopup({
                   onChange={handleContactChange}
                   onBlur={handleBlur}
                   placeholder="e.g. +1 555 123 4567"
-                  className={`w-full px-3.5 py-2 rounded-lg border text-sm transition-all bg-gray-50/50 ${
+                  className={`w-full px-3.5 py-2 rounded-lg border text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                     touched.phone && formErrors.phone
                       ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-gray-300 focus:border-[#C82021] focus:bg-white"
+                      : "border-[#26354A] focus:border-[#00C2CB]"
                   }`}
                 />
                 {touched.phone && formErrors.phone && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>
+                  <p className="text-red-400 text-xs mt-1">{formErrors.phone}</p>
                 )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-800 mb-1">
+                <label className="block text-xs font-bold text-slate-200 mb-1">
                   Email Address *
                 </label>
                 <input
@@ -277,26 +277,26 @@ export default function EnquiryPopup({
                   onChange={handleContactChange}
                   onBlur={handleBlur}
                   placeholder="e.g. contact@example.com"
-                  className={`w-full px-3.5 py-2 rounded-lg border text-sm transition-all bg-gray-50/50 ${
+                  className={`w-full px-3.5 py-2 rounded-lg border text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                     touched.email && formErrors.email
                       ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-gray-300 focus:border-[#C82021] focus:bg-white"
+                      : "border-[#26354A] focus:border-[#00C2CB]"
                   }`}
                 />
                 {touched.email && formErrors.email && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
+                  <p className="text-red-400 text-xs mt-1">{formErrors.email}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-800 mb-1">
+                <label className="block text-xs font-bold text-slate-200 mb-1">
                   Part Category
                 </label>
                 <select
                   name="category"
                   value={formData.category}
                   onChange={handleContactChange}
-                  className="w-full px-3.5 py-2 rounded-lg border border-gray-300 text-sm bg-gray-50/50 focus:border-[#C82021] focus:bg-white cursor-pointer"
+                  className="w-full px-3.5 py-2 rounded-lg border border-[#26354A] text-sm bg-[#0E1524] text-slate-200 focus:border-[#00C2CB] cursor-pointer"
                 >
                   <option value="General Inquiry">General Inquiry / Parts Check</option>
                   <option value="BMW OEM Bumper Assembly">BMW OEM Bumper Assembly</option>
@@ -309,13 +309,13 @@ export default function EnquiryPopup({
             </div>
 
             {/* Automotive Fitment Details */}
-            <div className="p-3.5 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
-              <p className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+            <div className="p-3.5 bg-[#0E1524] rounded-xl border border-[#26354A] space-y-3">
+              <p className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                 <span>Vehicle details for fitment verification:</span>
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                     Vehicle Model
                   </label>
                   <input
@@ -324,12 +324,12 @@ export default function EnquiryPopup({
                     value={formData.carModel}
                     onChange={handleContactChange}
                     placeholder="e.g. BMW 5 Series F10 LCI"
-                    className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs bg-white focus:border-[#C82021]"
+                    className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                     OEM Part Number
                   </label>
                   <input
@@ -338,12 +338,12 @@ export default function EnquiryPopup({
                     value={formData.oemNumber}
                     onChange={handleContactChange}
                     placeholder="e.g. 51118056586"
-                    className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs bg-white focus:border-[#C82021]"
+                    className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                     VIN Number (17 characters)
                   </label>
                   <input
@@ -353,12 +353,12 @@ export default function EnquiryPopup({
                     value={formData.vin}
                     onChange={handleContactChange}
                     placeholder="e.g. WBA5A71020G123456"
-                    className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs uppercase bg-white focus:border-[#C82021]"
+                    className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs uppercase bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                     Year of Manufacture
                   </label>
                   <input
@@ -367,7 +367,7 @@ export default function EnquiryPopup({
                     value={formData.year}
                     onChange={handleContactChange}
                     placeholder="e.g. 2016"
-                    className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs bg-white focus:border-[#C82021]"
+                    className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB]"
                   />
                 </div>
               </div>
@@ -375,10 +375,10 @@ export default function EnquiryPopup({
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="block text-xs font-bold text-gray-800">
+                <label className="block text-xs font-bold text-slate-200">
                   Message / Additional Notes *
                 </label>
-                <span className="text-[11px] text-gray-400">{formData.message.length}/1000</span>
+                <span className="text-[11px] text-slate-400">{formData.message.length}/1000</span>
               </div>
               <textarea
                 name="message"
@@ -388,14 +388,14 @@ export default function EnquiryPopup({
                 onBlur={handleBlur}
                 rows={3}
                 placeholder="Describe your requirement (e.g. trim level, parking sensor holes, package options)..."
-                className={`w-full px-3.5 py-2 rounded-lg border text-sm resize-none transition-all bg-gray-50/50 ${
+                className={`w-full px-3.5 py-2 rounded-lg border text-sm resize-none transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                   touched.message && formErrors.message
                     ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                    : "border-gray-300 focus:border-[#C82021] focus:bg-white"
+                    : "border-[#26354A] focus:border-[#00C2CB]"
                 }`}
               ></textarea>
               {touched.message && formErrors.message && (
-                <p className="text-red-500 text-xs mt-1">{formErrors.message}</p>
+                <p className="text-red-400 text-xs mt-1">{formErrors.message}</p>
               )}
             </div>
 
@@ -403,7 +403,7 @@ export default function EnquiryPopup({
               <button
                 disabled={contactLoading}
                 type="submit"
-                className="w-full bg-[#C82021] hover:bg-[#A01819] text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 text-sm disabled:opacity-50 cursor-pointer shadow-md shadow-red-900/20"
+                className="w-full bg-[#00C2CB] hover:bg-[#00B0B8] active:bg-[#009EA6] text-[#0B0F19] font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 text-sm disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
               >
                 {contactLoading ? (
                   <span>Submitting inquiry...</span>

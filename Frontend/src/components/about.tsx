@@ -86,26 +86,23 @@ const AboutPage = () => {
   );
 
   return (
-    <div ref={containerRef} className="w-full bg-white text-gray-900 overflow-x-hidden">
+    <div ref={containerRef} className="w-full bg-[#0B0F19] text-[#F8FAFC] overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[380px] sm:min-h-[480px] lg:min-h-[520px] flex items-center bg-[#10151C] overflow-hidden pt-24 pb-16 sm:pt-36 sm:pb-28 text-white">
+      <section className="relative w-full min-h-[380px] sm:min-h-[460px] flex items-center bg-[#0E1524] border-b border-[#26354A]/60 overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24 text-white">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-30"
+          className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{ backgroundImage: "url(/images/automotive/warehouse.jpg)" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#10151C] via-[#10151C]/90 to-transparent z-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19] via-[#0B0F19]/90 to-transparent z-0" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="max-w-3xl">
-            <p className="text-[#C82021] font-bold tracking-[0.16em] text-xs uppercase mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-xs font-semibold mb-4 tracking-wider uppercase">
               ABOUT OUR OEM PARTS DISTRIBUTION
-            </p>
-            <h1
-              style={{ fontFamily: "var(--font-manrope), 'Manrope', sans-serif" }}
-              className="text-2xl sm:text-4xl md:text-5xl lg:text-[52px] font-extrabold mb-4 sm:mb-5 tracking-tight leading-tight"
-            >
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[48px] font-extrabold mb-4 sm:mb-5 tracking-tight leading-tight text-white">
               Genuine OEM Body Panels &amp; Lighting Solutions
             </h1>
-            <p className="text-gray-300 text-sm sm:text-base md:text-[16px] leading-relaxed">
+            <p className="text-slate-300 text-sm sm:text-base md:text-[16px] leading-relaxed">
               We are a dedicated distributor of genuine OEM plastic body panels, bumper assemblies, shells, and headlights for BMW, Mercedes-Benz, Audi, and Range Rover.
             </p>
           </div>
@@ -113,12 +110,12 @@ const AboutPage = () => {
       </section>
 
       {/* Uncompromising Quality Section */}
-      <section className="py-8 md:py-24 bg-white">
+      <section className="py-12 md:py-24 bg-[#0B0F19]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-24 md:space-y-36">
             {/* Feature 1 - Our Mission */}
             <div className="gsap-feature-row grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-24 items-center">
-              <div className="gsap-feature-img rounded-2xl overflow-hidden shadow-xl bg-gray-100 w-full max-w-[558px] h-[280px] md:h-[400px] mx-auto md:mx-0 relative group border border-gray-200/70">
+              <div className="gsap-feature-img rounded-2xl overflow-hidden shadow-xl bg-[#161F30] w-full max-w-[558px] h-[280px] md:h-[400px] mx-auto md:mx-0 relative group border border-[#26354A]">
                 <img
                   src="/images/automotive/workshop.jpg"
                   alt="OEM bumper assemblies and body panels installation"
@@ -130,14 +127,14 @@ const AboutPage = () => {
                 />
               </div>
               <div className="gsap-feature-text space-y-5">
-                <span className="text-xs font-bold text-[#C82021] tracking-wider uppercase">Mission &amp; Precision</span>
-                <h2 className="text-xl md:text-2xl sm:text-3xl md:text-4xl font-bold text-[#10151C]">
+                <span className="text-xs font-bold text-[#00C2CB] tracking-wider uppercase">Mission &amp; Precision</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                   Guaranteed 100% VIN Compatibility
                 </h2>
-                <p className="text-gray-600 leading-relaxed text-[15px]">
+                <p className="text-slate-300 leading-relaxed text-[15px]">
                   Modern premium vehicles (BMW, Mercedes-Benz, Audi) demand precision-engineered replacement parts. Differences across production years, aero packages (M-Sport, AMG Line, S-Line), and driver-assistance sensors prevent generic fitment.
                 </p>
-                <p className="text-gray-600 leading-relaxed text-[15px]">
+                <p className="text-slate-400 leading-relaxed text-[15px]">
                   That is why every quotation is verified against factory manufacturer catalogs using your vehicle's unique 17-digit VIN.
                 </p>
               </div>
@@ -145,7 +142,7 @@ const AboutPage = () => {
 
             {/* Feature 2 - Quality & Condition */}
             <div className="gsap-feature-row grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-24 items-center">
-              <div className="order-1 md:order-2 gsap-feature-img rounded-2xl overflow-hidden shadow-xl bg-gray-100 w-full max-w-[558px] h-[280px] md:h-[400px] mx-auto md:ml-auto relative group border border-gray-200/70">
+              <div className="order-1 md:order-2 gsap-feature-img rounded-2xl overflow-hidden shadow-xl bg-[#161F30] w-full max-w-[558px] h-[280px] md:h-[400px] mx-auto md:ml-auto relative group border border-[#26354A]">
                 <img
                   src="/uploads/products/headlight_bmw_row_2.png"
                   alt="OEM Headlights BMW Adaptive LED"
@@ -157,14 +154,14 @@ const AboutPage = () => {
                 />
               </div>
               <div className="order-2 md:order-1 gsap-feature-text space-y-5">
-                <span className="text-xs font-bold text-[#C82021] tracking-wider uppercase">Quality Control</span>
-                <h2 className="text-xl md:text-2xl sm:text-3xl md:text-4xl font-bold text-[#10151C]">
+                <span className="text-xs font-bold text-[#00C2CB] tracking-wider uppercase">Quality Control</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                   Original Thermoplastics &amp; Verified Mounting Tabs
                 </h2>
-                <p className="text-gray-600 leading-relaxed text-[15px]">
+                <p className="text-slate-300 leading-relaxed text-[15px]">
                   Every bumper, shell, headlight, and lens in our catalogue undergoes thorough inspection for structural geometry, intact mounting tabs, undamaged bracket points, and authentic factory markings.
                 </p>
-                <p className="text-gray-600 leading-relaxed text-[15px]">
+                <p className="text-slate-400 leading-relaxed text-[15px]">
                   This gives collision centers and repair specialists complete assurance of straightforward installation without costly modifications.
                 </p>
               </div>
@@ -172,7 +169,7 @@ const AboutPage = () => {
 
             {/* Feature 3 - Workshop Support */}
             <div className="gsap-feature-row grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-24 items-center">
-              <div className="gsap-feature-img rounded-2xl overflow-hidden shadow-xl bg-gray-100 w-full max-w-[558px] h-[280px] md:h-[400px] mx-auto md:mx-0 relative group border border-gray-200/70">
+              <div className="gsap-feature-img rounded-2xl overflow-hidden shadow-xl bg-[#161F30] w-full max-w-[558px] h-[280px] md:h-[400px] mx-auto md:mx-0 relative group border border-[#26354A]">
                 <img
                   src="/images/automotive/collection.jpg"
                   alt="Repair workshop support and genuine OEM body parts"
@@ -184,14 +181,14 @@ const AboutPage = () => {
                 />
               </div>
               <div className="gsap-feature-text space-y-5">
-                <span className="text-xs font-bold text-[#C82021] tracking-wider uppercase">Dedicated B2B Support</span>
-                <h2 className="text-xl md:text-2xl sm:text-3xl md:text-4xl font-bold text-[#10151C]">
+                <span className="text-xs font-bold text-[#00C2CB] tracking-wider uppercase">Dedicated B2B Support</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                   Built for Body Shops, Dealerships &amp; Repair Centers
                 </h2>
-                <p className="text-gray-600 leading-relaxed text-[15px]">
+                <p className="text-slate-300 leading-relaxed text-[15px]">
                   We support collision repair facilities with comprehensive Request for Quotation (RFQ) processing. We provide high-resolution photos of specific parts, condition reports, and availability within 24 hours.
                 </p>
-                <p className="text-gray-600 leading-relaxed text-[15px]">
+                <p className="text-slate-400 leading-relaxed text-[15px]">
                   Our specialized logistics ensure oversized automotive parts are carefully packed and delivered securely.
                 </p>
               </div>
@@ -201,20 +198,20 @@ const AboutPage = () => {
       </section>
 
       {/* Craft Section with Animated Counters */}
-      <section id="craft-section" className="bg-[#17202A] text-white py-16 md:py-24">
+      <section id="craft-section" className="bg-[#0E1524] text-white py-16 md:py-24 border-y border-[#26354A]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="gsap-craft-left lg:col-span-6 space-y-6">
-              <p className="text-[#C82021] font-bold tracking-[0.16em] text-xs uppercase">
+              <span className="text-[#00C2CB] font-bold tracking-[0.16em] text-xs uppercase">
                 WHY CHOOSE US
-              </p>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
+              </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-white">
                 Specialized in Premium Automotive Marques
               </h2>
-              <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+              <p className="text-slate-300 leading-relaxed text-sm sm:text-base">
                 Rather than offering millions of generic aftermarket items, we focus strictly on our core expertise: genuine OEM bumper assemblies, shells, headlights, and lenses for BMW, Mercedes-Benz, Audi, and Range Rover.
               </p>
-              <p className="text-gray-200 font-semibold italic text-sm sm:text-base border-l-2 border-[#C82021] pl-3">
+              <p className="text-slate-200 font-semibold italic text-sm sm:text-base border-l-2 border-[#00C2CB] pl-3">
                 &ldquo;Genuine OEM parts guarantee vehicle safety, factory shut lines, and authentic showroom appearance.&rdquo;
               </p>
 
@@ -225,18 +222,18 @@ const AboutPage = () => {
                   { val: "4", label: "Premium Marques" },
                   { val: "24h", label: "Quote Turnaround" },
                 ].map((stat, idx) => (
-                  <div key={idx} className="gsap-presence-stat">
-                    <p className="text-2xl md:text-3xl font-bold text-[#C82021] mb-1">
+                  <div key={idx} className="gsap-presence-stat p-3 rounded-lg bg-[#161F30] border border-[#26354A]">
+                    <p className="text-2xl md:text-3xl font-bold text-[#00C2CB] mb-1">
                       <AnimatedCounter value={stat.val} duration={2.0} />
                     </p>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">{stat.label}</p>
+                    <p className="text-xs text-slate-400 uppercase tracking-wider">{stat.label}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="gsap-craft-right lg:col-span-6">
-              <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/10 h-[320px] md:h-[420px]">
+              <div className="rounded-2xl overflow-hidden shadow-2xl border border-[#26354A] h-[320px] md:h-[420px]">
                 <img
                   src="/images/automotive/warehouse.jpg"
                   alt="OEM Bumpers and body panels in automotive warehouse"
@@ -253,16 +250,16 @@ const AboutPage = () => {
       </section>
 
       {/* Core Values Section */}
-      <section id="values-section" className="py-12 md:py-24 bg-[#F8F9FA] border-b border-gray-200/60">
+      <section id="values-section" className="py-12 md:py-24 bg-[#0B0F19]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <p className="text-[#C82021] font-bold tracking-[0.16em] text-xs uppercase mb-2">
+            <span className="text-[#00C2CB] font-bold tracking-[0.16em] text-xs uppercase mb-2 block">
               QUALITY STANDARDS
-            </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#10151C] tracking-tight mb-3">
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
               Our Operational Standards
             </h2>
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Principles that guarantee reliability and confidence with every order.
             </p>
           </div>
@@ -280,13 +277,13 @@ const AboutPage = () => {
             ].map((val, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-xl p-5 border border-gray-200/80 shadow-xs hover:shadow-md hover:border-[#C82021]/30 transition-all duration-300"
+                className="bg-[#161F30] rounded-xl p-5 border border-[#26354A] shadow-lg hover:border-[#00C2CB]/50 transition-all duration-300"
               >
-                <div className="w-8 h-8 rounded-lg bg-red-50 text-[#C82021] flex items-center justify-center font-bold text-sm mb-3">
+                <div className="w-8 h-8 rounded-lg bg-[#00C2CB]/15 text-[#00C2CB] border border-[#00C2CB]/30 flex items-center justify-center font-bold text-sm mb-3">
                   ✓
                 </div>
-                <h3 className="font-bold text-[#10151C] text-base mb-1.5">{val.title}</h3>
-                <p className="text-gray-600 text-xs leading-relaxed">{val.desc}</p>
+                <h3 className="font-bold text-white text-base mb-1.5">{val.title}</h3>
+                <p className="text-slate-400 text-xs leading-relaxed">{val.desc}</p>
               </div>
             ))}
           </div>
@@ -294,23 +291,23 @@ const AboutPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-[#10151C] py-12 md:py-20 text-center text-white">
+      <section className="bg-[#0E1524] border-t border-[#26354A] py-12 md:py-20 text-center text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl md:text-3xl font-bold mb-3">Looking for Parts for Your Vehicle or Fleet?</h2>
-          <p className="text-gray-400 mb-8 max-w-xl mx-auto text-sm sm:text-base">
+          <h2 className="text-xl md:text-3xl font-bold mb-3 text-white">Looking for Parts for Your Vehicle or Fleet?</h2>
+          <p className="text-slate-300 mb-8 max-w-xl mx-auto text-sm sm:text-base">
             Explore our catalogue of over 800 OEM parts or contact us for free VIN verification.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-xs sm:max-w-none mx-auto">
             <Link
               href="/products"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#C82021] hover:bg-[#A01819] text-white font-bold py-3.5 px-6 rounded-xl text-sm transition-all duration-200 shadow-md shadow-red-900/30"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#00C2CB] hover:bg-[#00B0B8] text-[#0B0F19] font-bold py-3.5 px-6 rounded-xl text-sm transition-all duration-200 shadow-lg shadow-cyan-500/10"
             >
               <span>Browse Parts Catalogue</span>
               <ArrowRight size={16} />
             </Link>
             <Link
               href="/contact-us"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-white/30 hover:bg-white hover:text-[#10151C] text-white font-semibold py-3.5 px-6 rounded-xl text-sm transition-all duration-200"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-[#26354A] hover:border-[#00C2CB] bg-[#161F30] hover:text-[#00C2CB] text-white font-semibold py-3.5 px-6 rounded-xl text-sm transition-all duration-200"
             >
               <span>Request for Quotation (RFQ)</span>
             </Link>

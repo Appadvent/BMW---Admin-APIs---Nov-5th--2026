@@ -80,26 +80,26 @@ const NewsDetailPage: React.FC<NewsDetailPageProps> = ({ id }) => {
 
   if (detailLoading) {
     return (
-      <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center pt-20">
-        <Loader2 size={40} className="animate-spin text-[#C82021] mb-3" />
-        <p className="text-gray-500 font-medium text-sm">Loading article details...</p>
+      <div className="w-full min-h-screen bg-[#0B0F19] flex flex-col items-center justify-center pt-20">
+        <Loader2 size={40} className="animate-spin text-[#00C2CB] mb-3" />
+        <p className="text-slate-400 font-medium text-sm">Loading article details...</p>
       </div>
     );
   }
 
   if (!currentBlog) {
     return (
-      <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center px-4 pt-20 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 mb-4">
+      <div className="w-full min-h-screen bg-[#0B0F19] flex flex-col items-center justify-center px-4 pt-20 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-[#161F30] border border-[#26354A] flex items-center justify-center text-slate-500 mb-4">
           <Newspaper size={32} />
         </div>
-        <h2 className="text-xl md:text-2xl font-bold text-[#172631] mb-2">Article Not Found</h2>
-        <p className="text-gray-500 text-sm mb-6 max-w-md">
+        <h2 className="text-xl md:text-2xl font-bold text-white mb-2">Article Not Found</h2>
+        <p className="text-slate-400 text-sm mb-6 max-w-md">
           The news article you are looking for might have been moved or removed.
         </p>
         <Link
           href="/news"
-          className="inline-flex items-center gap-2 btn-automotive-primary text-white px-6 py-2.5 rounded-lg text-xs font-semibold"
+          className="inline-flex items-center gap-2 bg-[#00C2CB] hover:bg-[#00B0B8] text-[#0B0F19] font-bold px-6 py-2.5 rounded-lg text-xs"
         >
           <ArrowLeft size={14} />
           <span>Back to All News</span>
@@ -111,30 +111,30 @@ const NewsDetailPage: React.FC<NewsDetailPageProps> = ({ id }) => {
   const blog = currentBlog as unknown as BlogItem;
 
   return (
-    <div className="w-full bg-white text-gray-900 min-h-screen overflow-x-hidden flex flex-col justify-between">
+    <div className="w-full bg-[#0B0F19] text-[#F8FAFC] min-h-screen overflow-x-hidden flex flex-col justify-between">
       <div>
         {/* Banner Section matching the reference screenshot */}
-        <section className="relative bg-[#1A232C] pt-28 sm:pt-36 lg:pt-40 pb-16 sm:pb-24 overflow-hidden border-b border-[#2D3742] text-white">
+        <section className="relative bg-[#0E1524] pt-28 sm:pt-36 lg:pt-40 pb-16 sm:pb-24 overflow-hidden border-b border-[#26354A] text-white">
           <div
             className="absolute inset-0 bg-cover bg-center z-0 scale-105"
             style={{
-              backgroundImage: `linear-gradient(0deg, rgba(14, 29, 39, 0.95) 0%, rgba(14, 29, 39, 0.5) 100%), url(${blog.image || "/images/automotive/warehouse.jpg"
+              backgroundImage: `linear-gradient(0deg, rgba(11, 15, 25, 0.95) 0%, rgba(11, 15, 25, 0.6) 100%), url(${blog.image || "/images/automotive/warehouse.jpg"
                 })`,
             }}
           />
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
-              {/* Category Pill in Red */}
+              {/* Category Pill in Cyan */}
               <div className="mb-3">
-                <span className="inline-block px-3 py-1 rounded-[4px] text-[11px] font-bold tracking-[0.1em] uppercase text-white bg-[#C82021]">
+                <span className="inline-block px-3 py-1 rounded-[4px] text-[11px] font-bold tracking-[0.1em] uppercase text-[#00C2CB] bg-[#00C2CB]/10 border border-[#00C2CB]/30">
                   {getCategoryName(blog.category)}
                 </span>
               </div>
 
               {/* Date */}
               {(blog.publishedDate || blog.createdAt) && (
-                <p className="text-[#A0A8AE] text-xs sm:text-[13px] font-medium mb-3.5">
+                <p className="text-slate-400 text-xs sm:text-[13px] font-medium mb-3.5">
                   {formatDate(blog.publishedDate || blog.createdAt)}
                 </p>
               )}
@@ -151,24 +151,24 @@ const NewsDetailPage: React.FC<NewsDetailPageProps> = ({ id }) => {
         </section>
 
         {/* Content Section (2 Columns) */}
-        <main className="py-8 md:py-12 sm:py-16 lg:py-20 bg-white">
+        <main className="py-8 md:py-12 sm:py-16 lg:py-20 bg-[#0B0F19]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-10 lg:gap-14 items-start">
               {/* Left Column: Article Body */}
-              <div className="lg:col-span-8 space-y-8">
+              <div className="lg:col-span-8 space-y-8 bg-[#161F30] border border-[#26354A] rounded-2xl p-6 sm:p-8">
                 {/* Article Body in HTML format */}
                 <div
-                  className="text-[#59636B] text-[15px] sm:text-[16px] leading-[1.8] font-normal space-y-4 [&_p]:leading-[1.8] [&_p]:mb-5 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-[#172631] [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-[#172631] [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-[#172631] [&_h3]:mb-2 [&_strong]:font-bold [&_strong]:text-[#172631] [&_b]:font-bold [&_b]:text-[#172631] [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_blockquote]:border-l-4 [&_blockquote]:border-[#C82021] [&_blockquote]:pl-4 [&_blockquote]:py-1 [&_blockquote]:font-bold [&_blockquote]:text-[#172631] [&_blockquote]:mb-5"
+                  className="text-slate-300 text-[15px] sm:text-[16px] leading-[1.8] font-normal space-y-4 [&_p]:leading-[1.8] [&_p]:mb-5 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-white [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-white [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-white [&_h3]:mb-2 [&_strong]:font-bold [&_strong]:text-white [&_b]:font-bold [&_b]:text-white [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_blockquote]:border-l-4 [&_blockquote]:border-[#00C2CB] [&_blockquote]:pl-4 [&_blockquote]:py-1 [&_blockquote]:font-bold [&_blockquote]:text-white [&_blockquote]:mb-5"
                   dangerouslySetInnerHTML={{
                     __html: blog?.description || "",
                   }}
                 />
 
                 {/* Back to News Navigation */}
-                <div className="pt-8 border-t border-gray-200">
+                <div className="pt-8 border-t border-[#26354A]">
                   <Link
                     href="/news"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-[#172631] hover:text-[#C82021] transition-colors"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-[#00C2CB] hover:text-[#38ef7d] transition-colors"
                   >
                     <ArrowLeft size={16} />
                     <span>Back to News</span>
@@ -178,27 +178,27 @@ const NewsDetailPage: React.FC<NewsDetailPageProps> = ({ id }) => {
 
               {/* Right Column: Sidebar Widget */}
               <div className="lg:col-span-4">
-                <div className="bg-[#F8FAFC] rounded-2xl border border-[#E5E7E8] p-6 sm:p-7 space-y-6 sticky top-28 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+                <div className="bg-[#161F30] rounded-2xl border border-[#26354A] p-6 sm:p-7 space-y-6 sticky top-28 shadow-xl">
                   {/* MORE NEWS List */}
                   {otherArticles.length > 0 && (
                     <div>
-                      <p className="text-[#C82021] font-bold text-[11px] uppercase tracking-[0.16em] mb-4">
+                      <p className="text-[#00C2CB] font-bold text-[11px] uppercase tracking-[0.16em] mb-4">
                         MORE NEWS
                       </p>
                       <div className="space-y-4">
                         {otherArticles.map((article, idx) => (
                           <div
                             key={article.id || idx}
-                            className="border-b border-[#E5E7E8]/80 pb-3.5 last:border-b-0 last:pb-0"
+                            className="border-b border-[#26354A] pb-3.5 last:border-b-0 last:pb-0"
                           >
                             {(article.publishedDate || article.createdAt) && (
-                              <p className="text-[#A0A8AE] text-[11px] font-medium mb-1">
+                              <p className="text-slate-500 text-[11px] font-medium mb-1">
                                 {formatDate(article.publishedDate || article.createdAt)}
                               </p>
                             )}
                             <Link
                               href={`/news/${article.id}`}
-                              className="font-bold text-[13.5px] sm:text-[14px] text-[#172631] hover:text-[#C82021] transition-colors leading-snug line-clamp-2"
+                              className="font-bold text-[13.5px] sm:text-[14px] text-white hover:text-[#00C2CB] transition-colors leading-snug line-clamp-2"
                             >
                               {article.title}
                             </Link>
@@ -209,8 +209,8 @@ const NewsDetailPage: React.FC<NewsDetailPageProps> = ({ id }) => {
                   )}
 
                   {/* ENQUIRE Section */}
-                  <div className="border-t border-[#E2E8F0] pt-6">
-                    <p className="text-[#C82021] font-bold text-[11px] uppercase tracking-[0.16em] mb-3">
+                  <div className="border-t border-[#26354A] pt-6">
+                    <p className="text-[#00C2CB] font-bold text-[11px] uppercase tracking-[0.16em] mb-3">
                       ENQUIRE
                     </p>
                     <a
@@ -219,7 +219,7 @@ const NewsDetailPage: React.FC<NewsDetailPageProps> = ({ id }) => {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 bg-[#27804C] hover:bg-[#20BA5A] text-white font-semibold text-sm py-3 px-4 rounded-lg transition-all duration-200 shadow-sm active:scale-98"
+                      className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-slate-950 font-bold text-sm py-3 px-4 rounded-lg transition-all duration-200 shadow-sm active:scale-98"
                     >
                       <WhatsAppIcon />
                       <span>WhatsApp Us</span>
