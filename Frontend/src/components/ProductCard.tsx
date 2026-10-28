@@ -1,118 +1,157 @@
 import Link from "next/link";
 import React from "react";
-import { ArrowRight, CheckCircle2, Car, Shield } from "lucide-react";
+
+export interface ProductItem {
+  id?: string | number;
+  _id?: string | number;
+  title?: string;
+  name?: string;
+  badge?: string;
+  make?: string;
+  image?: string;
+  images?: string[];
+  thumbnail?: string;
+  version?: string;
+  model?: string;
+  condition?: string;
+  price?: string | number;
+  category?: any;
+  oemNumber?: string;
+  description?: string;
+  modelGen?: string[];
+  modelYear?: string[];
+  mountingPosition?: string[];
+  productCondition?: string[];
+  spec?: string[];
+  bumperSpecs?: string[];
+  specifications?: Array<{ name: string; value: string }>;
+}
 
 interface ProductCardProps {
-  prod: any;
+  prod: ProductItem;
   idx?: number;
   className?: string;
-  showTag?: boolean;
-  onEnquire?: (product: any) => void;
+  onInquire?: (prod: ProductItem) => void;
 }
 
 export default function ProductCard({
   prod,
   idx = 0,
   className = "",
-  showTag = true,
-  onEnquire,
+  onInquire,
 }: ProductCardProps) {
-  const getTagColor = (tag: string) => {
-    const t = tag?.toLowerCase()?.trim();
-    if (t?.includes("m sport")) return "bg-red-500/20 text-red-400 border border-red-500/30";
-    if (t?.includes("led") || t === "featured") return "bg-[#00C2CB]/20 text-[#00C2CB] border border-[#00C2CB]/30";
-    if (t?.includes("oem") || t === "new") return "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-    return "bg-[#1E293B] text-slate-300 border border-[#334155]";
-  };
+  const title = prod?.title || prod?.name || "Automotive Replacement Part";
 
-  const tagLabel = prod?.tag || prod?.badge;
-  const oem = prod?.oemNumber || (prod?.specifications?.find((s: any) => s.name?.toLowerCase().includes("oem"))?.value);
-  const model = prod?.model || (prod?.specifications?.find((s: any) => s.name?.toLowerCase().includes("model"))?.value);
-  const make = prod?.make || "BMW";
+  const brand =
+    prod?.badge ||
+    prod?.make?.toUpperCase() ||
+    "BMW";
+
+  const imageSrc =
+    prod?.image ||
+    prod?.images?.[0] ||
+    prod?.thumbnail ||
+    "/msp_car_1.png";
+
+  const version =
+    prod?.version ||
+    prod?.model ||
+    (prod?.specifications?.find((s: any) =>
+      s.name?.toLowerCase().includes("model") || s.name?.toLowerCase().includes("version")
+    )?.value) ||
+    "OEM Specification";
+
+  const condition =
+    prod?.condition ||
+    (prod?.specifications?.find((s: any) =>
+      s.name?.toLowerCase().includes("condition")
+    )?.value) ||
+    "OEM complete piece";
+
+  let priceStr = "Inquire";
+  if (prod?.price !== undefined && prod?.price !== null && prod?.price !== "") {
+    if (typeof prod.price === "number") {
+      priceStr = `€${prod.price.toLocaleString()}`;
+    } else {
+      priceStr = String(prod.price);
+    }
+  }
+
+  const productId = prod?.id || prod?._id || `ref-${idx + 1}`;
+  const queryPart = encodeURIComponent(title);
 
   return (
-    <div className={`bg-[#161F30] rounded-xl overflow-hidden border border-[#26354A] hover:border-[#00C2CB] hover:shadow-[0_8px_24px_rgba(0,194,203,0.15)] transition-all duration-300 group flex flex-col h-full ${className}`}>
-      {/* Product Image */}
-      <div className="relative h-[210px] bg-[#0F172A] overflow-hidden shrink-0 flex items-center justify-center p-3">
-        {prod?.image || prod?.images?.[0] || prod?.thumbnail ? (
+    <div
+      className={`bg-white rounded-none overflow-hidden flex flex-col justify-between text-[#111827] shadow-xl border border-white/10 group transition-all duration-300 hover:shadow-2xl h-full ${className}`}
+    >
+      {/* Product Photo with Badge */}
+      <div className="relative h-44 sm:h-[185px] w-full bg-black overflow-hidden shrink-0 group/img">
+        <Link
+          href={`/products/${productId}`}
+          className="block w-full h-full cursor-pointer focus:outline-none"
+          title={`View specifications for ${title}`}
+        >
           <img
-            src={prod?.image || prod?.images?.[0] || prod?.thumbnail}
-            alt={prod?.title || prod?.name || "Automotive Replacement Part"}
-            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+            src={imageSrc}
+            alt={title}
+            className="w-full h-full object-cover object-center group-hover/img:scale-105 transition-transform duration-500"
           />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 gap-1.5">
-            <Car size={36} className="text-slate-600" />
-            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">OEM Part</span>
-          </div>
-        )}
-        {showTag && tagLabel && (
-          <div
-            className={`absolute top-3 left-3 ${getTagColor(
-              tagLabel
-            )} text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm z-10 backdrop-blur-md`}
-          >
-            {tagLabel}
-          </div>
-        )}
-        {make && (
-          <div className="absolute top-3 right-3 bg-[#0B0F19]/80 backdrop-blur-md text-slate-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded border border-[#26354A] shadow-xs z-10">
-            {make}
-          </div>
-        )}
+        </Link>
+        {/* Brand Badge on photo bottom left */}
+        <div className="absolute bottom-2.5 left-2.5 pointer-events-none">
+          <span className="bg-[#11161f]/90 backdrop-blur-md text-[#00E5EE] text-[9px] font-bold px-2 py-0.5 rounded-xs border border-white/10 uppercase tracking-wider">
+            {brand}
+          </span>
+        </div>
       </div>
 
-      {/* Product Information */}
-      <div className="p-4 sm:p-5 flex flex-col flex-grow justify-between bg-[#161F30]">
+      {/* Product Info Table */}
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between bg-white">
         <div>
-          <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
-            <span className="text-[#00C2CB] font-bold text-[11px] uppercase tracking-wider flex items-center gap-1">
-              <Shield size={12} className="text-[#00C2CB]" />
-              {prod?.category?.title || prod?.category?.name || "OEM REPLACEMENT"}
-            </span>
-            {oem && (
-              <span className="font-mono text-[11px] font-medium text-slate-300 bg-[#0B0F19] px-2 py-0.5 rounded border border-[#26354A]">
-                OEM: {oem.length > 16 ? oem.slice(0, 16) + "..." : oem}
-              </span>
-            )}
-          </div>
+          <h4
+            className="text-[14px] sm:text-[15px] font-bold text-slate-900 mb-3 min-h-[40px] leading-snug line-clamp-2"
+          >
+            <Link
+              href={`/products/${productId}`}
+              className="hover:text-[#00C2CB] transition-colors cursor-pointer"
+              title={title}
+            >
+              {title}
+            </Link>
+          </h4>
 
-          <h3 className="font-bold text-white text-[15px] sm:text-[16px] mb-2 line-clamp-2 leading-snug group-hover:text-[#00C2CB] transition-colors" title={prod?.title}>
-            {prod?.title || "Automotive Component"}
-          </h3>
-
-          {model && (
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3 font-medium">
-              <span className="text-slate-500">Compatibility:</span>
-              <span className="text-slate-200 font-semibold bg-[#0B0F19] px-2 py-0.5 rounded border border-[#26354A]">
-                {model}
+          <div className="space-y-2 border-t border-slate-100 pt-3 text-[11px] text-slate-500 mb-5">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">Version:</span>
+              <span className="font-semibold text-slate-800 truncate max-w-[160px] text-right">
+                {version}
               </span>
             </div>
-          )}
-
-          <p className="text-slate-400 text-[12px] leading-relaxed line-clamp-2 mb-4">
-            {prod?.description
-              ? prod.description.replace(/<[^>]+>/g, '')
-              : "Precision-engineered genuine OEM replacement part. Factory verified fitment and mounting points."}
-          </p>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">Condition:</span>
+              <span className="font-semibold text-slate-800">{condition}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">Price:</span>
+              <span className="font-bold text-slate-900">{priceStr}</span>
+            </div>
+          </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-[#26354A]">
-          <Link
-            href={prod?.id ? `/products/${prod.id}` : '#'}
-            className="text-center text-[12px] font-semibold py-2 px-3 rounded-lg bg-[#0B0F19] text-slate-200 border border-[#26354A] hover:border-[#00C2CB] hover:text-white transition-all flex items-center justify-center gap-1"
-          >
-            Details
-            <ArrowRight size={13} />
-          </Link>
-          <Link
-            href={`/contact-us?part=${encodeURIComponent(prod?.title || '')}&oem=${encodeURIComponent(oem || '')}`}
-            className="text-center text-[12px] font-bold py-2 px-3 rounded-lg bg-[#00C2CB] hover:bg-[#00E5FF] text-[#0B0F19] transition-all block truncate shadow-sm"
-          >
-            Request Quote
-          </Link>
-        </div>
+        {/* Cyan Inquire Button */}
+        <button
+          type="button"
+          onClick={() => {
+            if (onInquire) {
+              onInquire(prod);
+            } else {
+              window.location.href = `/contact-us?subject=Part+Inquiry&part=${queryPart}`;
+            }
+          }}
+          className="w-full bg-[#00E5EE] hover:bg-[#00c8d1] active:scale-[0.99] text-[#081516] text-xs font-bold py-2.5 sm:py-3 px-3 rounded-none text-center transition-all shadow-sm block uppercase tracking-wider font-sans cursor-pointer"
+        >
+          Inquire about this part
+        </button>
       </div>
     </div>
   );
