@@ -43,16 +43,45 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  background-color: #ffffff;
-  color: #151C23;
+  background-color: #0B0F19;
+  color: #F8FAFC;
 }
 
 .ant-btn-primary {
-  background-color: #0052CC !important;
+  background-color: #00C2CB !important;
 }
 
 .ant-drawer-title {
   font-weight: 600 !important;
+}
+
+/* Figma Automotive Dark Theme Utilities */
+.bg-dark-base {
+  background-color: #0B0F19;
+}
+.bg-dark-surface {
+  background-color: #121824;
+}
+.bg-dark-card {
+  background-color: #161F30;
+}
+.border-dark-border {
+  border-color: #26354A;
+}
+.text-accent-cyan {
+  color: #00C2CB;
+}
+.bg-accent-cyan {
+  background-color: #00C2CB;
+}
+.btn-cyan {
+  background-color: #00C2CB;
+  color: #0B0F19;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.btn-cyan:hover {
+  background-color: #00E5FF;
 }
 
 @layer base {
@@ -163,19 +192,19 @@ body {
 /* ========================================================================= */
 .btn-primary-yellow,
 .btn-automotive-primary {
-  background-color: #C82021 !important;
-  color: #FFFFFF !important;
-  font-weight: 600 !important;
+  background-color: #00C2CB !important;
+  color: #0B0F19 !important;
+  font-weight: 700 !important;
   border: 1px solid transparent !important;
-  box-shadow: 0 4px 14px 0 rgba(200, 32, 33, 0.25) !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 194, 203, 0.25) !important;
   transition: all 0.25s ease !important;
 }
 
 .btn-primary-yellow:hover,
 .btn-automotive-primary:hover {
-  background-color: #A01819 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 6px 20px 0 rgba(200, 32, 33, 0.35) !important;
+  background-color: #00B0B8 !important;
+  color: #0B0F19 !important;
+  box-shadow: 0 6px 20px 0 rgba(0, 194, 203, 0.35) !important;
   transform: translateY(-1px);
 }
 
@@ -187,8 +216,8 @@ body {
 .btn-outline-yellow,
 .btn-automotive-outline {
   background-color: transparent !important;
-  color: #C82021 !important;
-  border: 1.5px solid #C82021 !important;
+  color: #00C2CB !important;
+  border: 1.5px solid #00C2CB !important;
   font-weight: 600 !important;
   box-shadow: none !important;
   transition: all 0.25s ease !important;
@@ -196,16 +225,16 @@ body {
 
 .btn-outline-yellow:hover,
 .btn-automotive-outline:hover {
-  background-color: #C82021 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 4px 14px 0 rgba(200, 32, 33, 0.25) !important;
+  background-color: #00C2CB !important;
+  color: #0B0F19 !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 194, 203, 0.25) !important;
 }
 
 .btn-automotive-dark {
-  background-color: #10151C !important;
+  background-color: #161F30 !important;
   color: #FFFFFF !important;
   font-weight: 600 !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid #26354A !important;
   transition: all 0.25s ease !important;
 }
 

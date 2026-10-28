@@ -35,7 +35,7 @@ export default function AnimatedText({
   trigger,
   start = "top 85%",
   highlightWords = [],
-  highlightClass = "text-[#C82021]",
+  highlightClass = "text-[#00C2CB]",
   autoPlay = false,
 }: AnimatedTextProps) {
   const containerRef = useRef<HTMLElement | null>(null);

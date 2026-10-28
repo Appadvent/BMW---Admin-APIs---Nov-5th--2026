@@ -235,22 +235,22 @@ function ContactUsContent() {
 
   const contactInfo = [
     {
-      icon: <Phone size={24} className="text-[#C82021] mb-4 mx-auto" />,
+      icon: <Phone size={24} className="text-[#00C2CB] mb-4 mx-auto" />,
       title: "HOTLINE / PHONE",
       main: "+1 800 555 0199",
-      sub: "Mon - Fri: 8:00 AM - 6:00 PM",
+      sub: "Mon - Fri: 8:00 AM - 6:00 PM EST",
     },
     {
-      icon: <Mail size={24} className="text-[#C82021] mb-4 mx-auto" />,
+      icon: <Mail size={24} className="text-[#00C2CB] mb-4 mx-auto" />,
       title: "EMAIL SUPPORT",
-      main: "support@autoparts-oem.com",
-      sub: "Response within 24 hours",
+      main: "support@motorium-parts.com",
+      sub: "Response within 2-4 business hours",
     },
     {
       icon: <MessageCircle size={24} className="text-[#25D366] mb-4 mx-auto" />,
       title: "WHATSAPP",
       main: "+1 800 555 0199",
-      sub: "Instant VIN fitment check",
+      sub: "Instant VIN fitment & catalog check",
     },
   ];
 
@@ -258,90 +258,92 @@ function ContactUsContent() {
     {
       question: "How is parts compatibility verified?",
       answer:
-        "Every inquiry is cross-referenced in factory manufacturer catalogs (BMW ETK, Mercedes EPC) using your 17-character VIN, guaranteeing 100% factory fitment.",
+        "Every inquiry is cross-referenced against factory manufacturer catalogs (BMW ETK, Mercedes EPC, Audi PR codes) using your 17-character VIN, guaranteeing 100% factory fitment.",
     },
     {
-      question: "What is the condition of the body and lighting parts?",
+      question: "What is the condition of body and lighting parts?",
       answer:
-        "All items in our catalogue are genuine OEM parts (bumpers, shells, headlights, lenses). Mounting points, tabs, and surface integrity are verified prior to dispatch.",
+        "All items in our catalog are genuine OEM parts (bumpers, shells, headlights, lenses). Mounting tabs, structural integrity, and lens clarity are verified prior to dispatch.",
     },
     {
       question: "Do you supply wholesale orders to repair shops?",
       answer:
-        "Yes, we partner with authorized repair centers, independent body shops, and fleet managers across North America and Europe with dedicated B2B terms.",
+        "Yes, we partner with authorized collision centers, independent body shops, and fleet managers across North America and Europe with dedicated B2B trade pricing.",
     },
     {
       question: "How quickly will I receive an official quotation (RFQ)?",
       answer:
-        "Standard quote turnaround is between 2 to 24 business hours. For urgent requests, please contact our hotline or message us on WhatsApp.",
+        "Standard quote turnaround is between 2 to 4 business hours. For urgent requests, please contact our hotline or message our technical team on WhatsApp.",
     },
   ];
 
   return (
-    <div ref={containerRef} className="w-full bg-white min-h-screen">
+    <div ref={containerRef} className="w-full bg-[#0B0F19] text-[#F8FAFC] min-h-screen">
       {/* Hero Section */}
-      <section className="relative w-full bg-[#10151C] text-white pt-36 pb-20 flex flex-col justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-15 bg-[radial-gradient(#C82021_1px,transparent_1px)] [background-size:20px_20px]" />
+      <section className="relative w-full bg-[#0E1524] border-b border-[#26354A]/60 text-white pt-36 pb-20 flex flex-col justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-15 bg-[radial-gradient(#00C2CB_1px,transparent_1px)] [background-size:24px_24px]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <p className="text-[11px] font-bold text-[#C82021] tracking-[0.2em] mb-4 uppercase">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center md:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/25 text-[#00C2CB] text-xs font-semibold mb-4 tracking-wider uppercase">
             Customer Service &amp; Technical Support
-          </p>
-          <h1 className="text-3xl sm:text-4xl md:text-[50px] font-extrabold mb-4 sm:mb-6 tracking-tight leading-tight">
-            Parts Quotation &amp; VIN Fitment Verification
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-[46px] font-extrabold mb-4 sm:mb-6 tracking-tight leading-tight text-white">
+            Request a Quote &amp; VIN Fitment Verification
           </h1>
-          <p className="text-gray-300 text-[15px] sm:text-[16px] font-normal max-w-2xl leading-relaxed">
-            Need an OEM bumper, headlight, or lens for BMW, Mercedes-Benz, Audi, or Range Rover? Provide your vehicle VIN or required part number. Our technical team will confirm factory fitment free of charge.
+          <p className="text-slate-300 text-[15px] sm:text-[16px] font-normal max-w-3xl leading-relaxed">
+            Need an OEM bumper, headlight, or replacement component for BMW, Mercedes-Benz, Audi, or Porsche? Provide your vehicle VIN or required part number. Our technical team will confirm factory fitment and price availability within 2-4 hours.
           </p>
         </div>
       </section>
 
       {/* Contact Info Cards */}
-      <section id="info-section" className="w-full bg-white py-8 md:py-12 -mt-10 relative z-20">
+      <section id="info-section" className="w-full bg-[#0B0F19] py-8 md:py-12 -mt-8 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
           {contactInfo.map((info, index) => (
             <div
               key={index}
-              className="gsap-info-card bg-[#F8FAFC] rounded-xl p-8 text-center shadow-xs hover:shadow-md border border-gray-100 transition-all duration-300"
+              className="gsap-info-card bg-[#161F30] rounded-xl p-8 text-center border border-[#26354A] hover:border-[#00C2CB]/50 transition-all duration-300 shadow-lg group"
             >
-              {info.icon}
-              <p className="text-[11px] font-bold text-[#C82021] tracking-[0.1em] mb-2.5 uppercase">
+              <div className="p-3 bg-[#0E1524] rounded-full w-14 h-14 mx-auto flex items-center justify-center border border-[#26354A] group-hover:border-[#00C2CB]/40 transition-colors">
+                {info.icon}
+              </div>
+              <p className="text-[11px] font-bold text-[#00C2CB] tracking-[0.1em] mb-2.5 uppercase mt-3">
                 {info.title}
               </p>
-              <h3 className="text-[17px] font-bold text-[#172631] mb-1.5">{info.main}</h3>
-              <p className="text-[13px] font-normal text-[#59636B]">{info.sub}</p>
+              <h3 className="text-[17px] font-bold text-white mb-1.5">{info.main}</h3>
+              <p className="text-[13px] font-normal text-slate-400">{info.sub}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Main Content Area: Form & FAQ */}
-      <section id="main-content-section" className="w-full bg-white py-8 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16">
+      <section id="main-content-section" className="w-full bg-[#0B0F19] py-8 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
           {/* Left Column: Form */}
-          <div className="gsap-form-section">
-            <p className="text-[11px] font-bold text-[#C82021] tracking-[0.2em] mb-3 uppercase">
+          <div className="gsap-form-section lg:col-span-7 bg-[#161F30] border border-[#26354A] rounded-2xl p-6 sm:p-8">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-[11px] font-bold uppercase tracking-wider mb-3">
               Request for Quotation (RFQ)
-            </p>
-            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-[#172631] mb-4 sm:mb-6 leading-tight">
-              Submit a Part Inquiry
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">
+              Tell us what part you are looking for
             </h2>
-            <p className="text-sm text-gray-600 mb-8 leading-relaxed">
+            <p className="text-sm text-slate-300 mb-8 leading-relaxed">
               Not sure if a part fits your vehicle? Provide your 17-digit VIN from your vehicle registration — we will verify catalog compatibility free of charge.
             </p>
 
             {contactSuccess && (
-              <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl flex items-center space-x-3 text-sm">
-                <CheckCircle size={20} className="shrink-0" />
-                <span>Your inquiry has been submitted successfully! Our technical advisor will contact you shortly.</span>
+              <div className="mb-6 p-4 bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 rounded-xl flex items-center space-x-3 text-sm">
+                <CheckCircle size={20} className="shrink-0 text-emerald-400" />
+                <span>Your inquiry has been submitted successfully! Our technical advisor will contact you shortly with quotation details.</span>
               </div>
             )}
 
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5" onSubmit={handleContactSubmit} noValidate>
               <div className="col-span-1">
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-[#172631]">Full Name / Company *</label>
-                  <span className="text-[11px] text-gray-400">{formData.name.length}/60</span>
+                  <label className="block text-xs font-bold text-slate-200">Full Name / Company *</label>
+                  <span className="text-[11px] text-slate-400">{formData.name.length}/60</span>
                 </div>
                 <input
                   type="text"
@@ -351,14 +353,14 @@ function ContactUsContent() {
                   onChange={handleContactChange}
                   onBlur={handleBlur}
                   placeholder="e.g. John Smith / Auto Repair LLC"
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-white ${
+                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                     touched.name && formErrors.name
                       ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-gray-300 focus:border-[#C82021]"
+                      : "border-[#26354A] focus:border-[#00C2CB]"
                   }`}
                 />
                 {touched.name && formErrors.name && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
                     <AlertCircle size={13} className="shrink-0" />
                     <span>{formErrors.name}</span>
                   </p>
@@ -367,8 +369,8 @@ function ContactUsContent() {
 
               <div className="col-span-1">
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-[#172631]">Email Address *</label>
-                  <span className="text-[11px] text-gray-400">{formData.email.length}/100</span>
+                  <label className="block text-xs font-bold text-slate-200">Email Address *</label>
+                  <span className="text-[11px] text-slate-400">{formData.email.length}/100</span>
                 </div>
                 <input
                   type="email"
@@ -378,14 +380,14 @@ function ContactUsContent() {
                   onChange={handleContactChange}
                   onBlur={handleBlur}
                   placeholder="contact@example.com"
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-white ${
+                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                     touched.email && formErrors.email
                       ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-gray-300 focus:border-[#C82021]"
+                      : "border-[#26354A] focus:border-[#00C2CB]"
                   }`}
                 />
                 {touched.email && formErrors.email && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
                     <AlertCircle size={13} className="shrink-0" />
                     <span>{formErrors.email}</span>
                   </p>
@@ -394,8 +396,8 @@ function ContactUsContent() {
 
               <div className="col-span-1">
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-[#172631]">Phone Number *</label>
-                  <span className="text-[11px] text-gray-400">Digits only</span>
+                  <label className="block text-xs font-bold text-slate-200">Phone Number *</label>
+                  <span className="text-[11px] text-slate-400">Digits only</span>
                 </div>
                 <input
                   type="tel"
@@ -405,14 +407,14 @@ function ContactUsContent() {
                   onChange={handleContactChange}
                   onBlur={handleBlur}
                   placeholder="e.g. +1 555 123 4567"
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-white ${
+                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                     touched.phone && formErrors.phone
                       ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-gray-300 focus:border-[#C82021]"
+                      : "border-[#26354A] focus:border-[#00C2CB]"
                   }`}
                 />
                 {touched.phone && formErrors.phone && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
                     <AlertCircle size={13} className="shrink-0" />
                     <span>{formErrors.phone}</span>
                   </p>
@@ -420,12 +422,12 @@ function ContactUsContent() {
               </div>
 
               <div className="col-span-1">
-                <label className="block text-xs font-bold text-[#172631] mb-1.5">Part Category</label>
+                <label className="block text-xs font-bold text-slate-200 mb-1.5">Part Category</label>
                 <select
                   name="category"
                   value={formData.category}
                   onChange={handleContactChange}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#C82021] text-sm bg-white text-gray-700 cursor-pointer"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#26354A] focus:outline-none focus:border-[#00C2CB] text-sm bg-[#0E1524] text-slate-200 cursor-pointer"
                 >
                   <option value="General Inquiry">General Inquiry / Quotation</option>
                   <option value="BMW OEM Bumper Assembly">BMW OEM Bumper Assembly</option>
@@ -437,16 +439,16 @@ function ContactUsContent() {
               </div>
 
               {/* Automotive Fitment Section */}
-              <div className="col-span-1 md:col-span-2 p-4 bg-[#F8FAFC] rounded-xl border border-gray-200/80">
+              <div className="col-span-1 md:col-span-2 p-4 bg-[#0E1524] rounded-xl border border-[#26354A]">
                 <div className="flex items-center gap-2 mb-3">
-                  <ShieldCheck size={18} className="text-[#C82021]" />
-                  <span className="text-xs font-bold text-gray-900 uppercase tracking-wide">
+                  <ShieldCheck size={18} className="text-[#00C2CB]" />
+                  <span className="text-xs font-bold text-slate-200 uppercase tracking-wide">
                     Vehicle details for factory fitment verification (Optional)
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-700 mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                       Vehicle Model
                     </label>
                     <input
@@ -455,12 +457,12 @@ function ContactUsContent() {
                       value={formData.carModel}
                       onChange={handleContactChange}
                       placeholder="e.g. BMW 5 Series F10"
-                      className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs bg-white focus:border-[#C82021] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-700 mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                       OEM Part Number
                     </label>
                     <input
@@ -469,12 +471,12 @@ function ContactUsContent() {
                       value={formData.oemNumber}
                       onChange={handleContactChange}
                       placeholder="e.g. 51118056586"
-                      className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs bg-white focus:border-[#C82021] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-700 mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                       Vehicle VIN
                     </label>
                     <input
@@ -484,12 +486,12 @@ function ContactUsContent() {
                       value={formData.vin}
                       onChange={handleContactChange}
                       placeholder="e.g. WBA5A71020G..."
-                      className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs uppercase bg-white focus:border-[#C82021] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs uppercase bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-700 mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                       Year
                     </label>
                     <input
@@ -498,7 +500,7 @@ function ContactUsContent() {
                       value={formData.year}
                       onChange={handleContactChange}
                       placeholder="e.g. 2016"
-                      className="w-full px-3 py-1.5 rounded-md border border-gray-300 text-xs bg-white focus:border-[#C82021] focus:outline-none"
+                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -506,8 +508,8 @@ function ContactUsContent() {
 
               <div className="col-span-1 md:col-span-2">
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-[#172631]">Message / Additional Notes *</label>
-                  <span className="text-[11px] text-gray-400">{formData.message.length}/1000</span>
+                  <label className="block text-xs font-bold text-slate-200">Message / Additional Notes *</label>
+                  <span className="text-[11px] text-slate-400">{formData.message.length}/1000</span>
                 </div>
                 <textarea
                   name="message"
@@ -517,14 +519,14 @@ function ContactUsContent() {
                   onBlur={handleBlur}
                   rows={4}
                   placeholder="Describe the required part, package trim, mounting tabs, or specific requirements..."
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm resize-none transition-all bg-white ${
+                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm resize-none transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
                     touched.message && formErrors.message
                       ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-gray-300 focus:border-[#C82021]"
+                      : "border-[#26354A] focus:border-[#00C2CB]"
                   }`}
                 ></textarea>
                 {touched.message && formErrors.message && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-medium">
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
                     <AlertCircle size={13} className="shrink-0" />
                     <span>{formErrors.message}</span>
                   </p>
@@ -535,7 +537,7 @@ function ContactUsContent() {
                 <button
                   disabled={contactLoading}
                   type="submit"
-                  className="w-full bg-[#C82021] hover:bg-[#A01819] text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 text-sm disabled:opacity-50 cursor-pointer shadow-md shadow-red-900/20"
+                  className="w-full bg-[#00C2CB] hover:bg-[#00B0B8] active:bg-[#009EA6] text-[#0B0F19] font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 text-sm disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/20"
                 >
                   {contactLoading ? (
                     <span>Submitting inquiry...</span>
@@ -551,19 +553,19 @@ function ContactUsContent() {
           </div>
 
           {/* Right Column: FAQ */}
-          <div className="gsap-faq-section">
-            <p className="text-[11px] font-bold text-[#C82021] tracking-[0.2em] mb-3 uppercase">
+          <div className="gsap-faq-section lg:col-span-5 flex flex-col justify-start">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-[11px] font-bold uppercase tracking-wider mb-3 w-fit">
               Frequently Asked Questions
-            </p>
-            <h2 className="text-2xl sm:text-3xl md:text-[30px] font-extrabold text-[#172631] mb-6 sm:mb-8 leading-tight">
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-6 leading-tight">
               Questions &amp; Answers
             </h2>
 
             <div className="space-y-4">
               {faqs.map((faq, index) => (
-                <div key={index} className="bg-[#F8FAFC] rounded-xl p-6 border border-gray-100 hover:border-gray-200 transition-colors">
-                  <h4 className="text-[14px] font-bold text-[#172631] mb-2">{faq.question}</h4>
-                  <p className="text-[13px] font-normal text-[#59636B] leading-relaxed">
+                <div key={index} className="bg-[#161F30] rounded-xl p-5 sm:p-6 border border-[#26354A] hover:border-[#00C2CB]/40 transition-colors">
+                  <h4 className="text-[14px] font-bold text-white mb-2">{faq.question}</h4>
+                  <p className="text-[13px] font-normal text-slate-300 leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>
@@ -578,7 +580,7 @@ function ContactUsContent() {
 
 export default function ContactUs() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#0B0F19] text-white flex items-center justify-center">Loading...</div>}>
       <ContactUsContent />
     </Suspense>
   );
