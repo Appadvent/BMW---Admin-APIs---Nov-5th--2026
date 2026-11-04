@@ -23,7 +23,7 @@ export default function Navber() {
     { name: "Home", href: "/" },
     { name: "About us", href: "/about" },
     { name: "Parts", href: "/products" },
-    { name: "Search by OEM", href: "/products?search=OEM" },
+    { name: "Search by OEM", href: "/products" },
     { name: "Blog", href: "/news" },
     { name: "Contact us", href: "/contact-us" },
   ];

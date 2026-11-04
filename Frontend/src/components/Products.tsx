@@ -36,476 +36,6 @@ const ALL_BUMPER_SPECS = [
 
 // Curated automotive parts catalogue ensuring every filter combination returns matching parts
 // Matching Figma Frame 169:1136, BMW parts, Mercedes-Benz parts, and Rangerover parts frames
-const COMPREHENSIVE_PRODUCTS: ProductItem[] = [
-  // 1. Initial 9 items matching Figma Frame 169:1136
-  {
-    id: 'ref-1',
-    title: 'Front bumper BMW Series 3 G20',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'G20 (2018 - 2022)',
-    condition: 'OEM complete piece',
-    price: 'Inquire',
-    image: '/products/bumper_assy_row_1.jpeg',
-    category: 'Bumper assembly',
-    modelGen: ['3 Series (G20/G21)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: '51118074989',
-  },
-  {
-    id: 'ref-2',
-    title: 'LED headlight BMW Series 5 G30',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'OEM/LED (2017 - 2023)',
-    condition: 'OEM complete piece',
-    price: 'Inquire',
-    image: '/products/headlight_bmw_row_10.png',
-    category: 'Headlights',
-    modelGen: ['5 Series (G30/G31)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Front', 'Right side'],
-    productCondition: ['OEM complete piece', 'Restyling'],
-    spec: ['EU specification (ECE)'],
-    oemNumber: '63117438344',
-  },
-  {
-    id: 'ref-3',
-    title: 'Front bumper C-Class W206',
-    badge: 'MERCEDES-BENZ',
-    make: 'Mercedes-Benz',
-    version: 'W206 (2021+)',
-    condition: 'OEM complete piece',
-    price: 'From €1,250.00',
-    image: '/products/bumper_assy_row_1.png',
-    category: 'Bumper assembly',
-    modelGen: ['C-Class (W206)'],
-    modelYear: ['2021 - 2023', '2024+'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: 'A2068808401',
-  },
-  {
-    id: 'ref-4',
-    title: 'Front bumper C-Class W206',
-    badge: 'MERCEDES-BENZ',
-    make: 'Mercedes-Benz',
-    version: 'W213 (2016 - 2020)',
-    condition: 'OEM complete piece',
-    price: 'Upon request',
-    image: '/products/bumper_shell_row_1.jpeg',
-    category: 'Bumper shell',
-    modelGen: ['C-Class (W206)', 'E-Class (W214)'],
-    modelYear: ['2015 - 2017', '2018 - 2020', '2021 - 2023', '2024+'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece', 'New OEM'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: 'A2068804902',
-  },
-  {
-    id: 'ref-5',
-    title: 'Front grille set X5 G05',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'Shadow-Line (2018 - 2023)',
-    condition: 'OEM complete piece',
-    price: 'Inquire',
-    image: '/products/bumper_shell_row_1.png',
-    category: 'Grilles & Trims',
-    modelGen: ['X5 (G05)', '7 Series (G11/G12)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    oemNumber: '51138096590',
-  },
-  {
-    id: 'ref-6',
-    title: 'Bumper trim Range Rover Sport',
-    badge: 'RANGE ROVER',
-    make: 'Range Rover',
-    version: 'L494 (2018 - 2022)',
-    condition: 'OEM complete piece',
-    price: 'From €650.00',
-    image: '/products/bumper_shell_row_10.jpeg',
-    category: 'Grilles & Trims',
-    modelGen: ['Range Rover Sport (L461)', 'Range Rover (L460)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Front', 'Rear'],
-    productCondition: ['OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ['M Sport / AMG package', 'PDC openings', 'Exhaust cutout'],
-    oemNumber: 'LR116843',
-  },
-  {
-    id: 'ref-7',
-    title: 'Front splitter BMW Series 4 G22',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'G22 / G23 (2020+)',
-    condition: 'OEM complete piece',
-    price: 'Upon request',
-    image: '/products/bumper_shell_row_100.png',
-    category: 'Grilles & Trims',
-    modelGen: ['4 Series (G22/G23)', '3 Series (G20/G21)'],
-    modelYear: ['2021 - 2023', '2024+'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece', 'New OEM'],
-    spec: ['EU specification (ECE)'],
-    oemNumber: '51138075665',
-  },
-  {
-    id: 'ref-8',
-    title: 'Mirror housing GLC X253',
-    badge: 'MERCEDES-BENZ',
-    make: 'Mercedes-Benz',
-    version: 'X253 (2015 - 2022)',
-    condition: 'OEM complete piece',
-    price: 'Inquire',
-    image: '/products/headlight_bmw_row_11.png',
-    category: 'Lenses & Housings',
-    modelGen: ['GLC (X254)', 'C-Class (W206)', 'E-Class (W214)', 'GLE (V167)'],
-    modelYear: ['2015 - 2017', '2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Left side', 'Right side', 'Front'],
-    productCondition: ['OEM complete piece', 'Refurbished'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    oemNumber: 'A2538100100',
-  },
-  {
-    id: 'ref-9',
-    title: 'Headlight housing kit W205',
-    badge: 'VALEO / HELLA',
-    make: 'Mercedes-Benz',
-    version: 'Left + Right (2014 - 2018)',
-    condition: 'OEM complete piece',
-    price: 'Inquire',
-    image: '/products/headlight_bmw_row_12.png',
-    category: 'Lenses & Housings',
-    modelGen: ['C-Class (W206)', 'S-Class (W223)'],
-    modelYear: ['2010 - 2014', '2015 - 2017'],
-    mountingPosition: ['Left side', 'Right side', 'Front'],
-    productCondition: ['OEM complete piece', 'Refurbished'],
-    spec: ['US specification (DOT/SAE)'],
-    oemNumber: 'A2058200461',
-  },
-
-  // 2. Mercedes-Benz E-Class W214 & Additional Mercedes Products
-  {
-    id: 'mb-w214-1',
-    title: 'Front bumper E-Class W214 AMG Line',
-    badge: 'MERCEDES-BENZ',
-    make: 'Mercedes-Benz',
-    version: 'AMG-Line (2023 - 2025)',
-    condition: 'OEM complete piece',
-    price: 'From €1,450.00',
-    image: '/products/bumper_assy_row_10.jpeg',
-    category: 'Bumper assembly',
-    modelGen: ['E-Class (W214)'],
-    modelYear: ['2024+', '2021 - 2023'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece', 'New OEM'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: 'A2148800101',
-  },
-  {
-    id: 'mb-w214-2',
-    title: 'Rear bumper cover E-Class W214 AMG',
-    badge: 'MERCEDES-BENZ',
-    make: 'Mercedes-Benz',
-    version: 'AMG-Line (2023+)',
-    condition: 'OEM complete piece',
-    price: 'From €950.00',
-    image: '/products/bumper_shell_row_101.png',
-    category: 'Bumper shell',
-    modelGen: ['E-Class (W214)'],
-    modelYear: ['2024+'],
-    mountingPosition: ['Rear'],
-    productCondition: ['OEM complete piece', 'New OEM'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: 'A2148800202',
-  },
-  {
-    id: 'mb-w214-3',
-    title: 'Digital Light Headlight E-Class W214',
-    badge: 'MERCEDES-BENZ',
-    make: 'Mercedes-Benz',
-    version: 'Left Side (2023 - 2025)',
-    condition: 'New OEM',
-    price: 'Inquire',
-    image: '/products/headlight_bmw_row_13.png',
-    category: 'Headlights',
-    modelGen: ['E-Class (W214)'],
-    modelYear: ['2024+'],
-    mountingPosition: ['Front', 'Left side'],
-    productCondition: ['New OEM', 'OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    oemNumber: 'A2149060100',
-  },
-
-  // 3. BMW Additional Models
-  {
-    id: 'bmw-g20-rear',
-    title: 'Rear bumper assembly BMW 3 Series G20',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'M-Sport (2019 - 2023)',
-    condition: 'OEM complete piece',
-    price: 'From €880.00',
-    image: '/products/bumper_assy_row_100.jpeg',
-    category: 'Bumper assembly',
-    modelGen: ['3 Series (G20/G21)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Rear'],
-    productCondition: ['OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: '51128074990',
-  },
-  {
-    id: 'bmw-f10-bumper',
-    title: 'Front bumper BMW 5 Series F10',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'M-Aerodynamic (2010 - 2014)',
-    condition: 'Refurbished',
-    price: 'From €490.00',
-    image: '/products/bumper_assy_row_101.jpeg',
-    category: 'Bumper assembly',
-    modelGen: ['5 Series (G30/G31)'],
-    modelYear: ['2010 - 2014', '2015 - 2017'],
-    mountingPosition: ['Front'],
-    productCondition: ['Refurbished', 'Restyling'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: '51118048668',
-  },
-  {
-    id: 'bmw-x5-bumper',
-    title: 'Front bumper cover BMW X5 G05 M-Sport',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'M-Sport Package (2019 - 2024)',
-    condition: 'OEM complete piece',
-    price: 'From €1,100.00',
-    image: '/products/bumper_shell_row_102.jpeg',
-    category: 'Bumper shell',
-    modelGen: ['X5 (G05)'],
-    modelYear: ['2018 - 2020', '2021 - 2023', '2024+'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece', 'New OEM'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: '51118072044',
-  },
-  {
-    id: 'bmw-x5-headlight-left',
-    title: 'Laserlight Headlight BMW X5 G05',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'Left Side (2018 - 2023)',
-    condition: 'OEM complete piece',
-    price: 'Inquire',
-    image: '/products/headlight_bmw_row_14.png',
-    category: 'Headlights',
-    modelGen: ['X5 (G05)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Front', 'Left side'],
-    productCondition: ['OEM complete piece', 'Restyling'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    oemNumber: '63117933339',
-  },
-  {
-    id: 'bmw-g30-lens',
-    title: 'Clear headlight lens kit BMW 5 Series G30',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'Left + Right (2017 - 2020)',
-    condition: 'New OEM',
-    price: 'From €220.00',
-    image: '/products/headlight_bmw_row_15.png',
-    category: 'Lenses & Housings',
-    modelGen: ['5 Series (G30/G31)'],
-    modelYear: ['2015 - 2017', '2018 - 2020'],
-    mountingPosition: ['Front', 'Left side', 'Right side'],
-    productCondition: ['New OEM'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    oemNumber: '63117438341',
-  },
-
-  // 4. Audi Brand Products
-  {
-    id: 'audi-rs6-bumper',
-    title: 'Front bumper assembly Audi RS6 / A6 C8',
-    badge: 'AUDI',
-    make: 'Audi',
-    version: 'RS Black Edition (2020 - 2024)',
-    condition: 'OEM complete piece',
-    price: 'From €1,650.00',
-    image: '/products/bumper_assy_row_102.jpeg',
-    category: 'Bumper assembly',
-    modelGen: ['A6 (C8)', 'A4 (B9)'],
-    modelYear: ['2021 - 2023', '2024+'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece', 'New OEM'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: '4K0807065',
-  },
-  {
-    id: 'audi-matrix-headlight',
-    title: 'HD Matrix LED Headlight Audi A4 B9',
-    badge: 'AUDI',
-    make: 'Audi',
-    version: 'Right Side (2016 - 2020)',
-    condition: 'Restyling',
-    price: 'Inquire',
-    image: '/products/headlight_bmw_row_16.png',
-    category: 'Headlights',
-    modelGen: ['A4 (B9)'],
-    modelYear: ['2015 - 2017', '2018 - 2020'],
-    mountingPosition: ['Front', 'Right side'],
-    productCondition: ['Restyling', 'OEM complete piece'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    oemNumber: '8W0941036',
-  },
-  {
-    id: 'audi-q8-grille',
-    title: 'Singleframe Front Grille Audi Q8 S-Line',
-    badge: 'AUDI',
-    make: 'Audi',
-    version: 'Shadow Black (2019 - 2024)',
-    condition: 'OEM complete piece',
-    price: 'From €580.00',
-    image: '/products/bumper_shell_row_103.jpeg',
-    category: 'Grilles & Trims',
-    modelGen: ['Q8 (4M8)', 'Q7 (4M)'],
-    modelYear: ['2018 - 2020', '2021 - 2023', '2024+'],
-    mountingPosition: ['Front'],
-    productCondition: ['OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    oemNumber: '4M8853651',
-  },
-  {
-    id: 'audi-s3-rear',
-    title: 'Rear bumper diffuser Audi S3 8Y',
-    badge: 'AUDI',
-    make: 'Audi',
-    version: 'Gloss Black (2020 - 2023)',
-    condition: 'OEM complete piece',
-    price: 'From €420.00',
-    image: '/products/bumper_shell_row_104.png',
-    category: 'Bumper shell',
-    modelGen: ['S3 (8Y)', 'A4 (B9)', 'A6 (C8)'],
-    modelYear: ['2021 - 2023'],
-    mountingPosition: ['Rear'],
-    productCondition: ['OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    bumperSpecs: ['M Sport / AMG package', 'PDC openings', 'Exhaust cutout'],
-    oemNumber: '8Y4807521',
-  },
-
-  // 5. Range Rover Brand Products
-  {
-    id: 'rr-l460-bumper',
-    title: 'Front bumper assembly Range Rover L460',
-    badge: 'RANGE ROVER',
-    make: 'Range Rover',
-    version: 'SV Autobiography (2022 - 2025)',
-    condition: 'New OEM',
-    price: 'From €1,850.00',
-    image: '/products/bumper_assy_row_104.jpeg',
-    category: 'Bumper assembly',
-    modelGen: ['Range Rover (L460)', 'Defender (L663)'],
-    modelYear: ['2021 - 2023', '2024+'],
-    mountingPosition: ['Front'],
-    productCondition: ['New OEM', 'OEM complete piece'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: 'LR153094',
-  },
-  {
-    id: 'rr-sport-headlight',
-    title: 'Pixel Laser Headlight Range Rover Sport',
-    badge: 'RANGE ROVER',
-    make: 'Range Rover',
-    version: 'Left Side (2018 - 2022)',
-    condition: 'Restyling',
-    price: 'Inquire',
-    image: '/products/headlight_bmw_row_17.png',
-    category: 'Headlights',
-    modelGen: ['Range Rover Sport (L461)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Front', 'Left side'],
-    productCondition: ['Restyling', 'OEM complete piece'],
-    spec: ['EU specification (ECE)'],
-    oemNumber: 'LR116492',
-  },
-  {
-    id: 'rr-velar-rear',
-    title: 'Rear bumper assembly Range Rover Velar',
-    badge: 'RANGE ROVER',
-    make: 'Range Rover',
-    version: 'R-Dynamic (2018 - 2023)',
-    condition: 'Refurbished',
-    price: 'From €720.00',
-    image: '/products/bumper_assy_row_11.png',
-    category: 'Bumper assembly',
-    modelGen: ['Range Rover Velar (L560)', 'Defender (L663)'],
-    modelYear: ['2018 - 2020', '2021 - 2023'],
-    mountingPosition: ['Rear'],
-    productCondition: ['Refurbished', 'OEM complete piece'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: 'LR093412',
-  },
-
-  // 6. Older Generations & Classic Spares (2010 - 2014 & Refurbished)
-  {
-    id: 'mb-w212-bumper',
-    title: 'Front bumper shell Mercedes E-Class W212',
-    badge: 'MERCEDES-BENZ',
-    make: 'Mercedes-Benz',
-    version: 'Avantgarde (2010 - 2013)',
-    condition: 'Refurbished',
-    price: 'From €380.00',
-    image: '/products/bumper_shell_row_106.png',
-    category: 'Bumper shell',
-    modelGen: ['E-Class (W214)'],
-    modelYear: ['2010 - 2014'],
-    mountingPosition: ['Front'],
-    productCondition: ['Refurbished', 'Restyling'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    bumperSpecs: ALL_BUMPER_SPECS,
-    oemNumber: 'A2128800140',
-  },
-  {
-    id: 'bmw-f30-headlight',
-    title: 'Bi-Xenon Headlight BMW 3 Series F30',
-    badge: 'BMW',
-    make: 'BMW',
-    version: 'Right Side (2012 - 2015)',
-    condition: 'Refurbished',
-    price: 'From €310.00',
-    image: '/products/headlight_bmw_row_18.png',
-    category: 'Headlights',
-    modelGen: ['3 Series (G20/G21)'],
-    modelYear: ['2010 - 2014', '2015 - 2017'],
-    mountingPosition: ['Front', 'Right side'],
-    productCondition: ['Refurbished'],
-    spec: ['EU specification (ECE)', 'US specification (DOT/SAE)'],
-    oemNumber: '63117338706',
-  },
-];
-
 function ProductsContent() {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -566,6 +96,12 @@ function ProductsContent() {
       setSelectedBrand(urlBrand);
     }
   }, [urlBrand]);
+
+  useEffect(() => {
+    // Sync search query when url query changes
+    setSearchQuery(urlSearch);
+    setDebouncedSearch(urlSearch);
+  }, [urlSearch]);
 
   useEffect(() => {
     if (!categories || categories.length === 0) {
@@ -725,54 +261,49 @@ function ProductsContent() {
     ];
   }, [selectedBrand]);
 
-  // Merge comprehensive reference catalogue with dynamic backend products if available
+  // Pure dynamic backend products
   const baseProducts: ProductItem[] = useMemo(() => {
-    if (reduxProducts && reduxProducts.length > 0) {
-      const dbMapped: ProductItem[] = reduxProducts.map((p: any, idx: number) => ({
-        id: p.id || p._id || `db-${idx}`,
-        title: p.title || p.name,
-        badge: p.make?.toUpperCase() || 'OEM',
-        make: p.make || 'BMW',
-        version:
-          p.model ||
-          p.version ||
-          p.specifications?.find(
-            (s: any) =>
-              s.name?.toLowerCase().includes('model') ||
-              s.name?.toLowerCase().includes('version')
-          )?.value ||
-          'OEM Specification',
-        condition:
-          p.condition ||
-          p.specifications?.find((s: any) =>
-            s.name?.toLowerCase().includes('condition')
-          )?.value ||
-          'OEM complete piece',
-        price:
-          p.price !== undefined && p.price !== null
-            ? typeof p.price === 'number'
-              ? `€${p.price.toLocaleString()}`
-              : p.price
-            : 'Inquire',
-        finish:
-          p.finish ||
-          p.specifications?.find((s: any) =>
-            s.name?.toLowerCase().includes('finish')
-          )?.value ||
-          'To be painted',
-        image: p.image || p.images?.[0] || p.thumbnail || '/products/bumper_assy_row_1.jpeg',
-        oemNumber: p.oemNumber,
-        category: p.category?.title || p.category?.name || 'Bumper assembly',
-        modelGen: ['3 Series (G20/G21)', '5 Series (G30/G31)', 'C-Class (W206)', 'E-Class (W214)'],
-        modelYear: ['2021 - 2023', '2024+'],
-        mountingPosition: ['Front'],
-        productCondition: ['OEM complete piece'],
-        spec: ['EU specification (ECE)'],
-        bumperSpecs: ALL_BUMPER_SPECS,
-      }));
-      return [...COMPREHENSIVE_PRODUCTS, ...dbMapped];
+    if (reduxProducts && Array.isArray(reduxProducts)) {
+      return reduxProducts.map((p: any, idx: number) => {
+        const specs = Array.isArray(p.specifications) ? p.specifications : [];
+        const findSpec = (keyword: string) =>
+          specs.find((s: any) => s.name?.toLowerCase().includes(keyword))?.value;
+
+        const modelValue = p.model || findSpec('model') || findSpec('version') || '';
+        const conditionValue = p.condition || findSpec('condition') || 'OEM complete piece';
+        const finishValue = p.finish || findSpec('finish') || 'To be painted';
+        const positionValue = p.position || findSpec('position') || findSpec('mounting') || '';
+        const yearValue = p.yearRange || findSpec('year') || '';
+        const specType = findSpec('spec') || '';
+        const oemVal = p.oemNumber || findSpec('oem') || findSpec('number') || '';
+
+        return {
+          id: p.id || p._id || `db-${idx}`,
+          title: p.title || p.name || 'Automotive Replacement Part',
+          badge: p.make?.toUpperCase() || (p.tag ? p.tag.toUpperCase() : 'OEM'),
+          make: p.make || '',
+          version: modelValue || 'Universal / Specific Series',
+          condition: conditionValue,
+          price:
+            p.price !== undefined && p.price !== null
+              ? typeof p.price === 'number'
+                ? `€${p.price.toLocaleString()}`
+                : p.price
+              : 'Inquire',
+          finish: finishValue,
+          image: p.image || p.images?.[0] || p.thumbnail || '/products/bumper_assy_row_1.jpeg',
+          oemNumber: oemVal,
+          category: p.category?.title || p.category?.name || '',
+          modelGen: modelValue ? [modelValue] : [],
+          modelYear: yearValue ? [yearValue] : [],
+          mountingPosition: positionValue ? [positionValue] : [],
+          productCondition: conditionValue ? [conditionValue] : [],
+          spec: specType ? [specType] : [],
+          bumperSpecs: specs.map((s: any) => s.name || s.value),
+        };
+      });
     }
-    return COMPREHENSIVE_PRODUCTS;
+    return [];
   }, [reduxProducts]);
 
   // Robust client-side filtering across all selected criteria
@@ -782,24 +313,26 @@ function ProductsContent() {
       const pMake = (p.make || '').toLowerCase();
       const pBadge = (p.badge || '').toLowerCase();
       const pVersion = (p.version || '').toLowerCase();
+      const pCategory = (p.category || '').toLowerCase();
+      const pOem = (p.oemNumber || '').toLowerCase();
 
       // 1. Brand Filter
       if (selectedBrand !== 'all') {
         const target = selectedBrand.toLowerCase().trim();
         if (target.includes('range') || target.includes('rover')) {
-          if (!pMake.includes('range') && !pMake.includes('rover') && !pBadge.includes('range') && !pBadge.includes('rover')) {
+          if (!pMake.includes('range') && !pMake.includes('rover') && !pBadge.includes('range') && !pBadge.includes('rover') && !pTitle.includes('range') && !pTitle.includes('rover')) {
             return false;
           }
         } else if (target.includes('mercedes')) {
-          if (!pMake.includes('mercedes') && !pBadge.includes('mercedes')) {
+          if (!pMake.includes('mercedes') && !pBadge.includes('mercedes') && !pTitle.includes('mercedes') && !pTitle.includes('benz') && !pTitle.includes('w206') && !pTitle.includes('w214') && !pTitle.includes('glc')) {
             return false;
           }
         } else if (target.includes('bmw')) {
-          if (!pMake.includes('bmw') && !pBadge.includes('bmw')) {
+          if (!pMake.includes('bmw') && !pBadge.includes('bmw') && !pTitle.includes('bmw') && !pTitle.includes('g20') && !pTitle.includes('g30') && !pTitle.includes('f20') && !pTitle.includes('f30')) {
             return false;
           }
         } else if (target.includes('audi')) {
-          if (!pMake.includes('audi') && !pBadge.includes('audi')) {
+          if (!pMake.includes('audi') && !pBadge.includes('audi') && !pTitle.includes('audi')) {
             return false;
           }
         } else {
@@ -812,7 +345,7 @@ function ProductsContent() {
       // 2. Search Query
       if (debouncedSearch.trim()) {
         const query = debouncedSearch.toLowerCase().trim();
-        const fullString = `${pTitle} ${pMake} ${pVersion} ${pBadge} ${p.oemNumber || ''}`.toLowerCase();
+        const fullString = `${pTitle} ${pMake} ${pVersion} ${pBadge} ${pOem}`.toLowerCase();
         if (!fullString.includes(query)) {
           return false;
         }
@@ -820,62 +353,105 @@ function ProductsContent() {
 
       // 3. Model & Generation
       if (selectedModelGen !== 'all') {
-        const matchGen = p.modelGen?.includes(selectedModelGen);
-        const matchText =
-          (selectedModelGen.includes('3 Series') && (pTitle.includes('series 3') || pTitle.includes('g20'))) ||
-          (selectedModelGen.includes('5 Series') && (pTitle.includes('series 5') || pTitle.includes('g30'))) ||
-          (selectedModelGen.includes('X5') && (pTitle.includes('x5') || pTitle.includes('g05'))) ||
-          (selectedModelGen.includes('C-Class') && (pTitle.includes('c-class') || pTitle.includes('w206'))) ||
-          (selectedModelGen.includes('E-Class') && (pTitle.includes('e-class') || pTitle.includes('w214') || pTitle.includes('w212')));
-        if (!matchGen && !matchText) return false;
+        const targetModel = selectedModelGen.toLowerCase();
+        // Check exact match in modelGen array
+        const matchGen = p.modelGen?.some((m) => m.toLowerCase().includes(targetModel) || targetModel.includes(m.toLowerCase()));
+        
+        // Smart matching by keywords in title, version, and model code
+        const codes = targetModel.match(/\((.*?)\)/)?.[1]?.toLowerCase()?.split('/') || [];
+        const modelName = targetModel.replace(/\(.*?\)/g, '').trim().toLowerCase();
+        
+        const matchCode = codes.some((c) => pTitle.includes(c) || pVersion.includes(c));
+        const matchName = modelName && (pTitle.includes(modelName) || pVersion.includes(modelName));
+
+        if (!matchGen && !matchCode && !matchName) return false;
       }
 
       // 4. Model Year
       if (selectedModelYear !== 'all') {
-        const matchYear = p.modelYear?.includes(selectedModelYear);
-        if (!matchYear) return false;
+        const y = selectedModelYear;
+        const matchYear = p.modelYear?.some((my) => my.includes(y));
+        
+        // Match year range from product title/description e.g. "15-18", "2023", "21-"
+        let matchTextYear = false;
+        if (y === '2024+') {
+          matchTextYear = pTitle.includes('2024') || pTitle.includes('2025') || pTitle.includes('24-');
+        } else if (y === '2021 - 2023') {
+          matchTextYear = pTitle.includes('2021') || pTitle.includes('2022') || pTitle.includes('2023') || pTitle.includes('21-');
+        } else if (y === '2018 - 2020') {
+          matchTextYear = pTitle.includes('2018') || pTitle.includes('2019') || pTitle.includes('2020') || pTitle.includes('18-20') || pTitle.includes('18-');
+        } else if (y === '2015 - 2017') {
+          matchTextYear = pTitle.includes('2015') || pTitle.includes('2016') || pTitle.includes('2017') || pTitle.includes('15-18') || pTitle.includes('15-17') || pTitle.includes('15-19');
+        } else if (y === '2010 - 2014') {
+          matchTextYear = pTitle.includes('2010') || pTitle.includes('2011') || pTitle.includes('2012') || pTitle.includes('2013') || pTitle.includes('2014') || pTitle.includes('11-14') || pTitle.includes('12-15');
+        }
+
+        if (!matchYear && !matchTextYear) return false;
       }
 
       // 5. Product Category
       if (selectedCategory !== 'all') {
         const targetCat = selectedCategory.toLowerCase();
         const matchCat =
-          (p.category && String(p.category).toLowerCase().includes(targetCat)) ||
-          (targetCat.includes('bumper assembly') && pTitle.includes('bumper')) ||
-          (targetCat.includes('bumper shell') && pTitle.includes('bumper')) ||
-          (targetCat.includes('headlights') && (pTitle.includes('headlight') || pTitle.includes('lamp') || pTitle.includes('led'))) ||
-          (targetCat.includes('lenses') && (pTitle.includes('housing') || pTitle.includes('lens'))) ||
-          (targetCat.includes('grilles') && (pTitle.includes('grille') || pTitle.includes('trim')));
+          pCategory.includes(targetCat) ||
+          (targetCat.includes('lens') && (pTitle.includes('lens') || pTitle.includes('lamp lens'))) ||
+          (targetCat.includes('housing') && (pTitle.includes('housing') || pTitle.includes('shell'))) ||
+          (targetCat.includes('bumper') && pTitle.includes('bumper')) ||
+          (targetCat.includes('headlight') && (pTitle.includes('headlamp') || pTitle.includes('headlight') || pTitle.includes('led'))) ||
+          (targetCat.includes('grille') && (pTitle.includes('grille') || pTitle.includes('grill')));
         if (!matchCat) return false;
       }
 
       // 6. Mounting Position
       if (selectedMountingPosition !== 'all') {
-        const matchPos = p.mountingPosition?.includes(selectedMountingPosition);
-        if (!matchPos) return false;
+        const pos = selectedMountingPosition.toLowerCase();
+        const matchPos = p.mountingPosition?.some((mp) => mp.toLowerCase().includes(pos));
+        const matchTitlePos =
+          (pos === 'left' || pos.includes('left')) ? (pTitle.includes('left') || pTitle.includes(' l ') || pTitle.endsWith('left')) :
+          (pos === 'right' || pos.includes('right')) ? (pTitle.includes('right') || pTitle.includes(' r ') || pTitle.endsWith('right')) :
+          (pos === 'front' || pos.includes('front')) ? (pTitle.includes('front') || pTitle.includes('headlamp') || pTitle.includes('bumper') || pTitle.includes('lens')) :
+          (pos === 'rear' || pos.includes('rear')) ? (pTitle.includes('rear') || pTitle.includes('tail')) : false;
+
+        if (!matchPos && !matchTitlePos) return false;
       }
 
       // 7. Product Condition
       if (selectedCondition !== 'all') {
+        const cond = selectedCondition.toLowerCase();
         const matchCond =
-          p.productCondition?.includes(selectedCondition) ||
-          (selectedCondition === 'OEM complete piece' && p.condition?.includes('complete piece')) ||
-          (selectedCondition === 'Restyling' && (p.version?.includes('Restyling') || p.condition?.includes('Restyling'))) ||
-          (selectedCondition === 'New OEM' && p.condition?.includes('New')) ||
-          (selectedCondition === 'Refurbished' && p.condition?.includes('Refurbished'));
+          p.productCondition?.some((pc) => pc.toLowerCase().includes(cond)) ||
+          p.condition?.toLowerCase().includes(cond) ||
+          (cond.includes('new') && (pTitle.includes('new') || pTitle.includes('2023') || pTitle.includes('2024'))) ||
+          (cond.includes('restyle') || cond.includes('lci') ? (pTitle.includes('lci') || pTitle.includes('restyle')) : false) ||
+          (cond.includes('complete') && (pTitle.includes('assembly') || pTitle.includes('complete')));
         if (!matchCond) return false;
       }
 
       // 8. EU / US Specification
       if (selectedSpec !== 'all') {
-        const matchSpec = p.spec?.includes(selectedSpec);
+        const spec = selectedSpec.toLowerCase();
+        const matchSpec =
+          p.spec?.some((s) => s.toLowerCase().includes(spec)) ||
+          (spec.includes('eu') || spec.includes('ece') ? (!pTitle.includes('us dot') && !pTitle.includes('usa')) : false) ||
+          (spec.includes('us') || spec.includes('dot') ? (pTitle.includes('us') || pTitle.includes('dot') || pTitle.includes('sae')) : false);
         if (!matchSpec) return false;
       }
 
-      // 9. Bumper Specification (Supports multi-checked filters seamlessly)
+      // 9. Bumper Specification
       if (selectedBumperSpecs.length > 0) {
-        const hasAllSelected = selectedBumperSpecs.every((spec) => p.bumperSpecs?.includes(spec));
-        if (!hasAllSelected) return false;
+        const matchesAll = selectedBumperSpecs.every((spec) => {
+          const s = spec.toLowerCase();
+          return (
+            p.bumperSpecs?.some((bs: string) => bs.toLowerCase().includes(s)) ||
+            (s.includes('m sport') || s.includes('amg') ? (pTitle.includes('m sport') || pTitle.includes('amg') || pTitle.includes('sport')) : false) ||
+            (s.includes('pdc') ? (pTitle.includes('pdc') || pTitle.includes('sensor')) : false) ||
+            (s.includes('radar') ? (pTitle.includes('radar') || pTitle.includes('acc')) : false) ||
+            (s.includes('camera') ? (pTitle.includes('camera')) : false) ||
+            (s.includes('washer') ? (pTitle.includes('washer')) : false) ||
+            (s.includes('primed') ? (pTitle.includes('primed') || p.finish?.toLowerCase().includes('paint')) : false)
+          );
+        });
+        if (!matchesAll) return false;
       }
 
       return true;
@@ -1190,7 +766,7 @@ function ProductsContent() {
                 </button>
                 {openAccordions['Product category'] && (
                   <div className="pb-3 pl-2 space-y-1.5 text-[11px]">
-                    {['Bumper assembly', 'Bumper shell', 'Headlights', 'Lenses & Housings', 'Grilles & Trims'].map((opt) => {
+                    {(categories && categories.length > 0 ? categories.map((cat: any) => cat.name || cat.title) : []).map((opt: string) => {
                       const isActive = selectedCategory === opt;
                       return (
                         <button

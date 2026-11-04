@@ -47,8 +47,58 @@ export default function HomePage() {
   const [selectedModel, setSelectedModel] = useState("");
   const [oemInput, setOemInput] = useState("");
 
+  // Live Auto-Suggest Search States
+  const [liveSuggestions, setLiveSuggestions] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchWrapperRef = useRef<HTMLDivElement>(null);
+
+  // Debounced live search
+  useEffect(() => {
+    const trimmed = oemInput.trim();
+    if (trimmed.length < 2) {
+      setLiveSuggestions([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const handler = setTimeout(async () => {
+      try {
+        const { default: api } = await import("../utils/api");
+        const res = await api.get("/product", {
+          params: { search: trimmed, limit: 10 },
+        });
+        if (res.data && res.data.data) {
+          setLiveSuggestions(res.data.data);
+        } else {
+          setLiveSuggestions([]);
+        }
+      } catch (err) {
+        console.error("Live search error:", err);
+        setLiveSuggestions([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [oemInput]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleVehicleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowDropdown(false);
     const params = new URLSearchParams();
     if (selectedBrand) params.set("brand", selectedBrand);
     if (selectedModel) params.set("model", selectedModel);
@@ -362,42 +412,25 @@ export default function HomePage() {
     },
   ];
 
-  // Top Row & Bottom Row Categories Data
-  const topCategories = [
-    {
-      name: "Complete bumpers",
-      href: "/products?category=bumpers",
-      image: "/7a633909f37ebad7ba458ab83b64e97d182de499.png",
-    },
-    {
-      name: "Headlights",
-      href: "/products?category=headlights",
-      image: "/f93de2dfa9c809df119e34582c3f80a56d2e7e69.png",
-    },
+  // Dynamic Categories from Backend (Admin Panel)
+  const defaultCategoryImages = [
+    "/7a633909f37ebad7ba458ab83b64e97d182de499.png",
+    "/f93de2dfa9c809df119e34582c3f80a56d2e7e69.png",
+    "/a92783c40197d1e216cf1371a696c41a78daff2a.png",
+    "/9b7be6140818a0c881d657f179c827d267409917.png",
+    "/5dd349e4eaad559c6d2ec0c7249e247ac00dc1b0.png",
+    "/9b7be6140818a0c881d657f179c827d267409917.png",
   ];
 
-  const bottomCategories = [
-    {
-      name: "Grilles",
-      href: "/products?category=grilles",
-      image: "/a92783c40197d1e216cf1371a696c41a78daff2a.png",
-    },
-    {
-      name: "Exterior trims",
-      href: "/products?category=trims",
-      image: "/9b7be6140818a0c881d657f179c827d267409917.png",
-    },
-    {
-      name: "Front splitters",
-      href: "/products?category=splitters",
-      image: "/5dd349e4eaad559c6d2ec0c7249e247ac00dc1b0.png",
-    },
-    {
-      name: "Body elements",
-      href: "/products?category=body",
-      image: "/9b7be6140818a0c881d657f179c827d267409917.png",
-    },
-  ];
+  const dynamicCategories = (categories && Array.isArray(categories) ? categories : []).map((cat: any, idx: number) => ({
+    id: cat.id,
+    name: cat.name || cat.title || "Category",
+    href: `/products?categoryId=${cat.id}`,
+    image: cat.image || defaultCategoryImages[idx % defaultCategoryImages.length],
+  }));
+
+  const topCategories = dynamicCategories.slice(0, 2);
+  const bottomCategories = dynamicCategories.slice(2);
 
   const categoryCardStyles = {
     title: "text-[19px] sm:text-[20px] font-bold text-white mb-1.5 group-hover:text-[#00C2CB] transition-colors",
@@ -410,9 +443,9 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {/* 1. HERO SECTION */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden min-h-[580px] lg:min-h-[640px] flex items-center border-b border-[#26354A]">
+      <section className="relative min-h-[580px] lg:min-h-[640px] flex items-center border-b border-[#26354A] z-30">
         {/* Full Hero Image matching reference image exactly */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src="/6e01705d37bba339a4a45c329968238c33c1ef92.png"
             alt="Premium automotive replacement parts"
@@ -435,25 +468,99 @@ export default function HomePage() {
               Discover high-quality replacement bumpers, headlights, grilles, and exterior parts for BMW, Mercedes-Benz, Audi, and Range Rover.
             </p>
 
-            {/* Search Input Bar with Cyan Search parts button */}
-            <form onSubmit={handleVehicleSearch} className="mb-4 max-w-[520px]">
-              <div className="relative flex items-center bg-[#07111e]/90 border border-[#23354E] rounded-xl p-1.5 focus-within:border-[#00C2CB] shadow-2xl backdrop-blur-md transition-all">
-                <Search size={18} className="text-[#94A3B8] ml-3 mr-2 shrink-0" />
-                <input
-                  type="text"
-                  value={oemInput}
-                  onChange={(e) => setOemInput(e.target.value)}
-                  placeholder="Enter OEM number, VIN, make or model"
-                  className="w-full bg-transparent text-white placeholder-[#8A9EB5] text-sm sm:text-[15px] focus:outline-none px-2 py-2"
-                />
-                <button
-                  type="submit"
-                  className="bg-[#33FDFF] hover:bg-[#00f5ff] text-[#0B0F19] text-sm font-bold px-6 py-3.5 rounded-lg shrink-0 transition-colors cursor-pointer shadow-md"
-                >
-                  Search parts
-                </button>
-              </div>
-            </form>
+            {/* Search Input Bar with Cyan Search parts button & Live Dropdown */}
+            <div ref={searchWrapperRef} className="relative mb-4 max-w-[520px]">
+              <form onSubmit={handleVehicleSearch}>
+                <div className="relative flex items-center bg-[#07111e]/90 border border-[#23354E] rounded-xl p-1.5 focus-within:border-[#00C2CB] shadow-2xl backdrop-blur-md transition-all">
+                  <Search size={18} className="text-[#94A3B8] ml-3 mr-2 shrink-0" />
+                  <input
+                    type="text"
+                    value={oemInput}
+                    onFocus={() => setShowDropdown(true)}
+                    onChange={(e) => {
+                      setOemInput(e.target.value);
+                      setShowDropdown(true);
+                    }}
+                    placeholder="Enter OEM number, VIN, make or model"
+                    className="w-full bg-transparent text-white placeholder-[#8A9EB5] text-sm sm:text-[15px] focus:outline-none px-2 py-2"
+                  />
+                  {isSearching && (
+                    <div className="mr-3 shrink-0">
+                      <div className="w-4 h-4 border-2 border-[#33FDFF] border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    className="bg-[#33FDFF] hover:bg-[#00f5ff] text-[#0B0F19] text-sm font-bold px-6 py-3.5 rounded-lg shrink-0 transition-colors cursor-pointer shadow-md"
+                  >
+                    Search parts
+                  </button>
+                </div>
+              </form>
+
+              {/* Live Search Results Dropdown */}
+              {showDropdown && oemInput.trim().length >= 2 && (
+                <div className="absolute left-0 right-0 top-full mt-2 bg-[#0C1524] border border-[#23354E] rounded-xl shadow-2xl overflow-hidden z-[100] backdrop-blur-xl divide-y divide-[#1D2B3F]">
+                  {isSearching ? (
+                    <div className="p-4 text-center text-sm text-[#8A9EB5]">
+                      Searching parts...
+                    </div>
+                  ) : liveSuggestions.length > 0 ? (
+                    <>
+                      <div className="max-h-[480px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#23354E] scrollbar-track-transparent">
+                        {liveSuggestions.map((item: any) => (
+                          <div
+                            key={item.id}
+                            onClick={() => {
+                              setShowDropdown(false);
+                              router.push(`/products/${item.id}`);
+                            }}
+                            className="p-3.5 hover:bg-[#142338] transition-colors cursor-pointer flex items-center gap-3.5"
+                          >
+                            <div className="w-12 h-12 rounded-lg bg-black/40 overflow-hidden shrink-0 border border-white/5 flex items-center justify-center">
+                              {item.image ? (
+                                <img
+                                  src={item.image}
+                                  alt={item.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <Search size={18} className="text-[#8A9EB5]" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-white text-sm font-semibold truncate">
+                                {item.title}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-0.5 text-xs text-[#8A9EB5]">
+                                {item.oemNumber && (
+                                  <span className="font-mono text-[#33FDFF]">
+                                    OEM: {item.oemNumber}
+                                  </span>
+                                )}
+                                {item.make && <span>• {item.make}</span>}
+                                {item.model && <span>{item.model}</span>}
+                              </div>
+                            </div>
+                            <ChevronRight size={16} className="text-[#8A9EB5] shrink-0" />
+                          </div>
+                        ))}
+                      </div>
+                      <div
+                        onClick={handleVehicleSearch}
+                        className="p-3 text-center text-xs font-bold text-[#33FDFF] hover:bg-[#142338] transition-colors cursor-pointer"
+                      >
+                        View all results for &quot;{oemInput}&quot; →
+                      </div>
+                    </>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-[#8A9EB5]">
+                      No parts found matching &quot;{oemInput}&quot;. Try OEM number, brand or model.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Check by VIN button */}
             <div className="flex items-center">
@@ -559,66 +666,77 @@ export default function HomePage() {
           </h2>
         </div>
 
-        {/* Categories Grid (Top row: 2 large cards, Bottom row: 4 smaller cards) */}
-        <div className="space-y-3.5">
-          {/* Top Row: 2 Large Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            {topCategories.map((cat) => (
-              <Link
-                key={cat.name}
-                href={cat.href}
-                className="gsap-cat-card group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[210px] sm:h-[240px] flex flex-col justify-end p-6 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-              >
-                <div className="absolute inset-0 z-0">
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                </div>
-                <div className="relative z-10">
-                  <h3 className={categoryCardStyles.title}>
-                    {cat.name}
-                  </h3>
-                  <div className={categoryCardStyles.action}>
-                    <span>{categoryCardStyles.actionText}</span>
-                    <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+        {/* Dynamic Categories Grid from Backend */}
+        {dynamicCategories.length > 0 ? (
+          <div className="space-y-3.5">
+            {/* Top Row: First 2 Categories */}
+            {topCategories.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {topCategories.map((cat: any) => (
+                  <Link
+                    key={cat.id || cat.name}
+                    href={cat.href}
+                    className="gsap-cat-card group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[210px] sm:h-[240px] flex flex-col justify-end p-6 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
+                  >
+                    <div className="absolute inset-0 z-0">
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                    </div>
+                    <div className="relative z-10">
+                      <h3 className={categoryCardStyles.title}>
+                        {cat.name}
+                      </h3>
+                      <div className={categoryCardStyles.action}>
+                        <span>{categoryCardStyles.actionText}</span>
+                        <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
 
-          {/* Bottom Row: 4 Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-            {bottomCategories.map((cat) => (
-              <Link
-                key={cat.name}
-                href={cat.href}
-                className="gsap-cat-card group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-              >
-                <div className="absolute inset-0 z-0">
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-                </div>
-                <div className="relative z-10">
-                  <h3 className={categoryCardStyles.title}>
-                    {cat.name}
-                  </h3>
-                  <div className={categoryCardStyles.action}>
-                    <span>{categoryCardStyles.actionText}</span>
-                    <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+            {/* Bottom Row: Remaining Categories from Admin */}
+            {bottomCategories.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+                {bottomCategories.map((cat: any) => (
+                  <Link
+                    key={cat.id || cat.name}
+                    href={cat.href}
+                    className="gsap-cat-card group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
+                  >
+                    <div className="absolute inset-0 z-0">
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+                    </div>
+                    <div className="relative z-10">
+                      <h3 className={categoryCardStyles.title}>
+                        {cat.name}
+                      </h3>
+                      <div className={categoryCardStyles.action}>
+                        <span>{categoryCardStyles.actionText}</span>
+                        <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="py-16 text-center text-slate-400 bg-[#070e12] border border-white/5 p-8 rounded">
+            <p className="text-base text-slate-300">No categories added yet.</p>
+            <p className="text-xs text-slate-500 mt-1">Categories created in Admin Panel will automatically appear here.</p>
+          </div>
+        )}
       </section>
 
       {/* ========================================================================= */}
@@ -643,102 +761,86 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 4 White-Card Products */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {[
-            {
-              id: "msp-1",
-              title: "Front bumper BMW Series 3 G20",
-              badge: "BMW",
-              vehicle: "G20 • 2019-2022",
-              number: "OEM: sample data",
-              finish: "Primed",
-              image: "/products/bumper_assy_row_1.jpeg",
-              param: "BMW Series 3 G20 Bumper",
-            },
-            {
-              id: "msp-2",
-              title: "LED headlight BMW Series 5 G30",
-              badge: "BMW",
-              vehicle: "G30 / G31 • 2017-2020",
-              number: "OEM: sample data",
-              finish: "Primed",
-              image: "/products/headlight_bmw_row_10.png",
-              param: "BMW Series 5 G30 LED Headlight",
-            },
-            {
-              id: "msp-3",
-              title: "Front bumper C-Class W206",
-              badge: "MERCEDES-BENZ",
-              vehicle: "W206 • 2021-",
-              number: "OEM: sample data",
-              finish: "To be painted",
-              image: "/products/bumper_assy_row_1.png",
-              param: "Mercedes C-Class W206 Bumper",
-            },
-            {
-              id: "msp-4",
-              title: "Front bumper C-Class W206",
-              badge: "MERCEDES-BENZ",
-              vehicle: "W213 • 2016-2020",
-              number: "OEM: sample data",
-              finish: "Gloss black",
-              image: "/products/bumper_shell_row_1.jpeg",
-              param: "Mercedes C-Class W206 Gloss Black Bumper",
-            },
-          ].map((item) => (
-            <div
-              key={item.id}
-              className="gsap-msp-card bg-white rounded-none overflow-hidden flex flex-col justify-between text-[#111827] shadow-xl border border-white/10"
-            >
-              {/* Product Photo with Badge */}
-              <div className="relative h-44 sm:h-[185px] w-full bg-black overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute bottom-2.5 left-2.5">
-                  <span className="bg-[#11161f]/40 backdrop-blur-sm text-[#00E5EE] text-[10px] font-bold px-2 py-0.5 border-[#00E5EE]/40 uppercase tracking-wider">
-                    {item.badge}
-                  </span>
-                </div>
-              </div>
+        {/* Dynamic Products from Backend */}
+        {products && products.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {products.slice(0, 4).map((p: any, idx: number) => {
+              const specs = Array.isArray(p.specifications) ? p.specifications : [];
+              const findSpec = (keyword: string) =>
+                specs.find((s: any) => s.name?.toLowerCase().includes(keyword))?.value;
 
-              {/* Product Info Table */}
-              <div className="p-5 flex-1 flex flex-col justify-between bg-white">
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-900 mb-4 min-h-[42px] leading-snug">
-                    {item.title}
-                  </h4>
+              const title = p.title || p.name || 'Automotive Replacement Part';
+              const badge = p.make?.toUpperCase() || (p.tag ? p.tag.toUpperCase() : 'OEM');
+              const vehicle = p.model || findSpec('model') || findSpec('version') || 'OEM Specification';
+              const number = p.oemNumber || findSpec('oem') || findSpec('number') || 'OEM: Available';
+              const finish = p.finish || findSpec('finish') || 'To be painted';
+              const image = p.image || p.images?.[0] || p.thumbnail || '/products/bumper_assy_row_1.jpeg';
+              const productId = p.id || p._id || idx + 1;
 
-                  <div className="space-y-2.5 border-t border-slate-100 pt-3 text-[12px] text-[#11161f] mb-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#686B70] ">Vehicle</span>
-                      <span className="font-semibold text-[#11161f]">{item.vehicle}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#686B70]">Number</span>
-                      <span className="font-mono text-[#11161f]">{item.number}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#686B70]">Finish</span>
-                      <span className="font-semibold text-[#11161f]"> {item.finish}</span>
+              return (
+                <div
+                  key={productId}
+                  className="gsap-msp-card bg-white rounded-none overflow-hidden flex flex-col justify-between text-[#111827] shadow-xl border border-white/10"
+                >
+                  {/* Product Photo with Badge */}
+                  <div className="relative h-44 sm:h-[185px] w-full bg-black overflow-hidden">
+                    <Link href={`/products/${productId}`} className="block w-full h-full">
+                      <img
+                        src={image}
+                        alt={title}
+                        className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                      />
+                    </Link>
+                    <div className="absolute bottom-2.5 left-2.5 pointer-events-none">
+                      <span className="bg-[#11161f]/40 backdrop-blur-sm text-[#00E5EE] text-[10px] font-bold px-2 py-0.5 border-[#00E5EE]/40 uppercase tracking-wider">
+                        {badge}
+                      </span>
                     </div>
                   </div>
-                </div>
 
-                {/* Cyan Inquire Button */}
-                <Link
-                  href={`/contact-us?subject=Part+Inquiry&part=${encodeURIComponent(item.param)}`}
-                  className="w-full bg-[#33FDFF] hover:bg-[#00c8d1] text-[#111214] text-[15px] font-bold py-3 px-3 rounded text-center transition-colors shadow-sm block"
-                >
-                  Inquire about the part
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+                  {/* Product Info Table */}
+                  <div className="p-5 flex-1 flex flex-col justify-between bg-white">
+                    <div>
+                      <h4 className="text-[15px] font-bold text-slate-900 mb-4 min-h-[42px] leading-snug line-clamp-2">
+                        <Link href={`/products/${productId}`} className="hover:text-[#00C2CB] transition-colors">
+                          {title}
+                        </Link>
+                      </h4>
+
+                      <div className="space-y-2.5 border-t border-slate-100 pt-3 text-[12px] text-[#11161f] mb-6">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[#686B70]">Vehicle</span>
+                          <span className="font-semibold text-[#11161f] truncate max-w-[150px]">{vehicle}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[#686B70]">Number</span>
+                          <span className="font-mono text-[#11161f] truncate max-w-[150px]">{number}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[#686B70]">Finish</span>
+                          <span className="font-semibold text-[#11161f] truncate max-w-[150px]">{finish}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Cyan Inquire Button */}
+                    <Link
+                      href={`/inquiry?part=${encodeURIComponent(title)}&oem=${encodeURIComponent(number)}&model=${encodeURIComponent(vehicle)}`}
+                      className="w-full bg-[#33FDFF] hover:bg-[#00c8d1] text-[#111214] text-[15px] font-bold py-3 px-3 rounded text-center transition-colors shadow-sm block"
+                    >
+                      Inquire about the part
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="py-16 text-center text-slate-400 bg-[#070e12] border border-white/5 p-8 rounded">
+            <p className="text-base text-slate-300">No parts currently listed.</p>
+            <p className="text-xs text-slate-500 mt-1">Products added via Admin Panel will automatically appear here.</p>
+          </div>
+        )}
       </section>
 
       {/* ========================================================================= */}
@@ -887,62 +989,147 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
-          {[
-            {
-              id: 1,
-              badge: "OEM NUMBERS • 14.05.2025",
-              title: "How to find the right OEM number for BMW?",
-              desc: "Learn about the data worth checking before sending a part inquiry.",
-              image: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-            },
-            {
-              id: 2,
-              badge: "COMPATIBILITY • 14.05.2025",
-              title: "BMW G20 — compatibility of body parts",
-              desc: "Learn about the data worth checking before sending a part inquiry.",
-              image: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-            },
-            {
-              id: 3,
-              badge: "TECHNICAL GUIDE • 14.05.2025",
-              title: "How to check if the bumper supports PDC?",
-              desc: "Learn about the data worth checking before sending a part inquiry.",
-              image: "/734295950a53ab641f4c489e327584416018d44d.jpg",
-            },
-          ].map((blog) => (
-            <div
-              key={blog.id}
-              className="gsap-guide-card bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
-            >
-              <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative text-[17px] font-medium">
-                <img
-                  src={blog.image}
-                  alt={blog.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between bg-white text-[#0B0F19]">
-                <div>
-                  <span className="text-[10px] font-mono font-bold text-[#9CA2A2] uppercase tracking-wider block mb-3">
-                    {blog.badge}
-                  </span>
-                  <h3 className="text-[17px] sm:text-lg font-medium text-[#111214] mb-3 leading-snug">
-                    {blog.title}
-                  </h3>
-                  <p className="text-[14px] text-[#686B70] leading-relaxed mb-6">
-                    {blog.desc}
-                  </p>
+          {blogsLoading ? (
+            // Loading skeleton
+            Array.from({ length: 3 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-white/5 border border-white/10 animate-pulse h-[400px] flex flex-col justify-between"
+              >
+                <div className="h-[210px] bg-white/10" />
+                <div className="p-6 space-y-4">
+                  <div className="h-4 bg-white/10 w-1/3" />
+                  <div className="h-6 bg-white/10 w-3/4" />
+                  <div className="h-4 bg-white/10 w-full" />
                 </div>
-                <Link
-                  href={"/news/" + blog.id}
-                  className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111214] hover:text-[#00c8d1] transition-colors mt-auto"
-                >
-                  <span>Read the article</span>
-                  <ArrowRight size={13} className="text-slate-900" />
-                </Link>
               </div>
-            </div>
-          ))}
+            ))
+          ) : blogs && blogs.length > 0 ? (
+            blogs.slice(0, 3).map((blog: any, idx: number) => {
+              const formattedDate = blog.publishedDate
+                ? new Date(blog.publishedDate).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  }).replace(/\//g, ".")
+                : blog.createdAt
+                ? new Date(blog.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  }).replace(/\//g, ".")
+                : "14.05.2025";
+
+              const categoryName = blog.category?.name || "KNOWLEDGE BASE";
+              const badgeText = `${categoryName} • ${formattedDate}`;
+
+              // Strip HTML tags for clean card description preview
+              const cleanDesc = blog.description
+                ? blog.description.replace(/<[^>]*>/g, "").trim()
+                : "Learn about the data worth checking before sending a part inquiry.";
+
+              // Fallback image if blog.image is not provided or empty
+              const fallbackImages = [
+                "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
+                "/734295950a53ab641f4c489e327584416018d44d.jpg",
+              ];
+              const displayImage = blog.image || fallbackImages[idx % fallbackImages.length];
+
+              return (
+                <div
+                  key={blog.id || idx}
+                  className="gsap-guide-card bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
+                >
+                  <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative text-[17px] font-medium">
+                    <img
+                      src={displayImage}
+                      alt={blog.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between bg-white text-[#0B0F19]">
+                    <div>
+                      <span className="text-[10px] font-mono font-bold text-[#9CA2A2] uppercase tracking-wider block mb-3">
+                        {badgeText}
+                      </span>
+                      <h3 className="text-[17px] sm:text-lg font-medium text-[#111214] mb-3 leading-snug line-clamp-2">
+                        {blog.title}
+                      </h3>
+                      <p className="text-[14px] text-[#686B70] leading-relaxed mb-6 line-clamp-2">
+                        {cleanDesc}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/news/${blog.id}`}
+                      className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111214] hover:text-[#00c8d1] transition-colors mt-auto"
+                    >
+                      <span>Read the article</span>
+                      <ArrowRight size={13} className="text-slate-900" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            // Fallback guides if no blogs exist in database
+            [
+              {
+                id: 1,
+                badge: "OEM NUMBERS • 14.05.2025",
+                title: "How to find the right OEM number for BMW?",
+                desc: "Learn about the data worth checking before sending a part inquiry.",
+                image: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+              },
+              {
+                id: 2,
+                badge: "COMPATIBILITY • 14.05.2025",
+                title: "BMW G20 — compatibility of body parts",
+                desc: "Learn about the data worth checking before sending a part inquiry.",
+                image: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
+              },
+              {
+                id: 3,
+                badge: "TECHNICAL GUIDE • 14.05.2025",
+                title: "How to check if the bumper supports PDC?",
+                desc: "Learn about the data worth checking before sending a part inquiry.",
+                image: "/734295950a53ab641f4c489e327584416018d44d.jpg",
+              },
+            ].map((fallbackBlog) => (
+              <div
+                key={fallbackBlog.id}
+                className="gsap-guide-card bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
+              >
+                <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative text-[17px] font-medium">
+                  <img
+                    src={fallbackBlog.image}
+                    alt={fallbackBlog.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between bg-white text-[#0B0F19]">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA2A2] uppercase tracking-wider block mb-3">
+                      {fallbackBlog.badge}
+                    </span>
+                    <h3 className="text-[17px] sm:text-lg font-medium text-[#111214] mb-3 leading-snug">
+                      {fallbackBlog.title}
+                    </h3>
+                    <p className="text-[14px] text-[#686B70] leading-relaxed mb-6">
+                      {fallbackBlog.desc}
+                    </p>
+                  </div>
+                  <Link
+                    href={"/news/" + fallbackBlog.id}
+                    className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111214] hover:text-[#00c8d1] transition-colors mt-auto"
+                  >
+                    <span>Read the article</span>
+                    <ArrowRight size={13} className="text-slate-900" />
+                  </Link>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 

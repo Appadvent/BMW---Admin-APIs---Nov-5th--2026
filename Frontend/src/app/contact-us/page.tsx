@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, Suspense } from 'react';
-import Image from 'next/image';
-import { Phone, Mail, MessageCircle, Clock, ArrowRight, AlertCircle, CheckCircle, ShieldCheck } from 'lucide-react';
+import { ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { sendContact, resetContactState } from '../../redux/Slice/contactSlice';
@@ -23,61 +22,35 @@ function ContactUsContent() {
   const paramModel = searchParams.get("model") || "";
   const paramCategory = searchParams.get("category") || "General Inquiry";
 
+  // GSAP Animations
   useGSAP(
     () => {
-      const infoCards = containerRef.current?.querySelectorAll(".gsap-info-card");
-      if (infoCards && infoCards.length > 0) {
-        const infoTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#info-section",
-            start: "top 85%",
-            once: true,
-          },
-        });
-        infoTl.fromTo(
-          infoCards,
-          { opacity: 0, y: 40, scale: 0.96 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.5,
-            stagger: 0.1,
-            ease: "power2.out",
-          }
+      const header = containerRef.current?.querySelector(".gsap-contact-header");
+      const leftBox = containerRef.current?.querySelector(".gsap-left-box");
+      const rightBox = containerRef.current?.querySelector(".gsap-right-box");
+
+      if (header) {
+        gsap.fromTo(
+          header,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" }
         );
       }
 
-      const formSection = containerRef.current?.querySelector(".gsap-form-section");
-      const faqSection = containerRef.current?.querySelector(".gsap-faq-section");
-
-      if (formSection || faqSection) {
-        const mainTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#main-content-section",
-            start: "top 85%",
-            once: true,
-          },
-        });
-
-        if (formSection) {
-          mainTl.fromTo(
-            formSection,
-            { opacity: 0, x: -40 },
-            { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }
-          );
-        }
-        if (faqSection) {
-          mainTl.fromTo(
-            faqSection,
-            { opacity: 0, x: 40 },
-            { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" },
-            formSection ? "-=0.4" : "0"
-          );
-        }
+      if (leftBox && rightBox) {
+        gsap.fromTo(
+          [leftBox, rightBox],
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.65,
+            stagger: 0.15,
+            ease: "power2.out",
+            delay: 0.15,
+          }
+        );
       }
-
-      ScrollTrigger.refresh();
     },
     { scope: containerRef }
   );
@@ -91,11 +64,9 @@ function ContactUsContent() {
     name: "",
     email: "",
     phone: "",
-    category: paramCategory,
-    carModel: paramModel,
-    vin: "",
-    oemNumber: paramOem,
-    year: "",
+    country: "",
+    vehicleBrand: "",
+    modelGeneration: paramModel || "",
     message: paramPart ? `Inquiry regarding OEM part: ${paramPart}${paramOem ? ` (OEM: ${paramOem})` : ''}` : "",
   });
 
@@ -103,8 +74,7 @@ function ContactUsContent() {
     if (paramPart || paramOem || paramModel) {
       setFormData((prev) => ({
         ...prev,
-        carModel: paramModel || prev.carModel,
-        oemNumber: paramOem || prev.oemNumber,
+        modelGeneration: paramModel || prev.modelGeneration,
         message: paramPart
           ? `Inquiry regarding OEM part: ${paramPart}${paramOem ? ` (OEM: ${paramOem})` : ''}`
           : prev.message,
@@ -118,32 +88,24 @@ function ContactUsContent() {
   const validateField = (fieldName: string, value: string): string => {
     switch (fieldName) {
       case "name":
-        if (!value.trim()) return "Full Name / Company is required";
+        if (!value.trim()) return "First and last name is required";
         if (value.trim().length < 2) return "Minimum 2 characters required";
-        if (value.trim().length > 60) return "Maximum 60 characters allowed";
         return "";
 
       case "email":
         if (!value.trim()) return "Email address is required";
-        if (value.length > 100) return "Maximum 100 characters allowed";
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(value.trim())) {
-          return "Please enter a valid email address (e.g. name@domain.com)";
+          return "Please enter a valid email address";
         }
         return "";
 
       case "phone":
         if (!value.trim()) return "Phone number is required";
         const cleanPhone = value.replace(/[\s-+()]/g, "");
-        if (cleanPhone.length < 7 || cleanPhone.length > 15) {
-          return "Please enter a valid phone number";
+        if (cleanPhone.length < 7 || cleanPhone.length > 18) {
+          return "Please enter a valid phone number with area code";
         }
-        return "";
-
-      case "message":
-        if (!value.trim()) return "Message is required";
-        if (value.trim().length < 5) return "Minimum 5 characters required";
-        if (value.length > 1000) return "Maximum 1000 characters allowed";
         return "";
 
       default:
@@ -151,27 +113,19 @@ function ContactUsContent() {
     }
   };
 
-  const handleContactChange = (
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     let { name, value } = e.target;
-
     if (name === "phone") {
       value = value.replace(/[^0-9+() -]/g, "");
-      if (value.length > 20) return;
-    } else if (name === "name" && value.length > 60) {
-      return;
-    } else if (name === "email" && value.length > 100) {
-      return;
-    } else if (name === "message" && value.length > 1000) {
-      return;
     }
-
     setFormData((prev) => ({ ...prev, [name]: value }));
-
     if (touched[name]) {
-      const error = validateField(name, value);
-      setFormErrors((prev) => ({ ...prev, [name]: error }));
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: validateField(name, value),
+      }));
     }
   };
 
@@ -180,47 +134,54 @@ function ContactUsContent() {
   ) => {
     const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
-    const error = validateField(name, value);
-    setFormErrors((prev) => ({ ...prev, [name]: error }));
+    setFormErrors((prev) => ({
+      ...prev,
+      [name]: validateField(name, value),
+    }));
   };
 
-  const validateAll = () => {
+  const validateAll = (): boolean => {
     const errors: { [key: string]: string } = {};
     const nameErr = validateField("name", formData.name);
     const emailErr = validateField("email", formData.email);
     const phoneErr = validateField("phone", formData.phone);
-    const messageErr = validateField("message", formData.message);
 
     if (nameErr) errors.name = nameErr;
     if (emailErr) errors.email = emailErr;
     if (phoneErr) errors.phone = phoneErr;
-    if (messageErr) errors.message = messageErr;
 
     setFormErrors(errors);
     setTouched({
       name: true,
       email: true,
       phone: true,
-      message: true,
     });
 
     return Object.keys(errors).length === 0;
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateAll()) return;
+
     try {
-      await dispatch(sendContact(formData)).unwrap();
+      const payload: any = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        category: formData.vehicleBrand || paramCategory,
+        carModel: formData.modelGeneration,
+        message: `${formData.country ? `[Country: ${formData.country}] ` : ''}${formData.vehicleBrand ? `[Brand: ${formData.vehicleBrand}] ` : ''}${formData.message}`.trim(),
+      };
+
+      await dispatch(sendContact(payload)).unwrap();
       setFormData({
         name: "",
         email: "",
         phone: "",
-        category: "General Inquiry",
-        carModel: "",
-        vin: "",
-        oemNumber: "",
-        year: "",
+        country: "",
+        vehicleBrand: "",
+        modelGeneration: "",
         message: "",
       });
       setTouched({});
@@ -233,354 +194,349 @@ function ContactUsContent() {
     }
   };
 
-  const contactInfo = [
-    {
-      icon: <Phone size={24} className="text-[#00C2CB] mb-4 mx-auto" />,
-      title: "HOTLINE / PHONE",
-      main: "+1 800 555 0199",
-      sub: "Mon - Fri: 8:00 AM - 6:00 PM EST",
-    },
-    {
-      icon: <Mail size={24} className="text-[#00C2CB] mb-4 mx-auto" />,
-      title: "EMAIL SUPPORT",
-      main: "support@motorium-parts.com",
-      sub: "Response within 2-4 business hours",
-    },
-    {
-      icon: <MessageCircle size={24} className="text-[#25D366] mb-4 mx-auto" />,
-      title: "WHATSAPP",
-      main: "+1 800 555 0199",
-      sub: "Instant VIN fitment & catalog check",
-    },
-  ];
-
-  const faqs = [
-    {
-      question: "How is parts compatibility verified?",
-      answer:
-        "Every inquiry is cross-referenced against factory manufacturer catalogs (BMW ETK, Mercedes EPC, Audi PR codes) using your 17-character VIN, guaranteeing 100% factory fitment.",
-    },
-    {
-      question: "What is the condition of body and lighting parts?",
-      answer:
-        "All items in our catalog are genuine OEM parts (bumpers, shells, headlights, lenses). Mounting tabs, structural integrity, and lens clarity are verified prior to dispatch.",
-    },
-    {
-      question: "Do you supply wholesale orders to repair shops?",
-      answer:
-        "Yes, we partner with authorized collision centers, independent body shops, and fleet managers across North America and Europe with dedicated B2B trade pricing.",
-    },
-    {
-      question: "How quickly will I receive an official quotation (RFQ)?",
-      answer:
-        "Standard quote turnaround is between 2 to 4 business hours. For urgent requests, please contact our hotline or message our technical team on WhatsApp.",
-    },
-  ];
-
   return (
-    <div ref={containerRef} className="w-full bg-[#0B0F19] text-[#F8FAFC] min-h-screen">
-      {/* Hero Section */}
-      <section className="relative w-full bg-[#0E1524] border-b border-[#26354A]/60 text-white pt-36 pb-20 flex flex-col justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-15 bg-[radial-gradient(#00C2CB_1px,transparent_1px)] [background-size:24px_24px]" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/25 text-[#00C2CB] text-xs font-semibold mb-4 tracking-wider uppercase">
-            Customer Service &amp; Technical Support
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-[46px] font-extrabold mb-4 sm:mb-6 tracking-tight leading-tight text-white">
-            Request a Quote &amp; VIN Fitment Verification
+    <div
+      ref={containerRef}
+      className="w-full bg-[#070e12] text-white min-h-screen pt-12 sm:pt-16 pb-24 font-['Manrope',sans-serif]"
+    >
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Title Section (Matching exact Figma typography specifications) */}
+        <div className="gsap-contact-header mb-12 sm:mb-14">
+          <h1
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 500,
+              fontSize: '44px',
+              lineHeight: '100%',
+              letterSpacing: '-2.43px',
+            }}
+            className="text-white mb-4 sm:mb-5 tracking-[-2.43px]"
+          >
+            Contact us
           </h1>
-          <p className="text-slate-300 text-[15px] sm:text-[16px] font-normal max-w-3xl leading-relaxed">
-            Need an OEM bumper, headlight, or replacement component for BMW, Mercedes-Benz, Audi, or Porsche? Provide your vehicle VIN or required part number. Our technical team will confirm factory fitment and price availability within 2-4 hours.
+          <p
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 400,
+              fontSize: '14px',
+              lineHeight: '100%',
+              letterSpacing: '0px',
+              color: '#9CA2A2',
+            }}
+            className="text-[#9CA2A2] max-w-4xl"
+          >
+            The more accurate the vehicle data you provide, the more efficiently we will be able to check compatibility and delivery options.
           </p>
         </div>
-      </section>
 
-      {/* Contact Info Cards */}
-      <section id="info-section" className="w-full bg-[#0B0F19] py-8 md:py-12 -mt-8 relative z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-          {contactInfo.map((info, index) => (
-            <div
-              key={index}
-              className="gsap-info-card bg-[#161F30] rounded-xl p-8 text-center border border-[#26354A] hover:border-[#00C2CB]/50 transition-all duration-300 shadow-lg group"
-            >
-              <div className="p-3 bg-[#0E1524] rounded-full w-14 h-14 mx-auto flex items-center justify-center border border-[#26354A] group-hover:border-[#00C2CB]/40 transition-colors">
-                {info.icon}
+        {/* 2-Column Grid (Left: Parts department, Right: Contact us form) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* ========================================================================= */}
+          {/* LEFT CARD: Parts department */}
+          {/* ========================================================================= */}
+          <div className="gsap-left-box lg:col-span-4 bg-[#121c21] p-8 sm:p-10 flex flex-col justify-between min-h-[460px]">
+            <div>
+              {/* Heading matching Figma Image 2 */}
+              <h2
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 400,
+                  fontSize: '22px',
+                  lineHeight: '33px',
+                  letterSpacing: '0px',
+                }}
+                className="text-white mb-8"
+              >
+                Parts department
+              </h2>
+
+              {/* Contact Info Items */}
+              <div className="space-y-6">
+                {/* E-MAIL */}
+                <div className="pb-5 border-b border-[#202d33]">
+                  <span className="block text-[11px] font-medium tracking-[0.1em] text-[#6b7b83] uppercase mb-1">
+                    E-MAIL
+                  </span>
+                  <a
+                    href="mailto:kontakt@motorium.pl"
+                    className="text-[15px] font-normal text-white hover:text-[#33FDFF] transition-colors"
+                  >
+                    kontakt@motorium.pl
+                  </a>
+                </div>
+
+                {/* PHONE */}
+                <div className="pb-5 border-b border-[#202d33]">
+                  <span className="block text-[11px] font-medium tracking-[0.1em] text-[#6b7b83] uppercase mb-1">
+                    PHONE
+                  </span>
+                  <a
+                    href="tel:+48000000000"
+                    className="text-[15px] font-normal text-white hover:text-[#33FDFF] transition-colors"
+                  >
+                    +48 000 000 000
+                  </a>
+                </div>
+
+                {/* WORKING HOURS */}
+                <div>
+                  <span className="block text-[11px] font-medium tracking-[0.1em] text-[#6b7b83] uppercase mb-1">
+                    WORKING HOURS
+                  </span>
+                  <p className="text-[15px] font-normal text-white">
+                    Mon.–Fri. · 9:00AM - 10:00PM
+                  </p>
+                </div>
               </div>
-              <p className="text-[11px] font-bold text-[#00C2CB] tracking-[0.1em] mb-2.5 uppercase mt-3">
-                {info.title}
-              </p>
-              <h3 className="text-[17px] font-bold text-white mb-1.5">{info.main}</h3>
-              <p className="text-[13px] font-normal text-slate-400">{info.sub}</p>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Main Content Area: Form & FAQ */}
-      <section id="main-content-section" className="w-full bg-[#0B0F19] py-8 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
-          {/* Left Column: Form */}
-          <div className="gsap-form-section lg:col-span-7 bg-[#161F30] border border-[#26354A] rounded-2xl p-6 sm:p-8">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-[11px] font-bold uppercase tracking-wider mb-3">
-              Request for Quotation (RFQ)
+            {/* Cyan WhatsApp Button */}
+            <div className="pt-8">
+              <a
+                href="https://wa.me/48000000000"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-[#33FDFF] hover:bg-[#00e5ee] text-[#070e12] font-semibold text-[15px] py-3.5 px-4 rounded-none flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+              >
+                {/* WhatsApp Icon */}
+                <svg
+                  className="w-5 h-5 fill-current"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+                <span>WhatsApp</span>
+              </a>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">
-              Tell us what part you are looking for
-            </h2>
-            <p className="text-sm text-slate-300 mb-8 leading-relaxed">
-              Not sure if a part fits your vehicle? Provide your 17-digit VIN from your vehicle registration — we will verify catalog compatibility free of charge.
-            </p>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* RIGHT CARD: Contact us form */}
+          {/* ========================================================================= */}
+          <div className="gsap-right-box lg:col-span-8 bg-[#121c21] p-8 sm:p-10">
+            {/* Header matching Figma */}
+            <div className="mb-8">
+              <h2
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 500,
+                  fontSize: '24px',
+                  lineHeight: '120%',
+                }}
+                className="text-white mb-2"
+              >
+                Contact us
+              </h2>
+              <p className="text-[13px] text-[#9CA2A2]">
+                Please fill the form , we will get back to you in 24 hours.
+              </p>
+            </div>
 
             {contactSuccess && (
-              <div className="mb-6 p-4 bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 rounded-xl flex items-center space-x-3 text-sm">
+              <div className="mb-6 p-4 bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 flex items-center space-x-3 text-sm">
                 <CheckCircle size={20} className="shrink-0 text-emerald-400" />
-                <span>Your inquiry has been submitted successfully! Our technical advisor will contact you shortly with quotation details.</span>
+                <span>Your message has been sent successfully! We will get back to you within 24 hours.</span>
               </div>
             )}
 
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5" onSubmit={handleContactSubmit} noValidate>
-              <div className="col-span-1">
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-slate-200">Full Name / Company *</label>
-                  <span className="text-[11px] text-slate-400">{formData.name.length}/60</span>
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              {/* Row 1: FIRST AND LAST NAME & EMAIL ADDRESS */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
+                    FIRST AND LAST NAME *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder=""
+                    className={`w-full px-4 py-3 bg-[#192429] text-white border text-sm focus:outline-none transition-colors ${
+                      touched.name && formErrors.name
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-[#253238] focus:border-[#33FDFF]"
+                    }`}
+                  />
+                  {touched.name && formErrors.name && (
+                    <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                      <AlertCircle size={13} />
+                      <span>{formErrors.name}</span>
+                    </p>
+                  )}
                 </div>
-                <input
-                  type="text"
-                  name="name"
-                  maxLength={60}
-                  value={formData.name}
-                  onChange={handleContactChange}
-                  onBlur={handleBlur}
-                  placeholder="e.g. John Smith / Auto Repair LLC"
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
-                    touched.name && formErrors.name
-                      ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-[#26354A] focus:border-[#00C2CB]"
-                  }`}
-                />
-                {touched.name && formErrors.name && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
-                    <AlertCircle size={13} className="shrink-0" />
-                    <span>{formErrors.name}</span>
-                  </p>
-                )}
+
+                <div>
+                  <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
+                    EMAIL ADDRESS *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder=""
+                    className={`w-full px-4 py-3 bg-[#192429] text-white border text-sm focus:outline-none transition-colors ${
+                      touched.email && formErrors.email
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-[#253238] focus:border-[#33FDFF]"
+                    }`}
+                  />
+                  {touched.email && formErrors.email && (
+                    <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                      <AlertCircle size={13} />
+                      <span>{formErrors.email}</span>
+                    </p>
+                  )}
+                </div>
               </div>
 
-              <div className="col-span-1">
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-slate-200">Email Address *</label>
-                  <span className="text-[11px] text-slate-400">{formData.email.length}/100</span>
+              {/* Row 2: PHONE WITH AREA CODE & COUNTRY */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
+                    PHONE WITH AREA CODE *
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder=""
+                    className={`w-full px-4 py-3 bg-[#192429] text-white border text-sm focus:outline-none transition-colors ${
+                      touched.phone && formErrors.phone
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-[#253238] focus:border-[#33FDFF]"
+                    }`}
+                  />
+                  {touched.phone && formErrors.phone && (
+                    <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                      <AlertCircle size={13} />
+                      <span>{formErrors.phone}</span>
+                    </p>
+                  )}
                 </div>
-                <input
-                  type="email"
-                  name="email"
-                  maxLength={100}
-                  value={formData.email}
-                  onChange={handleContactChange}
-                  onBlur={handleBlur}
-                  placeholder="contact@example.com"
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
-                    touched.email && formErrors.email
-                      ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-[#26354A] focus:border-[#00C2CB]"
-                  }`}
-                />
-                {touched.email && formErrors.email && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
-                    <AlertCircle size={13} className="shrink-0" />
-                    <span>{formErrors.email}</span>
-                  </p>
-                )}
-              </div>
 
-              <div className="col-span-1">
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-slate-200">Phone Number *</label>
-                  <span className="text-[11px] text-slate-400">Digits only</span>
-                </div>
-                <input
-                  type="tel"
-                  name="phone"
-                  maxLength={15}
-                  value={formData.phone}
-                  onChange={handleContactChange}
-                  onBlur={handleBlur}
-                  placeholder="e.g. +1 555 123 4567"
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
-                    touched.phone && formErrors.phone
-                      ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-[#26354A] focus:border-[#00C2CB]"
-                  }`}
-                />
-                {touched.phone && formErrors.phone && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
-                    <AlertCircle size={13} className="shrink-0" />
-                    <span>{formErrors.phone}</span>
-                  </p>
-                )}
-              </div>
-
-              <div className="col-span-1">
-                <label className="block text-xs font-bold text-slate-200 mb-1.5">Part Category</label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleContactChange}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#26354A] focus:outline-none focus:border-[#00C2CB] text-sm bg-[#0E1524] text-slate-200 cursor-pointer"
-                >
-                  <option value="General Inquiry">General Inquiry / Quotation</option>
-                  <option value="BMW OEM Bumper Assembly">BMW OEM Bumper Assembly</option>
-                  <option value="BMW OEM Bumper Shell">BMW OEM Bumper Shell</option>
-                  <option value="Headlight OEM BMW">Headlight OEM BMW</option>
-                  <option value="Lens and Housing - BMW / BENZ">Lens and Housing - BMW / BENZ</option>
-                  <option value="B2B Workshop Inquiry">B2B Workshop / Fleet Wholesale Inquiry</option>
-                </select>
-              </div>
-
-              {/* Automotive Fitment Section */}
-              <div className="col-span-1 md:col-span-2 p-4 bg-[#0E1524] rounded-xl border border-[#26354A]">
-                <div className="flex items-center gap-2 mb-3">
-                  <ShieldCheck size={18} className="text-[#00C2CB]" />
-                  <span className="text-xs font-bold text-slate-200 uppercase tracking-wide">
-                    Vehicle details for factory fitment verification (Optional)
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      Vehicle Model
-                    </label>
-                    <input
-                      type="text"
-                      name="carModel"
-                      value={formData.carModel}
-                      onChange={handleContactChange}
-                      placeholder="e.g. BMW 5 Series F10"
-                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      OEM Part Number
-                    </label>
-                    <input
-                      type="text"
-                      name="oemNumber"
-                      value={formData.oemNumber}
-                      onChange={handleContactChange}
-                      placeholder="e.g. 51118056586"
-                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      Vehicle VIN
-                    </label>
-                    <input
-                      type="text"
-                      name="vin"
-                      maxLength={17}
-                      value={formData.vin}
-                      onChange={handleContactChange}
-                      placeholder="e.g. WBA5A71020G..."
-                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs uppercase bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      Year
-                    </label>
-                    <input
-                      type="text"
-                      name="year"
-                      value={formData.year}
-                      onChange={handleContactChange}
-                      placeholder="e.g. 2016"
-                      className="w-full px-3 py-1.5 rounded-md border border-[#26354A] text-xs bg-[#161F30] text-white placeholder-slate-500 focus:border-[#00C2CB] focus:outline-none"
-                    />
+                <div>
+                  <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
+                    COUNTRY
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-[#192429] text-white border border-[#253238] text-sm focus:outline-none focus:border-[#33FDFF] transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="" className="bg-[#121c21] text-gray-400">Select</option>
+                      <option value="Poland" className="bg-[#121c21] text-white">Poland</option>
+                      <option value="Germany" className="bg-[#121c21] text-white">Germany</option>
+                      <option value="United Kingdom" className="bg-[#121c21] text-white">United Kingdom</option>
+                      <option value="United States" className="bg-[#121c21] text-white">United States</option>
+                      <option value="France" className="bg-[#121c21] text-white">France</option>
+                      <option value="Italy" className="bg-[#121c21] text-white">Italy</option>
+                      <option value="Spain" className="bg-[#121c21] text-white">Spain</option>
+                      <option value="Netherlands" className="bg-[#121c21] text-white">Netherlands</option>
+                      <option value="Other" className="bg-[#121c21] text-white">Other</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="col-span-1 md:col-span-2">
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-slate-200">Message / Additional Notes *</label>
-                  <span className="text-[11px] text-slate-400">{formData.message.length}/1000</span>
+              {/* Row 3: VEHICLE BRAND & MODEL AND GENERATION */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
+                    VEHICLE BRAND
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="vehicleBrand"
+                      value={formData.vehicleBrand}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-[#192429] text-white border border-[#253238] text-sm focus:outline-none focus:border-[#33FDFF] transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="" className="bg-[#121c21] text-gray-400">Select</option>
+                      <option value="BMW" className="bg-[#121c21] text-white">BMW</option>
+                      <option value="Mercedes-Benz" className="bg-[#121c21] text-white">MERCEDES-BENZ</option>
+                      <option value="Audi" className="bg-[#121c21] text-white">AUDI</option>
+                      <option value="Range Rover" className="bg-[#121c21] text-white">RANGE ROVER</option>
+                      <option value="Porsche" className="bg-[#121c21] text-white">PORSCHE</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
+                    MODEL AND GENERATION
+                  </label>
+                  <input
+                    type="text"
+                    name="modelGeneration"
+                    value={formData.modelGeneration}
+                    onChange={handleChange}
+                    placeholder=""
+                    className="w-full px-4 py-3 bg-[#192429] text-white border border-[#253238] text-sm focus:outline-none focus:border-[#33FDFF] transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Row 4: ADDITIONAL MESSAGE */}
+              <div>
+                <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
+                  ADDITIONAL MESSAGE
+                </label>
                 <textarea
                   name="message"
-                  maxLength={1000}
                   value={formData.message}
-                  onChange={handleContactChange}
-                  onBlur={handleBlur}
+                  onChange={handleChange}
                   rows={4}
-                  placeholder="Describe the required part, package trim, mounting tabs, or specific requirements..."
-                  className={`w-full px-3.5 py-2.5 rounded-lg border focus:outline-none text-sm resize-none transition-all bg-[#0E1524] text-white placeholder-slate-500 ${
-                    touched.message && formErrors.message
-                      ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                      : "border-[#26354A] focus:border-[#00C2CB]"
-                  }`}
+                  placeholder="Describe the part you are looking for and the vehicle specifications."
+                  className="w-full px-4 py-3 bg-[#192429] text-white border border-[#253238] text-sm focus:outline-none focus:border-[#33FDFF] transition-colors resize-none placeholder-[#6b7b83]"
                 ></textarea>
-                {touched.message && formErrors.message && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1 font-medium">
-                    <AlertCircle size={13} className="shrink-0" />
-                    <span>{formErrors.message}</span>
-                  </p>
-                )}
               </div>
 
-              <div className="col-span-1 md:col-span-2 pt-2">
+              {/* Submit Red Button matching Figma */}
+              <div className="pt-2">
                 <button
-                  disabled={contactLoading}
                   type="submit"
-                  className="w-full bg-[#00C2CB] hover:bg-[#00B0B8] active:bg-[#009EA6] text-[#0B0F19] font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 text-sm disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/20"
+                  disabled={contactLoading}
+                  className="w-full bg-[#E32626] hover:bg-[#c91d1d] active:bg-[#b51616] text-white font-medium text-[15px] py-4 px-6 rounded-none flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
                 >
-                  {contactLoading ? (
-                    <span>Submitting inquiry...</span>
-                  ) : (
-                    <>
-                      <span>Submit Part Request (RFQ)</span>
-                      <ArrowRight size={16} />
-                    </>
-                  )}
+                  <span>{contactLoading ? "Submitting..." : "Submit"}</span>
+                  <ArrowRight size={17} />
                 </button>
               </div>
             </form>
           </div>
-
-          {/* Right Column: FAQ */}
-          <div className="gsap-faq-section lg:col-span-5 flex flex-col justify-start">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-[11px] font-bold uppercase tracking-wider mb-3 w-fit">
-              Frequently Asked Questions
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-6 leading-tight">
-              Questions &amp; Answers
-            </h2>
-
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <div key={index} className="bg-[#161F30] rounded-xl p-5 sm:p-6 border border-[#26354A] hover:border-[#00C2CB]/40 transition-colors">
-                  <h4 className="text-[14px] font-bold text-white mb-2">{faq.question}</h4>
-                  <p className="text-[13px] font-normal text-slate-300 leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
 
 export default function ContactUs() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0B0F19] text-white flex items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#070e12] text-white flex items-center justify-center">
+          Loading Contact...
+        </div>
+      }
+    >
       <ContactUsContent />
     </Suspense>
   );
