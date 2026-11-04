@@ -13,22 +13,22 @@ export default function Footer() {
             <div className="lg:col-span-2 flex flex-col space-y-4">
               <Link href="/" className="inline-block group select-none">
                 <img
-                  src="/d4399531705f2cd5cbd3dc79bab27b7f083023f8.png"
+                  src="/lampa-i-zderzak-logo.png"
                   alt="LampaIZderzak.pl"
                   className="h-12 w-auto object-contain transition-transform group-hover:scale-105"
                 />
               </Link>
-              <p className="text-[13px] leading-relaxed max-w-xs text-slate-400 pt-1">
+              <p className="text-[14px] leading-relaxed max-w-xs text-[#999B9E] font-regular pt-1">
                 Specialized catalog of replacement body elements for European premium vehicles.
               </p>
             </div>
 
             {/* Column 3: CATALOG */}
             <div className="flex flex-col space-y-3">
-              <h3 className="text-white text-[11px] font-bold tracking-widest uppercase">
+              <h3 className="text-[#77797C] text-[9px] font-regular tracking-widest uppercase">
                 Catalog
               </h3>
-              <ul className="space-y-2 text-[13px]">
+              <ul className="space-y-2 text-[14px] text-[#C9CACC]">
                 <li>
                   <Link href="/products?category=bumpers" className="hover:text-[#00C2CB] transition-colors">
                     Bumpers
@@ -54,10 +54,10 @@ export default function Footer() {
 
             {/* Column 4: BRANDS */}
             <div className="flex flex-col space-y-3">
-              <h3 className="text-white text-[11px] font-bold tracking-widest uppercase">
+              <h3 className="text-[#77797C] text-[9px] font-regular tracking-widest uppercase">
                 Brands
               </h3>
-              <ul className="space-y-2 text-[13px]">
+              <ul className="space-y-2 text-[14px] text-[#C9CACC]">
                 <li>
                   <Link href="/products?brand=BMW" className="hover:text-[#00C2CB] transition-colors">
                     BMW
@@ -83,10 +83,10 @@ export default function Footer() {
 
             {/* Column 5: INFORMATION */}
             <div className="flex flex-col space-y-3">
-              <h3 className="text-white text-[11px] font-bold tracking-widest uppercase">
+              <h3 className="text-[#77797C] text-[9px] font-regular tracking-widest uppercase">
                 Information
               </h3>
-              <ul className="space-y-2 text-[13px]">
+              <ul className="space-y-2 text-[14px] text-[#C9CACC]">
                 <li>
                   <Link href="/contact-us?subject=VIN+Verification" className="hover:text-[#00C2CB] transition-colors">
                     VIN verification
@@ -112,10 +112,10 @@ export default function Footer() {
 
             {/* Column 6: CONTACT */}
             <div className="flex flex-col space-y-3">
-              <h3 className="text-white text-[11px] font-bold tracking-widest uppercase">
+              <h3 className="text-[#77797C] text-[9px] font-regular tracking-widest uppercase">
                 Contact
               </h3>
-              <ul className="space-y-2 text-[13px]">
+              <ul className="space-y-2 text-[14px] text-[#C9CACC] font-semibold">
                 <li>
                   <a href="tel:+48000000000" className="hover:text-[#00C2CB] transition-colors">
                     +48 000 000 000
@@ -131,9 +131,9 @@ export default function Footer() {
           </div>
 
           {/* Bottom Copyright & Disclaimer matching Figma */}
-          <div className="pt-8 border-t border-[#1E293B]/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-slate-500">
+          <div className="pt-8 border-t border-[#1E293B]/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[14px] text-[#6F7175] font-regular">
             <p>&copy; 2025 Motorium. Demonstration project.</p>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 text-[14px] text-[#6F7175] font-regular">
               <Link href="/about" className="hover:text-slate-300 transition-colors">
                 Privacy policy
               </Link>
@@ -154,9 +154,9 @@ export default function Footer() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contact on WhatsApp"
-        className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full flex items-center justify-center shadow-lg shadow-black/50 hover:scale-110 active:scale-95 transition-all cursor-pointer"
+        className="fixed bottom-6 right-6 z-50 w-12 h-12 flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer"
       >
-        <MessageCircle size={26} fill="white" className="text-white" />
+        <img src="/whatsapp.png" alt="WhatsApp" className="w-12 h-12 object-contain drop-shadow-md" />
       </a>
     </>
   );
