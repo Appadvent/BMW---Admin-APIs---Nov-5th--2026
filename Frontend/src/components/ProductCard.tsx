@@ -54,7 +54,7 @@ export default function ProductCard({
     prod?.image ||
     prod?.images?.[0] ||
     prod?.thumbnail ||
-    "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg";
+    "/products/bumper_assy_row_1.jpeg";
 
   const vehicle =
     prod?.vehicle ||
@@ -148,11 +148,10 @@ export default function ProductCard({
         <button
           type="button"
           onClick={() => {
-            if (onInquire) {
-              onInquire(prod);
-            } else {
-              window.location.href = `/contact-us?subject=Part+Inquiry&part=${queryPart}`;
-            }
+            const partQuery = encodeURIComponent(title);
+            const oemQuery = encodeURIComponent(oemNumber || "");
+            const modelQuery = encodeURIComponent(vehicle || "");
+            window.location.href = `/inquiry?part=${partQuery}&oem=${oemQuery}&model=${modelQuery}`;
           }}
           className="w-full bg-[#33FDFF] hover:bg-[#00c8d1] text-[#111214] text-[15px] font-bold py-3 px-3 rounded text-center transition-colors shadow-sm block cursor-pointer"
         >

@@ -54,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
-      <body className={`${inter.className} min-h-screen min-w-[320px] m-0`}>
+      <body className={`${inter.className} min-h-screen m-0 overflow-x-hidden`}>
         <Providers>
           <ScrollToTop />
           <Navber />
