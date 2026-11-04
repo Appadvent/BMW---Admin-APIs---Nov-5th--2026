@@ -35,14 +35,15 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
-  min-width: 320px;
   min-height: 100vh;
   background-color: #0B0F19;
   color: #F8FAFC;
+  overflow-x: clip;
 }
 
 .ant-btn-primary {

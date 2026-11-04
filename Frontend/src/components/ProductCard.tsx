@@ -54,7 +54,7 @@ export default function ProductCard({
     prod?.image ||
     prod?.images?.[0] ||
     prod?.thumbnail ||
-    "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg";
+    "/products/bumper_assy_row_1.jpeg";
 
   const vehicle =
     prod?.vehicle ||

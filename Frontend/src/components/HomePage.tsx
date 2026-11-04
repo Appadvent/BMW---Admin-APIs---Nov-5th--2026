@@ -653,7 +653,7 @@ export default function HomePage() {
               vehicle: "G20 • 2019-2022",
               number: "OEM: sample data",
               finish: "Primed",
-              image: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
+              image: "/products/bumper_assy_row_1.jpeg",
               param: "BMW Series 3 G20 Bumper",
             },
             {
@@ -663,7 +663,7 @@ export default function HomePage() {
               vehicle: "G30 / G31 • 2017-2020",
               number: "OEM: sample data",
               finish: "Primed",
-              image: "/734295950a53ab641f4c489e327584416018d44d.jpg",
+              image: "/products/headlight_bmw_row_10.png",
               param: "BMW Series 5 G30 LED Headlight",
             },
             {
@@ -673,7 +673,7 @@ export default function HomePage() {
               vehicle: "W206 • 2021-",
               number: "OEM: sample data",
               finish: "To be painted",
-              image: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
+              image: "/products/bumper_assy_row_1.png",
               param: "Mercedes C-Class W206 Bumper",
             },
             {
@@ -683,7 +683,7 @@ export default function HomePage() {
               vehicle: "W213 • 2016-2020",
               number: "OEM: sample data",
               finish: "Gloss black",
-              image: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
+              image: "/products/bumper_shell_row_1.jpeg",
               param: "Mercedes C-Class W206 Gloss Black Bumper",
             },
           ].map((item) => (
