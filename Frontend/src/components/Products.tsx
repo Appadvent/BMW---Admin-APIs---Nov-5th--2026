@@ -928,10 +928,10 @@ function ProductsContent() {
               <span>{pageHeadingInfo.breadcrumb}</span>
             )}
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-tight mb-3">
+          <h1 className="text-[44px] sm:text-[44px] lg:text-[44px] font-medium text-white tracking-tight leading-tight mb-3">
             {pageHeadingInfo.title}
           </h1>
-          <p className="text-slate-400 text-xs sm:text-[14px] max-w-3xl leading-relaxed">
+          <p className="text-[#9CA2A2] text-[14px] sm:text-[14px] font-regular max-w-3xl leading-relaxed">
             {pageHeadingInfo.subtitle}
           </p>
         </div>
@@ -945,7 +945,7 @@ function ProductsContent() {
           className="w-full bg-[#0d1c1e] border border-[#1b2d30] text-white py-2.5 px-4 rounded-md text-xs font-semibold flex items-center justify-between cursor-pointer"
         >
           <span className="flex items-center gap-2">
-            <SlidersHorizontal size={14} className="text-[#00E5EE]" />
+            <SlidersHorizontal size={16} className="text-[#F3F3F3] font-regular" />
             Filters {selectedBrand !== 'all' && `(${selectedBrand})`}
           </span>
           {mobileFilterOpen ? <X size={14} /> : <ChevronDown size={14} />}
@@ -962,32 +962,31 @@ function ProductsContent() {
           {/* LEFT SIDEBAR: FILTERS */}
           {/* ========================================================================= */}
           <aside
-            className={`lg:col-span-3 lg:block ${
-              mobileFilterOpen ? 'block' : 'hidden'
-            } space-y-5`}
+            className={`lg:col-span-3 lg:block ${mobileFilterOpen ? 'block' : 'hidden'
+              } space-y-5`}
           >
             {/* Header: Filters + Clear all */}
             <div>
               <div className="flex items-center justify-between pb-2">
-                <h3 className="text-base font-medium text-white tracking-wide">
+                <h3 className="text-[16px] font-regular text-white tracking-wide">
                   Filters
                 </h3>
                 <button
                   type="button"
                   onClick={handleClearAll}
-                  className="text-xs text-[#00E5EE] hover:text-[#33FDFF] transition-colors cursor-pointer font-normal"
+                  className="text-[12px] text-[#33FDFF] hover:text-[#33FDFF] transition-colors cursor-pointer font-bold"
                 >
                   Clear all
                 </button>
               </div>
-              <div className="w-full h-[1px] bg-[#6A787A]/50 mt-1 mb-5" />
+              <div className="w-full h-[1px] bg-white mt-1 mb-5" />
             </div>
 
             {/* Vehicle brand section (Only shown in General Catalogue as per Figma screens) */}
             {selectedBrand === 'all' && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-[13px] font-normal text-[#94A3B8] block">
+                  <h4 className="text-[14px] font-medium text-[#F3F3F3] block">
                     Vehicle brand
                   </h4>
                 </div>
@@ -1006,14 +1005,13 @@ function ProductsContent() {
                       <label
                         key={item.id}
                         onClick={() => handleBrandSelect(item.id)}
-                        className="flex items-center gap-2.5 py-0.5 text-xs text-slate-300 hover:text-white cursor-pointer select-none group"
+                        className="flex items-center gap-2.5 py-0.5 text-[14px] text-[#9CA2A2] hover:text-white cursor-pointer select-none group"
                       >
                         <span
-                          className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
-                            isChecked
-                              ? 'border-[#00E5EE]'
-                              : 'border-[#3E5255] group-hover:border-[#00E5EE]'
-                          }`}
+                          className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-colors shrink-0 ${isChecked
+                            ? 'border-[#00E5EE]'
+                            : 'border-[#3E5255] group-hover:border-[#00E5EE]'
+                            }`}
                         >
                           {isChecked && (
                             <span className="w-1.5 h-1.5 rounded-full bg-[#00E5EE]" />
@@ -1036,13 +1034,13 @@ function ProductsContent() {
                 <button
                   type="button"
                   onClick={() => toggleAccordion('Model and generation')}
-                  className="w-full flex items-center justify-between py-3 text-xs text-slate-300 hover:text-white cursor-pointer select-none text-left"
+                  className="w-full flex items-center justify-between py-3 cursor-pointer select-none text-left"
                 >
-                  <span className={`text-slate-200 ${selectedModelGen !== 'all' ? 'text-[#00E5EE] font-semibold' : ''}`}>
+                  <span className={`text-[14px] font-medium ${selectedModelGen !== 'all' ? 'text-[#00E5EE]' : 'text-[#F3F3F3]'}`}>
                     Model and generation
                     {selectedModelGen !== 'all' && ' •'}
                   </span>
-                  <span className="text-slate-400 text-sm font-light leading-none">
+                  <span className="text-[#9CA2A2] text-[15px] font-light leading-none">
                     {openAccordions['Model and generation'] ? '−' : '+'}
                   </span>
                 </button>
@@ -1058,11 +1056,10 @@ function ProductsContent() {
                             setSelectedModelGen(isActive ? 'all' : opt);
                             setCurrentPage(1);
                           }}
-                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${
-                            isActive
-                              ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
-                              : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
+                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${isActive
+                            ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            }`}
                         >
                           <span>{opt}</span>
                           {isActive && <Check size={12} className="text-[#00E5EE]" />}
@@ -1078,13 +1075,13 @@ function ProductsContent() {
                 <button
                   type="button"
                   onClick={() => toggleAccordion('Model year')}
-                  className="w-full flex items-center justify-between py-3 text-xs text-slate-300 hover:text-white cursor-pointer select-none text-left"
+                  className="w-full flex items-center justify-between py-3 cursor-pointer select-none text-left"
                 >
-                  <span className={`text-slate-200 ${selectedModelYear !== 'all' ? 'text-[#00E5EE] font-semibold' : ''}`}>
+                  <span className={`text-[14px] font-medium ${selectedModelYear !== 'all' ? 'text-[#00E5EE]' : 'text-[#F3F3F3]'}`}>
                     Model year
                     {selectedModelYear !== 'all' && ' •'}
                   </span>
-                  <span className="text-slate-400 text-sm font-light leading-none">
+                  <span className="text-[#9CA2A2] text-[15px] font-light leading-none">
                     {openAccordions['Model year'] ? '−' : '+'}
                   </span>
                 </button>
@@ -1100,11 +1097,10 @@ function ProductsContent() {
                             setSelectedModelYear(isActive ? 'all' : opt);
                             setCurrentPage(1);
                           }}
-                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${
-                            isActive
-                              ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
-                              : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
+                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${isActive
+                            ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            }`}
                         >
                           <span>{opt}</span>
                           {isActive && <Check size={12} className="text-[#00E5EE]" />}
@@ -1120,13 +1116,13 @@ function ProductsContent() {
                 <button
                   type="button"
                   onClick={() => toggleAccordion('Product category')}
-                  className="w-full flex items-center justify-between py-3 text-xs text-slate-300 hover:text-white cursor-pointer select-none text-left"
+                  className="w-full flex items-center justify-between py-3 cursor-pointer select-none text-left"
                 >
-                  <span className={`text-slate-200 ${selectedCategory !== 'all' ? 'text-[#00E5EE] font-semibold' : ''}`}>
+                  <span className={`text-[14px] font-medium ${selectedCategory !== 'all' ? 'text-[#00E5EE]' : 'text-[#F3F3F3]'}`}>
                     Product category
                     {selectedCategory !== 'all' && ' •'}
                   </span>
-                  <span className="text-slate-400 text-sm font-light leading-none">
+                  <span className="text-[#9CA2A2] text-[15px] font-light leading-none">
                     {openAccordions['Product category'] ? '−' : '+'}
                   </span>
                 </button>
@@ -1142,11 +1138,10 @@ function ProductsContent() {
                             setSelectedCategory(isActive ? 'all' : opt);
                             setCurrentPage(1);
                           }}
-                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${
-                            isActive
-                              ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
-                              : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
+                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${isActive
+                            ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            }`}
                         >
                           <span>{opt}</span>
                           {isActive && <Check size={12} className="text-[#00E5EE]" />}
@@ -1162,13 +1157,13 @@ function ProductsContent() {
                 <button
                   type="button"
                   onClick={() => toggleAccordion('Mounting position')}
-                  className="w-full flex items-center justify-between py-3 text-xs text-slate-300 hover:text-white cursor-pointer select-none text-left"
+                  className="w-full flex items-center justify-between py-3 cursor-pointer select-none text-left"
                 >
-                  <span className={`text-slate-200 ${selectedMountingPosition !== 'all' ? 'text-[#00E5EE] font-semibold' : ''}`}>
+                  <span className={`text-[14px] font-medium ${selectedMountingPosition !== 'all' ? 'text-[#00E5EE]' : 'text-[#F3F3F3]'}`}>
                     Mounting position
                     {selectedMountingPosition !== 'all' && ' •'}
                   </span>
-                  <span className="text-slate-400 text-sm font-light leading-none">
+                  <span className="text-[#9CA2A2] text-[15px] font-light leading-none">
                     {openAccordions['Mounting position'] ? '−' : '+'}
                   </span>
                 </button>
@@ -1184,11 +1179,10 @@ function ProductsContent() {
                             setSelectedMountingPosition(isActive ? 'all' : opt);
                             setCurrentPage(1);
                           }}
-                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${
-                            isActive
-                              ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
-                              : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
+                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${isActive
+                            ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            }`}
                         >
                           <span>{opt}</span>
                           {isActive && <Check size={12} className="text-[#00E5EE]" />}
@@ -1204,13 +1198,13 @@ function ProductsContent() {
                 <button
                   type="button"
                   onClick={() => toggleAccordion('Product condition')}
-                  className="w-full flex items-center justify-between py-3 text-xs text-slate-300 hover:text-white cursor-pointer select-none text-left"
+                  className="w-full flex items-center justify-between py-3 cursor-pointer select-none text-left"
                 >
-                  <span className={`text-slate-200 ${selectedCondition !== 'all' ? 'text-[#00E5EE] font-semibold' : ''}`}>
+                  <span className={`text-[14px] font-medium ${selectedCondition !== 'all' ? 'text-[#00E5EE]' : 'text-[#F3F3F3]'}`}>
                     Product condition
                     {selectedCondition !== 'all' && ' •'}
                   </span>
-                  <span className="text-slate-400 text-sm font-light leading-none">
+                  <span className="text-[#9CA2A2] text-[15px] font-light leading-none">
                     {openAccordions['Product condition'] ? '−' : '+'}
                   </span>
                 </button>
@@ -1226,11 +1220,10 @@ function ProductsContent() {
                             setSelectedCondition(isActive ? 'all' : opt);
                             setCurrentPage(1);
                           }}
-                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${
-                            isActive
-                              ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
-                              : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
+                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${isActive
+                            ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            }`}
                         >
                           <span>{opt}</span>
                           {isActive && <Check size={12} className="text-[#00E5EE]" />}
@@ -1246,13 +1239,13 @@ function ProductsContent() {
                 <button
                   type="button"
                   onClick={() => toggleAccordion('EU / US specification')}
-                  className="w-full flex items-center justify-between py-3 text-xs text-slate-300 hover:text-white cursor-pointer select-none text-left"
+                  className="w-full flex items-center justify-between py-3 cursor-pointer select-none text-left"
                 >
-                  <span className={`text-slate-200 ${selectedSpec !== 'all' ? 'text-[#00E5EE] font-semibold' : ''}`}>
+                  <span className={`text-[14px] font-medium ${selectedSpec !== 'all' ? 'text-[#00E5EE]' : 'text-[#F3F3F3]'}`}>
                     EU / US specification
                     {selectedSpec !== 'all' && ' •'}
                   </span>
-                  <span className="text-slate-400 text-sm font-light leading-none">
+                  <span className="text-[#9CA2A2] text-[15px] font-light leading-none">
                     {openAccordions['EU / US specification'] ? '−' : '+'}
                   </span>
                 </button>
@@ -1268,11 +1261,10 @@ function ProductsContent() {
                             setSelectedSpec(isActive ? 'all' : opt);
                             setCurrentPage(1);
                           }}
-                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${
-                            isActive
-                              ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
-                              : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
+                          className={`w-full text-left py-1 px-2 rounded flex items-center justify-between transition-colors cursor-pointer ${isActive
+                            ? 'bg-[#00E5EE]/15 text-[#00E5EE] font-bold'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            }`}
                         >
                           <span>{opt}</span>
                           {isActive && <Check size={12} className="text-[#00E5EE]" />}
@@ -1286,7 +1278,7 @@ function ProductsContent() {
 
             {/* Section 3: Bumper specification */}
             <div className="border-t border-[#1b2d30] pt-4 mt-4">
-              <h4 className="text-[13px] font-normal text-[#94A3B8] mb-3 block">
+              <h4 className="text-[14px] font-medium text-[#F3F3F3] mb-3 block">
                 Bumper specification
               </h4>
               <div className="space-y-2">
@@ -1296,14 +1288,13 @@ function ProductsContent() {
                     <label
                       key={spec}
                       onClick={() => toggleBumperSpec(spec)}
-                      className="flex items-center gap-2.5 py-0.5 text-xs text-slate-300 hover:text-white cursor-pointer select-none group"
+                      className="flex items-center gap-2.5 py-0.5 text-[14px] text-[#9CA2A2] font-regular hover:text-white cursor-pointer select-none group"
                     >
                       <span
-                        className={`w-3.5 h-3.5 rounded-xs border flex items-center justify-center transition-colors shrink-0 ${
-                          isChecked
-                            ? 'bg-[#00E5EE] border-[#00E5EE] text-[#081516]'
-                            : 'border-[#3E5255] bg-[#081516] group-hover:border-[#00E5EE]'
-                        }`}
+                        className={`w-3.5 h-3.5 rounded-xs border flex items-center justify-center transition-colors shrink-0 ${isChecked
+                          ? 'bg-[#00E5EE] border-[#00E5EE] text-[#081516]'
+                          : 'border-[#3E5255] bg-[#081516] group-hover:border-[#00E5EE]'
+                          }`}
                       >
                         {isChecked && <Check size={10} strokeWidth={3} />}
                       </span>
@@ -1325,10 +1316,10 @@ function ProductsContent() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-7">
               {/* Left: Results Count */}
               <div className="shrink-0">
-                <span className="text-sm font-bold text-white block">
+                <span className="text-[16px] font-bold text-white block">
                   {sortedProducts.length} results
                 </span>
-                <span className="text-[11px] text-slate-400 mt-0.5 block">
+                <span className="text-[9px] text-[#9CA2A2] mt-0.5 block">
                   Showing all spare parts
                 </span>
               </div>
@@ -1357,8 +1348,8 @@ function ProductsContent() {
                       setCurrentPage(1);
                     }
                   }}
-                  placeholder="Search OEM number, VIN, make or model"
-                  className="w-full bg-[#0d1c1e] border border-[#1b2d30] rounded-md pl-9 pr-9 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-[#00E5EE] transition-colors"
+                  placeholder="Enter OEM number, VIN, make or model"
+                  className="w-full bg-[#0d1c1e] border border-[#1b2d30] rounded-md pl-9 pr-9 py-2 text-[16px] text-[#9CA2A2] placeholder-slate-400 focus:outline-none focus:border-[#00E5EE] transition-colors"
                 />
                 {searchQuery && (
                   <button
@@ -1377,27 +1368,31 @@ function ProductsContent() {
               </form>
 
               {/* Right: Sort & View Toggle */}
-              <div className="flex items-center gap-3 shrink-0 self-end md:self-auto">
-                {/* Sort Dropdown */}
-                <div className="relative">
+              <div className="flex items-center gap-4 shrink-0 self-end md:self-auto">
+                {/* Sort Dropdown matching Figma design */}
+                <div className="relative inline-flex items-center cursor-pointer group">
+                  <div className="flex items-center gap-1.5 text-[15px] select-none pointer-events-none">
+                    <span className="text-[#8B939C] font-normal">Sort by:</span>
+                    <span className="text-white font-bold">{activeSort}</span>
+                    <ChevronDown
+                      size={17}
+                      className="text-white ml-0.5 stroke-[2.5]"
+                    />
+                  </div>
                   <select
                     value={activeSort}
                     onChange={(e) => {
                       setActiveSort(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="appearance-none bg-[#0d1c1e] border border-[#1b2d30] rounded-md pl-3 pr-8 py-2 text-xs text-slate-300 focus:outline-none focus:border-[#00E5EE] cursor-pointer"
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer bg-[#0d1c1e] text-white"
                   >
-                    <option value="Relevance">-- Relevance --</option>
-                    <option value="Price: Low to High">Price: Low to High</option>
-                    <option value="Price: High to Low">Price: High to Low</option>
-                    <option value="Name: A to Z">Name: A to Z</option>
-                    <option value="Name: Z to A">Name: Z to A</option>
+                    <option value="Relevance" className="bg-[#0b1522] text-white">Relevance</option>
+                    <option value="Price: Low to High" className="bg-[#0b1522] text-white">Price: Low to High</option>
+                    <option value="Price: High to Low" className="bg-[#0b1522] text-white">Price: High to Low</option>
+                    <option value="Name: A to Z" className="bg-[#0b1522] text-white">Name: A to Z</option>
+                    <option value="Name: Z to A" className="bg-[#0b1522] text-white">Name: Z to A</option>
                   </select>
-                  <ChevronDown
-                    size={13}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                  />
                 </div>
 
                 {/* Grid / List View Toggle */}
@@ -1407,11 +1402,10 @@ function ProductsContent() {
                     onClick={() => setViewMode('grid')}
                     aria-label="Grid View"
                     title="Grid View"
-                    className={`w-8 h-8 flex items-center justify-center transition-colors cursor-pointer ${
-                      viewMode === 'grid'
-                        ? 'bg-white text-[#081516]'
-                        : 'bg-[#0d1c1e] text-slate-400 hover:text-white'
-                    }`}
+                    className={`w-8 h-8 flex items-center justify-center transition-colors cursor-pointer ${viewMode === 'grid'
+                      ? 'bg-white text-[#081516]'
+                      : 'bg-[#0d1c1e] text-slate-400 hover:text-white'
+                      }`}
                   >
                     <LayoutGrid size={14} />
                   </button>
@@ -1420,11 +1414,10 @@ function ProductsContent() {
                     onClick={() => setViewMode('list')}
                     aria-label="List View"
                     title="List View"
-                    className={`w-8 h-8 flex items-center justify-center transition-colors cursor-pointer ${
-                      viewMode === 'list'
-                        ? 'bg-white text-[#081516]'
-                        : 'bg-[#0d1c1e] text-slate-400 hover:text-white'
-                    }`}
+                    className={`w-8 h-8 flex items-center justify-center transition-colors cursor-pointer ${viewMode === 'list'
+                      ? 'bg-white text-[#081516]'
+                      : 'bg-[#0d1c1e] text-slate-400 hover:text-white'
+                      }`}
                   >
                     <List size={14} />
                   </button>
@@ -1535,55 +1528,76 @@ function ProductsContent() {
             )}
 
             {/* Pagination Controls matching Figma Frame */}
-            <div className="flex items-center justify-center gap-1.5 mt-12 mb-10">
+            <div className="flex items-center justify-center gap-2 mt-12 mb-10 select-none">
+              {/* Previous Arrow Button */}
               <button
                 type="button"
                 onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
                 aria-label="Previous Page"
                 title="Previous Page"
-                className={`w-8 h-8 rounded border text-xs flex items-center justify-center transition-colors cursor-pointer ${
+                className={`w-11 h-11 border border-[#D9D9D9] bg-white text-[#111214] text-[15px] font-normal flex items-center justify-center transition-colors ${
                   currentPage === 1
-                    ? 'border-[#1b2d30] bg-[#0d1c1e] text-slate-600 cursor-not-allowed'
-                    : 'border-[#1b2d30] bg-[#0d1c1e] text-slate-400 hover:text-white hover:border-[#00E5EE]'
+                    ? 'opacity-40 cursor-not-allowed'
+                    : 'hover:bg-slate-100 cursor-pointer'
                 }`}
               >
-                &lt;
+                &larr;
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => {
-                const isActive = num === currentPage;
-                return (
-                  <button
-                    key={num}
-                    type="button"
-                    onClick={() => handlePageChange(num)}
-                    aria-label={`Page ${num}`}
-                    className={`w-8 h-8 rounded border text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
-                      isActive
-                        ? 'border-white/30 bg-[#162729] text-white shadow-sm'
-                        : 'border-[#1b2d30] bg-[#0d1c1e] text-slate-400 hover:text-white hover:border-[#00E5EE]'
-                    }`}
-                  >
-                    {num}
-                  </button>
-                );
-              })}
+              {/* Number Buttons grouped together (max 5 visible at a time) */}
+              <div className="inline-flex items-center border border-[#D9D9D9] divide-x divide-[#D9D9D9]">
+                {(() => {
+                  const maxVisible = 5;
+                  let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                  let end = start + maxVisible - 1;
 
-              <button
-                type="button"
-                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                aria-label="Next Page"
-                title="Next Page"
-                className={`w-8 h-8 rounded border text-xs flex items-center justify-center transition-colors cursor-pointer ${
-                  currentPage === totalPages
-                    ? 'border-[#1b2d30] bg-[#0d1c1e] text-slate-600 cursor-not-allowed'
-                    : 'border-[#1b2d30] bg-[#0d1c1e] text-slate-400 hover:text-white hover:border-[#00E5EE]'
-                }`}
-              >
-                &gt;
-              </button>
+                  if (end > totalPages) {
+                    end = totalPages;
+                    start = Math.max(1, end - maxVisible + 1);
+                  }
+
+                  const pages = [];
+                  for (let i = start; i <= end; i++) {
+                    pages.push(i);
+                  }
+
+                  return pages.map((num) => {
+                    const isActive = num === currentPage;
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => handlePageChange(num)}
+                        aria-label={`Page ${num}`}
+                        className={`w-11 h-11 text-[15px] flex items-center justify-center transition-colors cursor-pointer ${
+                          isActive
+                            ? 'bg-[#121619] text-white font-normal'
+                            : 'bg-white text-[#111214] font-normal hover:bg-slate-100'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    );
+                  });
+                })()}
+
+                {/* Next Arrow Button inside the right cluster */}
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  aria-label="Next Page"
+                  title="Next Page"
+                  className={`w-11 h-11 bg-white text-[#111214] text-[15px] font-normal flex items-center justify-center transition-colors ${
+                    currentPage === totalPages
+                      ? 'opacity-40 cursor-not-allowed'
+                      : 'hover:bg-slate-100 cursor-pointer'
+                  }`}
+                >
+                  &rarr;
+                </button>
+              </div>
             </div>
           </main>
         </div>

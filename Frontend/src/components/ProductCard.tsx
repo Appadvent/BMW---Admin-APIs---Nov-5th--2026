@@ -12,9 +12,12 @@ export interface ProductItem {
   images?: string[];
   thumbnail?: string;
   version?: string;
+  vehicle?: string;
   model?: string;
   condition?: string;
+  finish?: string;
   price?: string | number;
+  number?: string;
   category?: any;
   oemNumber?: string;
   description?: string;
@@ -51,31 +54,32 @@ export default function ProductCard({
     prod?.image ||
     prod?.images?.[0] ||
     prod?.thumbnail ||
-    "/msp_car_1.png";
+    "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg";
 
-  const version =
+  const vehicle =
+    prod?.vehicle ||
     prod?.version ||
     prod?.model ||
     (prod?.specifications?.find((s: any) =>
-      s.name?.toLowerCase().includes("model") || s.name?.toLowerCase().includes("version")
+      s.name?.toLowerCase().includes("model") || s.name?.toLowerCase().includes("version") || s.name?.toLowerCase().includes("vehicle")
     )?.value) ||
-    "OEM Specification";
+    "G20 • 2019-";
 
-  const condition =
+  const oemNumber =
+    prod?.number ||
+    prod?.oemNumber ||
+    (prod?.specifications?.find((s: any) =>
+      s.name?.toLowerCase().includes("oem") || s.name?.toLowerCase().includes("number")
+    )?.value) ||
+    "OEM: sample data";
+
+  const finish =
+    prod?.finish ||
     prod?.condition ||
     (prod?.specifications?.find((s: any) =>
-      s.name?.toLowerCase().includes("condition")
+      s.name?.toLowerCase().includes("finish") || s.name?.toLowerCase().includes("condition")
     )?.value) ||
-    "OEM complete piece";
-
-  let priceStr = "Inquire";
-  if (prod?.price !== undefined && prod?.price !== null && prod?.price !== "") {
-    if (typeof prod.price === "number") {
-      priceStr = `€${prod.price.toLocaleString()}`;
-    } else {
-      priceStr = String(prod.price);
-    }
-  }
+    "To be painted";
 
   const productId = prod?.id || prod?._id || `ref-${idx + 1}`;
   const queryPart = encodeURIComponent(title);
@@ -99,18 +103,16 @@ export default function ProductCard({
         </Link>
         {/* Brand Badge on photo bottom left */}
         <div className="absolute bottom-2.5 left-2.5 pointer-events-none">
-          <span className="bg-[#11161f]/90 backdrop-blur-md text-[#00E5EE] text-[9px] font-bold px-2 py-0.5 rounded-xs border border-white/10 uppercase tracking-wider">
+          <span className="bg-[#11161f]/40 backdrop-blur-sm text-[#00E5EE] text-[10px] font-bold px-2 py-0.5 border-[#00E5EE]/40 uppercase tracking-wider">
             {brand}
           </span>
         </div>
       </div>
 
       {/* Product Info Table */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between bg-white">
+      <div className="p-5 flex-1 flex flex-col justify-between bg-white">
         <div>
-          <h4
-            className="text-[14px] sm:text-[15px] font-bold text-slate-900 mb-3 min-h-[40px] leading-snug line-clamp-2"
-          >
+          <h4 className="text-[15px] font-bold text-slate-900 mb-4 min-h-[42px] leading-snug line-clamp-2">
             <Link
               href={`/products/${productId}`}
               className="hover:text-[#00C2CB] transition-colors cursor-pointer"
@@ -120,20 +122,24 @@ export default function ProductCard({
             </Link>
           </h4>
 
-          <div className="space-y-2 border-t border-slate-100 pt-3 text-[11px] text-slate-500 mb-5">
+          <div className="space-y-2.5 border-t border-slate-100 pt-3 text-[12px] text-[#11161f] mb-6">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Version:</span>
-              <span className="font-semibold text-slate-800 truncate max-w-[160px] text-right">
-                {version}
+              <span className="text-[#686B70]">Vehicle</span>
+              <span className="font-semibold text-[#11161f] truncate max-w-[170px] text-right">
+                {vehicle}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Condition:</span>
-              <span className="font-semibold text-slate-800">{condition}</span>
+              <span className="text-[#686B70]">Number</span>
+              <span className="font-mono text-[#11161f] truncate max-w-[170px] text-right">
+                {oemNumber}
+              </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Price:</span>
-              <span className="font-bold text-slate-900">{priceStr}</span>
+              <span className="text-[#686B70]">Finish</span>
+              <span className="font-semibold text-[#11161f] truncate max-w-[170px] text-right">
+                {finish}
+              </span>
             </div>
           </div>
         </div>
@@ -148,9 +154,9 @@ export default function ProductCard({
               window.location.href = `/contact-us?subject=Part+Inquiry&part=${queryPart}`;
             }
           }}
-          className="w-full bg-[#00E5EE] hover:bg-[#00c8d1] active:scale-[0.99] text-[#081516] text-xs font-bold py-2.5 sm:py-3 px-3 rounded-none text-center transition-all shadow-sm block uppercase tracking-wider font-sans cursor-pointer"
+          className="w-full bg-[#33FDFF] hover:bg-[#00c8d1] text-[#111214] text-[15px] font-bold py-3 px-3 rounded text-center transition-colors shadow-sm block cursor-pointer"
         >
-          Inquire about this part
+          Inquire about the part
         </button>
       </div>
     </div>

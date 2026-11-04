@@ -102,6 +102,8 @@ export default function HomePage() {
       image: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
       logo: "/B-M-W.png",
       brandParam: "BMW",
+      containerStyle: "w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full bg-black/40 border border-white/20 p-3 shadow-xl",
+      logoStyle: "w-full h-full object-contain scale-110 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]",
     },
     {
       name: "Mercedes-Benz",
@@ -110,6 +112,8 @@ export default function HomePage() {
       image: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
       logo: "/Benz.png",
       brandParam: "Mercedes-Benz",
+      containerStyle: "w-[62px] h-[62px] sm:w-[70px] sm:h-[70px] rounded-full bg-black/40 border border-white/20 p-2 shadow-xl",
+      logoStyle: "w-full h-full object-contain scale-110 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]",
     },
     {
       name: "Audi",
@@ -118,6 +122,8 @@ export default function HomePage() {
       image: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
       logo: "/Audi.png",
       brandParam: "Audi",
+      containerStyle: "w-[120px] h-[62px] rounded-[40px] bg-[#000000]/80 px-4 py-1.5 shadow-xl flex items-center justify-center",
+      logoStyle: "w-full h-full object-contain scale-125",
     },
     {
       name: "Range Rover",
@@ -126,8 +132,54 @@ export default function HomePage() {
       image: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
       logo: "/Land-Rover.png",
       brandParam: "Range Rover",
+      containerStyle: "w-[130px] h-[70px] rounded-[260px] bg-white px-2 py-1 shadow-xl flex items-center justify-center overflow-hidden",
+      logoStyle: "w-full h-full object-contain scale-125",
     },
   ];
+
+  // Top Row & Bottom Row Categories Data
+  const topCategories = [
+    {
+      name: "Complete bumpers",
+      href: "/products?category=bumpers",
+      image: "/7a633909f37ebad7ba458ab83b64e97d182de499.png",
+    },
+    {
+      name: "Headlights",
+      href: "/products?category=headlights",
+      image: "/f93de2dfa9c809df119e34582c3f80a56d2e7e69.png",
+    },
+  ];
+
+  const bottomCategories = [
+    {
+      name: "Grilles",
+      href: "/products?category=grilles",
+      image: "/a92783c40197d1e216cf1371a696c41a78daff2a.png",
+    },
+    {
+      name: "Exterior trims",
+      href: "/products?category=trims",
+      image: "/9b7be6140818a0c881d657f179c827d267409917.png",
+    },
+    {
+      name: "Front splitters",
+      href: "/products?category=splitters",
+      image: "/5dd349e4eaad559c6d2ec0c7249e247ac00dc1b0.png",
+    },
+    {
+      name: "Body elements",
+      href: "/products?category=body",
+      image: "/9b7be6140818a0c881d657f179c827d267409917.png",
+    },
+  ];
+
+  // Single place to customize Category Cards styling (Fonts, Sizes, Colors)
+  const categoryCardStyles = {
+    title: "text-[19px] sm:text-[20px] font-bold text-white mb-1.5 group-hover:text-[#00C2CB] transition-colors",
+    action: "inline-flex items-center gap-1.5 text-[14px] sm:text-[15px] font-semibold text-[#33FDFF] group-hover:text-[#00E5FF] transition-colors",
+    actionText: "Discover category",
+  };
 
   return (
     <main className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] font-sans antialiased selection:bg-[#00C2CB] selection:text-[#0B0F19]">
@@ -156,7 +208,7 @@ export default function HomePage() {
             </h1>
 
             {/* Description Paragraph - exact word to word */}
-            <p className="text-[#C5D0DC] text-sm sm:text-base lg:text-[17px] font-normal leading-relaxed mb-8 max-w-xl">
+            <p className="text-[#CFD0D2] text-sm sm:text-base lg:text-[17px] font-normal leading-relaxed mb-8 max-w-xl">
               Discover high-quality replacement bumpers, headlights, grilles, and exterior parts for BMW, Mercedes-Benz, Audi, and Range Rover.
             </p>
 
@@ -173,7 +225,7 @@ export default function HomePage() {
                 />
                 <button
                   type="submit"
-                  className="bg-[#00e5ee] hover:bg-[#00f5ff] text-[#0B0F19] text-sm font-bold px-5 py-2.5 rounded-lg shrink-0 transition-colors cursor-pointer shadow-md"
+                  className="bg-[#33FDFF] hover:bg-[#00f5ff] text-[#0B0F19] text-sm font-bold px-6 py-3.5 rounded-lg shrink-0 transition-colors cursor-pointer shadow-md"
                 >
                   Search parts
                 </button>
@@ -208,18 +260,21 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section id="vehicle-search-widget" className="relative pt-6 sm:pt-8 pb-10 sm:pb-12 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A] bg-[#081516]">
         {/* Header matching image */}
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-bold text-white tracking-tight">
+        <div className="flex flex-col items-start justify-between mb-4 sm:mb-6">
+          <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
+            PREMIUM BRANDS
+          </span>
+          <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-bold text-white tracking-tight">
             Replacement by Make and Model
           </h2>
 
-          <Link
+          {/* <Link
             href="/products"
             className="text-xs sm:text-sm text-slate-400 hover:text-[#00C2CB] transition-colors flex items-center gap-1 font-medium group"
           >
             <span>All brands</span>
             <span className="group-hover:translate-x-0.5 transition-transform text-xs sm:text-sm">&rarr;</span>
-          </Link>
+          </Link> */}
         </div>
 
         {/* 4 Brand Cards with EQUAL size and larger prominent logos */}
@@ -228,7 +283,7 @@ export default function HomePage() {
             <Link
               key={b.name}
               href={`/products?brand=${encodeURIComponent(b.brandParam)}`}
-              className="group relative rounded-[8px] overflow-hidden border border-[#1E293B]/80 hover:border-[#00E5EE]/70 bg-[#0B1522] h-[255px] sm:h-[265px] flex flex-col justify-between p-4 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-950/25"
+              className="group relative rounded-[8px] overflow-hidden border border-[#1E293B]/80 hover:border-[#00E5EE]/70 bg-[#0B1522] h-[355px] sm:h-[365px] flex flex-col justify-between p-4 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-950/25"
             >
               {/* Card Background Car Photo */}
               <div className="absolute inset-0 z-0">
@@ -243,42 +298,15 @@ export default function HomePage() {
 
               {/* Top Row: Prominent Larger Brand Logos on top-left + Index number on top-right */}
               <div className="relative z-10 flex items-start justify-between w-full">
-                {b.name === "BMW" && (
-                  <div className=" px-2 sm:px-3 rounded-full bg-black/30 border border-white/20 flex items-center justify-center shadow-xl shrink-0">
-                    <img
-                      src={b.logo}
-                      alt="BMW Logo"
-                      className="w-17 h-19 sm:w-17 sm:h-19 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]"
-                    />
-                  </div>
-                )}
-                {b.name === "Mercedes-Benz" && (
-                  <div className=" px-2 sm:px-3 rounded-full bg-black/30 border border-white/20 flex items-center justify-center shadow-xl shrink-0">
-                    <img
-                      src={b.logo}
-                      alt="Mercedes-Benz Logo"
-                      className="w-17 h-19 sm:w-17 sm:h-19 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] "
-                    />
-                  </div>
-                )}
-                {b.name === "Audi" && (
-                  <div className="h-11 sm:h-12 px-2 sm:px-3 rounded-full bg-black/30 border border-white/20 flex items-center justify-center shadow-xl shrink-0">
-                    <img
-                      src={b.logo}
-                      alt="Audi Logo"
-                      className="h-15 sm:h-17 w-auto object-contain"
-                    />
-                  </div>
-                )}
-                {b.name === "Range Rover" && (
-                  <div className="h-11 sm:h-12 px-1.5 sm:px-2 rounded-full bg-white flex items-center justify-center shadow-xl overflow-hidden shrink-0 border border-slate-200">
-                    <img
-                      src={b.logo}
-                      alt="Land Rover Logo"
-                      className="h-12 sm:h-14 w-auto object-contain scale-110"
-                    />
-                  </div>
-                )}
+                <div
+                  className={`flex items-center justify-center shrink-0 ${b.containerStyle}`}
+                >
+                  <img
+                    src={b.logo}
+                    alt={`${b.name} Logo`}
+                    className={b.logoStyle}
+                  />
+                </div>
                 {b.num && (
                   <span className="text-[11px] sm:text-xs font-mono text-white/60 tracking-wider">
                     {b.num}
@@ -288,13 +316,13 @@ export default function HomePage() {
 
               {/* Bottom Content */}
               <div className="relative z-10 mt-auto">
-                <h3 className="text-[16px] sm:text-[17px] font-bold text-white mb-1 leading-snug group-hover:text-[#00E5EE] transition-colors">
+                <h3 className="text-[25px] font-bold text-white mb-1 leading-snug group-hover:text-[#00E5EE] transition-colors">
                   {b.name}
                 </h3>
-                <p className="text-slate-300 text-[10px] sm:text-[11px] leading-[1.35] mb-2.5 line-clamp-2 max-w-[220px]">
+                <p className="text-[#D2D3D4] text-[14px] sm:text-[15px] leading-[1.35] mb-2.5 line-clamp-2 max-w-[220px]">
                   {b.desc}
                 </p>
-                <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold text-[#00E5EE] group-hover:text-[#3bf7ff] transition-colors">
+                <div className="inline-flex items-center gap-1.5 text-[14px] sm:text-[15px] font-semibold text-[#00E5EE] group-hover:text-[#3bf7ff] transition-colors">
                   <span>Browse parts</span>
                   <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
                 </div>
@@ -310,10 +338,10 @@ export default function HomePage() {
       <section className="py-16 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A] bg-[#000000]">
         {/* Header matching reference image */}
         <div className="mb-8">
-          <p className="text-[#00C2CB] font-bold text-[11px] uppercase tracking-[0.2em] mb-2">
+          <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2">
             CATEGORIES
           </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-white tracking-tight">
+          <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-bold text-white tracking-tight">
             Parts by category
           </h2>
         </div>
@@ -322,152 +350,60 @@ export default function HomePage() {
         <div className="space-y-3.5">
           {/* Top Row: 2 Large Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            {/* Complete bumpers */}
-            <Link
-              href="/products?category=bumpers"
-              className="group relative rounded-xl overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[210px] sm:h-[240px] flex flex-col justify-end p-6 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-            >
-              <div className="absolute inset-0 z-0">
-                <img
-                  src="/7a633909f37ebad7ba458ab83b64e97d182de499.png"
-                  alt="Complete bumpers"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-1.5 group-hover:text-[#00C2CB] transition-colors">
-                  Complete bumpers
-                </h3>
-                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#00C2CB] group-hover:text-[#00E5FF] transition-colors">
-                  <span>Discover category</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            {topCategories.map((cat) => (
+              <Link
+                key={cat.name}
+                href={cat.href}
+                className="group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[210px] sm:h-[240px] flex flex-col justify-end p-6 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
+              >
+                <div className="absolute inset-0 z-0">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                 </div>
-              </div>
-            </Link>
-
-            {/* Headlights */}
-            <Link
-              href="/products?category=headlights"
-              className="group relative rounded-xl overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[210px] sm:h-[240px] flex flex-col justify-end p-6 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-            >
-              <div className="absolute inset-0 z-0">
-                <img
-                  src="/f93de2dfa9c809df119e34582c3f80a56d2e7e69.png"
-                  alt="Headlights"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-1.5 group-hover:text-[#00C2CB] transition-colors">
-                  Headlights
-                </h3>
-                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#00C2CB] group-hover:text-[#00E5FF] transition-colors">
-                  <span>Discover category</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                <div className="relative z-10">
+                  <h3 className={categoryCardStyles.title}>
+                    {cat.name}
+                  </h3>
+                  <div className={categoryCardStyles.action}>
+                    <span>{categoryCardStyles.actionText}</span>
+                    <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            ))}
           </div>
 
           {/* Bottom Row: 4 Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-            {/* Grilles */}
-            <Link
-              href="/products?category=grilles"
-              className="group relative rounded-xl overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-            >
-              <div className="absolute inset-0 z-0">
-                <img
-                  src="/a92783c40197d1e216cf1371a696c41a78daff2a.png"
-                  alt="Grilles"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-base sm:text-lg font-bold text-white mb-1 group-hover:text-[#00C2CB] transition-colors">
-                  Grilles
-                </h3>
-                <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00C2CB] group-hover:text-[#00E5FF] transition-colors">
-                  <span>Discover category</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            {bottomCategories.map((cat) => (
+              <Link
+                key={cat.name}
+                href={cat.href}
+                className="group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
+              >
+                <div className="absolute inset-0 z-0">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
                 </div>
-              </div>
-            </Link>
-
-            {/* Exterior trims */}
-            <Link
-              href="/products?category=trims"
-              className="group relative rounded-xl overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-            >
-              <div className="absolute inset-0 z-0">
-                <img
-                  src="/9b7be6140818a0c881d657f179c827d267409917.png"
-                  alt="Exterior trims"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-base sm:text-lg font-bold text-white mb-1 group-hover:text-[#00C2CB] transition-colors">
-                  Exterior trims
-                </h3>
-                <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00C2CB] group-hover:text-[#00E5FF] transition-colors">
-                  <span>Discover category</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                <div className="relative z-10">
+                  <h3 className={categoryCardStyles.title}>
+                    {cat.name}
+                  </h3>
+                  <div className={categoryCardStyles.action}>
+                    <span>{categoryCardStyles.actionText}</span>
+                    <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-
-            {/* Front splitters */}
-            <Link
-              href="/products?category=splitters"
-              className="group relative rounded-xl overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-            >
-              <div className="absolute inset-0 z-0">
-                <img
-                  src="/5dd349e4eaad559c6d2ec0c7249e247ac00dc1b0.png"
-                  alt="Front splitters"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-base sm:text-lg font-bold text-white mb-1 group-hover:text-[#00C2CB] transition-colors">
-                  Front splitters
-                </h3>
-                <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00C2CB] group-hover:text-[#00E5FF] transition-colors">
-                  <span>Discover category</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                </div>
-              </div>
-            </Link>
-
-            {/* Body elements */}
-            <Link
-              href="/products?category=body"
-              className="group relative rounded-xl overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
-            >
-              <div className="absolute inset-0 z-0">
-                <img
-                  src="/9b7be6140818a0c881d657f179c827d267409917.png"
-                  alt="Body elements"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-base sm:text-lg font-bold text-white mb-1 group-hover:text-[#00C2CB] transition-colors">
-                  Body elements
-                </h3>
-                <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00C2CB] group-hover:text-[#00E5FF] transition-colors">
-                  <span>Discover category</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                </div>
-              </div>
-            </Link>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -479,16 +415,16 @@ export default function HomePage() {
         {/* Header matching image */}
         <div className="flex items-center justify-between mb-9">
           <div>
-            <p className="text-[#00E5EE] font-bold text-[11px] uppercase tracking-[0.2em] mb-2.5">
+            <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
               SELECTED FROM THE CATALOG
             </p>
-            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-none">
+            <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-extrabold text-white tracking-tight leading-none">
               Most selling parts
             </h2>
           </div>
           <Link
             href="/products"
-            className="bg-white hover:bg-slate-100 text-[#0B0F19] text-xs font-bold px-5 py-2.5 rounded shadow transition-all cursor-pointer"
+            className="bg-white hover:bg-slate-100 text-[#0B0F19] text-[14px] font-bold px-5 py-2.5 rounded shadow transition-all cursor-pointer"
           >
             View All
           </Link>
@@ -551,7 +487,7 @@ export default function HomePage() {
                 />
                 {/* Brand Badge on photo bottom left */}
                 <div className="absolute bottom-2.5 left-2.5">
-                  <span className="bg-[#11161f]/90 backdrop-blur-md text-[#00E5EE] text-[9px] font-bold px-2 py-0.5 rounded-sm border border-white/10 uppercase tracking-wider">
+                  <span className="bg-[#11161f]/40 backdrop-blur-sm text-[#00E5EE] text-[10px] font-bold px-2 py-0.5 border-[#00E5EE]/40 uppercase tracking-wider">
                     {item.badge}
                   </span>
                 </div>
@@ -564,18 +500,18 @@ export default function HomePage() {
                     {item.title}
                   </h4>
 
-                  <div className="space-y-2.5 border-t border-slate-100 pt-3 text-[11px] text-slate-500 mb-6">
+                  <div className="space-y-2.5 border-t border-slate-100 pt-3 text-[12px] text-[#11161f] mb-6">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Vehicle</span>
-                      <span className="font-semibold text-slate-800">{item.vehicle}</span>
+                      <span className="text-[#686B70] ">Vehicle</span>
+                      <span className="font-semibold text-[#11161f]">{item.vehicle}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Number</span>
-                      <span className="font-mono text-slate-800">{item.number}</span>
+                      <span className="text-[#686B70]">Number</span>
+                      <span className="font-mono text-[#11161f]">{item.number}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Finish</span>
-                      <span className="font-semibold text-slate-800">{item.finish}</span>
+                      <span className="text-[#686B70]">Finish</span>
+                      <span className="font-semibold text-[#11161f]"> {item.finish}</span>
                     </div>
                   </div>
                 </div>
@@ -583,7 +519,7 @@ export default function HomePage() {
                 {/* Cyan Inquire Button */}
                 <Link
                   href={`/contact-us?subject=Part+Inquiry&part=${encodeURIComponent(item.param)}`}
-                  className="w-full bg-[#00E5EE] hover:bg-[#00c8d1] text-[#0B0F19] text-xs font-bold py-3 px-3 rounded text-center transition-colors shadow-sm block"
+                  className="w-full bg-[#33FDFF] hover:bg-[#00c8d1] text-[#111214] text-[15px] font-bold py-3 px-3 rounded text-center transition-colors shadow-sm block"
                 >
                   Inquire about the part
                 </Link>
@@ -598,7 +534,7 @@ export default function HomePage() {
       <section className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A]/40 bg-[#000000]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Car Front-End Image matching exact reference */}
-          <div className="lg:col-span-5 relative rounded-xl overflow-hidden border border-white/10 bg-[#0d141e] aspect-square flex items-center justify-center shadow-2xl group">
+          <div className="lg:col-span-5 relative overflow-hidden border border-white/10 bg-[#0d141e] aspect-square flex items-center justify-center shadow-2xl group">
             <img
               src="/compatibility_bmw_m5.jpg"
               alt="BMW M5 Front End Compatibility Verification"
@@ -620,13 +556,13 @@ export default function HomePage() {
 
           {/* Right Column: Compatibility Checklist & Copy */}
           <div className="lg:col-span-7 flex flex-col justify-center">
-            <span className="text-[#00E5EE] font-bold text-[11px] uppercase tracking-[0.2em] mb-2.5">
+            <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
               COMPATIBILITY VERIFICATION
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-white tracking-tight leading-[1.15] mb-4">
+            <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-medium text-white tracking-tight leading-[1.15] mb-4">
               The right part starts with the right match.
             </h2>
-            <p className="text-slate-400 text-sm leading-relaxed mb-8 max-w-xl">
+            <p className="text-[#E6E8E8] text-[18px] leading-relaxed mb-8 max-w-xl">
               The same vehicle generation may have several equipment variants. Gather the most important data before sending an inquiry.
             </p>
 
@@ -642,7 +578,7 @@ export default function HomePage() {
                 "Lighting technology",
                 "EU or US specification",
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2.5 text-[13px] text-slate-300">
+                <div key={idx} className="flex items-center gap-2.5 text-[14px] text-[#FFFFFF] font-regular">
                   <Check size={14} className="text-[#00E5EE] shrink-0" strokeWidth={2.5} />
                   <span>{item}</span>
                 </div>
@@ -652,13 +588,13 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center gap-4">
               <Link
                 href="/contact-us?subject=Compatibility+Verification"
-                className="bg-[#00E5EE] hover:bg-[#00c8d1] text-[#0B0F19] px-7 py-3 rounded-md text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
+                className="bg-[#33FDFF] hover:bg-[#00c8d1] text-[#0B0F19] px-7 py-3 rounded-md text-[14px] sm:text-[16px] font-bold shadow-md transition-all cursor-pointer"
               >
                 Verify the part
               </Link>
               <Link
                 href="/contact-us"
-                className="inline-flex items-center gap-1.5 text-slate-300 hover:text-white px-4 py-3 text-xs sm:text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 text-[#F3F3F3] hover:text-white px-4 py-3 text-[14px] sm:text-[14px] font-bold transition-colors"
               >
                 <span>Contact an advisor</span>
                 <ChevronRight size={14} className="text-slate-400" />
@@ -672,10 +608,10 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section className="pt-20 pb-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 bg-[#081516]">
         <div className="mb-14">
-          <p className="text-[#00E5EE] font-bold text-[11px] uppercase tracking-[0.2em] mb-3">
+          <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3">
             SIMPLE PROCESS
           </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-none">
+          <h2 className="text-[44px] sm:text-[45] lg:text-[46px] font-medium text-white tracking-tight leading-none">
             How it works
           </h2>
         </div>
@@ -708,13 +644,13 @@ export default function HomePage() {
               className="border-l border-white/10 pl-6 sm:pl-7 pr-4 py-1 flex flex-col justify-between"
             >
               <div>
-                <span className="text-[#00E5EE] font-mono font-bold text-xs uppercase tracking-widest block mb-8">
+                <span className="text-[#33FDFF] font-mono font-extrabold text-[13px] uppercase tracking-widest block mb-8">
                   {item.step}
                 </span>
-                <h3 className="text-lg font-bold text-white mb-3">
+                <h3 className="text-[#FFFFFF] font-semibold text-[20px] mb-3">
                   {item.title}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed max-w-[220px]">
+                <p className="text-[14px] text-[#686B70] font-regular leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -726,8 +662,8 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {/* 6. B2B COOPERATION (Full-width dark container) */}
       {/* ========================================================================= */}
-      <section className="w-full bg-[#1c1e22] py-20 sm:py-24 relative overflow-hidden">
-        {/* Subtle LA watermark in background matching reference */}
+      {/* <section className="w-full bg-[#1c1e22] py-20 sm:py-24 relative overflow-hidden">
+
         <div className="absolute right-10 top-1/2 -translate-y-1/2 text-[280px] font-black text-white/[0.03] select-none pointer-events-none leading-none tracking-tighter">
           LA
         </div>
@@ -735,17 +671,16 @@ export default function HomePage() {
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
             <div className="max-w-2xl">
-              <span className="text-[#00E5EE] font-bold text-[11px] uppercase tracking-[0.2em] mb-3 block">
-                B2B COOPERATION
+              <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3 block">
+                KNOWLEDGE BASE
               </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-[1.12] mb-4">
-                A reliable partner for automotive professionals.
+              <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-regular text-white tracking-tight leading-[1.12] mb-4">
+                Automotive guides
               </h2>
-              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-8 max-w-xl">
-                Workshops, body shops, paint shops, and distributors can send organized individual or recurring inquiries.
+              <p className="text-[#686B70] text-[14px] leading-relaxed mb-8 max-w-xl">
+                Practical tips to help identify the right part.
               </p>
 
-              {/* Tags */}
               <div className="flex flex-wrap gap-2.5">
                 {["WORKSHOPS", "BODY SHOPS", "DISTRIBUTORS"].map((tag, i) => (
                   <span
@@ -758,7 +693,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Buttons */}
             <div className="flex flex-col gap-3 min-w-[210px] sm:min-w-[230px]">
               <Link
                 href="/contact-us?subject=B2B+Partner"
@@ -775,64 +709,20 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* ========================================================================= */}
-      {/* 6.1 VALUE PILLARS (Delivery in Poland, European shipping, Assistance in matching) */}
-      {/* ========================================================================= */}
-      <section className="w-full bg-[#070b11] border-y border-white/10 py-8 sm:py-10">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 items-center">
-            {[
-              {
-                icon: Box,
-                title: "Delivery in Poland",
-                desc: "We confirm delivery options individually.",
-              },
-              {
-                icon: Globe,
-                title: "European shipping",
-                desc: "We handle inquiries from European markets.",
-              },
-              {
-                icon: Headphones,
-                title: "Assistance in matching",
-                desc: "Support based on vehicle data.",
-              },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className={`flex items-center justify-center ${idx !== 0 ? "md:border-l md:border-white/15" : ""
-                  }`}
-              >
-                <div className="flex items-center gap-4 py-1">
-                  <item.icon size={22} className="text-[#00E5EE] shrink-0" strokeWidth={1.75} />
-                  <div>
-                    <h4 className="text-sm font-bold text-white mb-0.5">
-                      {item.title}
-                    </h4>
-                    <p className="text-xs text-slate-400 leading-normal">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* 7. AUTOMOTIVE GUIDES (Knowledge Base) */}
       {/* ========================================================================= */}
       <section className="pt-20 pb-28 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
-          <p className="text-[#00E5EE] font-bold text-[11px] uppercase tracking-[0.2em] mb-2.5">
+          <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
             KNOWLEDGE BASE
           </p>
           <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-tight mb-2">
             Automotive guides
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1">
+          <p className="text-[#686B70] text-xs sm:text-sm mt-1">
             Practical tips to help identify the right part.
           </p>
         </div>
@@ -865,7 +755,7 @@ export default function HomePage() {
               key={blog.id}
               className="bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
             >
-              <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative">
+              <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative text-[17px] font-medium">
                 <img
                   src={blog.image}
                   alt={blog.title}
@@ -874,19 +764,19 @@ export default function HomePage() {
               </div>
               <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between bg-white text-[#0B0F19]">
                 <div>
-                  <span className="text-[10px] font-mono font-medium text-slate-400 uppercase tracking-wider block mb-3">
+                  <span className="text-[10px] font-mono font-bold text-[#9CA2A2] uppercase tracking-wider block mb-3">
                     {blog.badge}
                   </span>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 leading-snug">
+                  <h3 className="text-[17px] sm:text-lg font-medium text-[#111214] mb-3 leading-snug">
                     {blog.title}
                   </h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-6">
+                  <p className="text-[14px] text-[#686B70] leading-relaxed mb-6">
                     {blog.desc}
                   </p>
                 </div>
                 <Link
                   href={"/news/" + blog.id}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-slate-900 hover:text-[#00c8d1] transition-colors mt-auto"
+                  className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111214] hover:text-[#00c8d1] transition-colors mt-auto"
                 >
                   <span>Read the article</span>
                   <ArrowRight size={13} className="text-slate-900" />
@@ -898,30 +788,75 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 8. NEED HELP? (Looking for a specific car part?) */}
+      {/* 8 VALUE PILLARS (Delivery in Poland, European shipping, Assistance in matching) */}
+      {/* ========================================================================= */}
+      <section className="w-full bg-[#081516] border-y border-white/10 py-8 sm:py-10">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 items-center">
+            {[
+              {
+                icon: Box,
+                title: "Delivery in Poland",
+                desc: "We confirm delivery options individually.",
+              },
+              {
+                icon: Globe,
+                title: "European shipping",
+                desc: "We handle inquiries from European markets.",
+              },
+              {
+                icon: Headphones,
+                title: "Assistance in matching",
+                desc: "Support based on vehicle data.",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className={`flex items-center justify-center ${idx !== 0 ? "md:border-l md:border-white/15" : ""
+                  }`}
+              >
+                <div className="flex items-center gap-4 py-1">
+                  <item.icon size={22} className="text-[#00E5EE] shrink-0" strokeWidth={1.75} />
+                  <div>
+                    <h4 className="text-[16px] font-bold text-white mb-0.5">
+                      {item.title}
+                    </h4>
+                    <p className="text-[14px] text-[#686B70] font-regular leading-normal">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 9. NEED HELP? (Looking for a specific car part?) */}
       {/* ========================================================================= */}
       <section className="pt-20 pb-28 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 text-center bg-[#081516]">
         <div className="max-w-3xl mx-auto flex flex-col items-center">
-          <span className="text-[#00E5EE] font-bold text-[11px] uppercase tracking-[0.2em] mb-3 block">
+          <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3 block">
             NEED HELP?
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-white tracking-tight mb-4 leading-tight">
+          <h2 className="text-[44px] sm:text-4xl lg:text-[46px] font-extrabold text-white tracking-tight mb-4 leading-tight">
             Looking for a specific car part?
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-8 max-w-xl">
+          <p className="text-[#9CA2A2] text-[14px] font-regular sm:text-sm leading-relaxed mb-8 max-w-xl">
             Send vehicle data or OEM number, and our team will help identify the right component.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3.5">
             <Link
               href="/products"
-              className="bg-[#00E5EE] hover:bg-[#00c8d1] text-[#0B0F19] px-7 py-3 rounded text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer min-w-[120px]"
+              className="bg-[#00E5EE] hover:bg-[#00c8d1] text-[#081516] px-7 py-3 rounded text-[14px] sm:text-[15px] font-bold shadow-md transition-all cursor-pointer min-w-[120px]"
             >
               Find a part
             </Link>
             <Link
               href="/contact-us"
-              className="bg-white hover:bg-slate-100 text-[#0B0F19] px-7 py-3 rounded text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer min-w-[120px]"
+              className="bg-white hover:bg-slate-100 text-[#111214] px-7 py-3 rounded text-[14px] sm:text-[15px] font-bold shadow-md transition-all cursor-pointer min-w-[120px]"
             >
               Contact us
             </Link>

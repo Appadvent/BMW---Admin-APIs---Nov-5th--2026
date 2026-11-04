@@ -41,6 +41,8 @@ export default function Navber() {
 
   // Word-to-word links as shown in the reference image
   const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "About us", href: "/about" },
     { name: "Parts", href: "/products" },
     { name: "Search by OEM", href: "/products?search=OEM" },
     { name: "Blog", href: "/news" },
@@ -49,15 +51,14 @@ export default function Navber() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 bg-[#060B11]/95 backdrop-blur-md border-b border-[#1E293B]/70 ${
-        isScrolled ? "py-2.5 shadow-xl shadow-black/50" : "py-3.5"
-      }`}
+      className={`sticky top-0 z-50 w-full transition-all duration-300 bg-[#060B11]/95 backdrop-blur-md border-b border-[#1E293B]/70 ${isScrolled ? "py-2.5 shadow-xl shadow-black/50" : "py-3.5"
+        }`}
     >
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Authentic Brand Logo matching reference image */}
         <Link href="/" className="flex items-center shrink-0 group select-none">
           <img
-            src="/d4399531705f2cd5cbd3dc79bab27b7f083023f8.png"
+            src="/lampa-i-zderzak-logo.png"
             alt="LampaIZderzak.pl"
             className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
           />
@@ -76,9 +77,8 @@ export default function Navber() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`transition-colors hover:text-white ${
-                    isActive ? "text-white font-semibold" : "text-[#D1DCE8] hover:text-white"
-                  }`}
+                  className={`transition-colors hover:text-white ${isActive ? "text-white font-semibold" : "text-[#D1DCE8] hover:text-white"
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -98,9 +98,8 @@ export default function Navber() {
               <span>{selectedLang}</span>
               <ChevronDown
                 size={14}
-                className={`text-[#8A9EB5] transition-transform duration-200 ${
-                  isLangOpen ? "rotate-180" : ""
-                }`}
+                className={`text-[#8A9EB5] transition-transform duration-200 ${isLangOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -165,9 +164,8 @@ export default function Navber() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`py-2 px-3 rounded-lg hover:bg-[#0D1520] hover:text-white transition-colors ${
-                  pathname === link.href ? "bg-[#0D1520] text-white font-bold" : ""
-                }`}
+                className={`py-2 px-3 rounded-lg hover:bg-[#0D1520] hover:text-white transition-colors ${pathname === link.href ? "bg-[#0D1520] text-white font-bold" : ""
+                  }`}
               >
                 {link.name}
               </Link>
