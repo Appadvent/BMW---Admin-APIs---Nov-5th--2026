@@ -144,6 +144,10 @@ const ProductForm: React.FC = () => {
         yearRange: product.yearRange || null,
         position: product.position || null,
         condition: product.condition || null,
+        price: product.price ?? null,
+        finish: product.finish || null,
+        price: product.price ?? null,
+        finish: product.finish || null,
         categoryId: product.categoryId || (product.category?.id ?? null),
         subcategoryId: product.subcategoryId || (product.subcategory?.id ?? null),
       });
@@ -375,6 +379,8 @@ const ProductForm: React.FC = () => {
         yearRange: values.yearRange ? String(values.yearRange).trim() : null,
         position: values.position ? String(values.position).trim() : null,
         condition: values.condition ? String(values.condition).trim() : null,
+        price: values.price !== undefined && values.price !== null && values.price !== "" ? Number(values.price) : null,
+        finish: values.finish ? String(values.finish).trim() : null,
         categoryId: values.categoryId ? Number(values.categoryId) : null,
         subcategoryId: product?.subcategoryId || null,
         specifications: cleanSpecifications,
@@ -528,10 +534,9 @@ const ProductForm: React.FC = () => {
                     className="rounded-lg h-11 w-full"
                     options={[
                       { value: "BMW", label: "BMW" },
-                      { value: "Mercedes-Benz", label: "Mercedes-Benz" },
-                      { value: "Audi", label: "Audi" },
-                      { value: "Range Rover", label: "Range Rover" },
-                      { value: "MINI", label: "MINI" },
+                      { value: "MERCEDES-BENZ", label: "MERCEDES-BENZ" },
+                      { value: "AUDI", label: "AUDI" },
+                      { value: "RANGE ROVER", label: "RANGE ROVER" },
                     ]}
                   />
                 </Form.Item>
@@ -570,6 +575,26 @@ const ProductForm: React.FC = () => {
                       { value: "Brand New Replacement", label: "Brand New Replacement" },
                     ]}
                   />
+                </Form.Item>
+                <Form.Item name="finish" label={<span className="font-semibold text-gray-700 text-sm">Finish / Surface</span>} className="mb-2">
+                  <Select
+                    placeholder="Select Finish"
+                    allowClear
+                    size="large"
+                    className="rounded-lg h-11 w-full"
+                    options={[
+                      { value: "To be painted", label: "To be painted" },
+                      { value: "Primed", label: "Primed" },
+                      { value: "Gloss Black", label: "Gloss Black" },
+                      { value: "Matte Black", label: "Matte Black" },
+                      { value: "Chrome", label: "Chrome" },
+                      { value: "Carbon Fiber Look", label: "Carbon Fiber Look" },
+                      { value: "Textured", label: "Textured" },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item name="price" label={<span className="font-semibold text-gray-700 text-sm">Price (€)</span>} className="mb-2">
+                  <Input type="number" step="0.01" min="0" placeholder="e.g. 1250.00 (leave blank for Inquire)" size="large" className="rounded-lg h-11" />
                 </Form.Item>
               </div>
 

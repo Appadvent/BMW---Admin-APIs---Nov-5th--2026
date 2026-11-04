@@ -19,6 +19,30 @@ export const createProduct = Joi.object({
   tag: Joi.string().optional().allow(null, "").messages({
     "string.base": "Tag must be a valid string",
   }),
+  price: Joi.number().optional().allow(null, "").messages({
+    "number.base": "Price must be a valid number",
+  }),
+  finish: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Finish must be a valid string",
+  }),
+  oemNumber: Joi.string().optional().allow(null, "").messages({
+    "string.base": "OEM number must be a valid string",
+  }),
+  make: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Make / Brand must be a valid string",
+  }),
+  model: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Model must be a valid string",
+  }),
+  yearRange: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Year range must be a valid string",
+  }),
+  position: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Position must be a valid string",
+  }),
+  condition: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Condition must be a valid string",
+  }),
   categoryId: Joi.number().integer().positive().optional().allow(null).messages({
     "number.base": "Category ID must be a valid number",
   }),
@@ -71,6 +95,30 @@ export const updateProduct = Joi.object({
   }),
   tag: Joi.string().optional().allow(null, "").messages({
     "string.base": "Tag must be a valid string",
+  }),
+  price: Joi.number().optional().allow(null, "").messages({
+    "number.base": "Price must be a valid number",
+  }),
+  finish: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Finish must be a valid string",
+  }),
+  oemNumber: Joi.string().optional().allow(null, "").messages({
+    "string.base": "OEM number must be a valid string",
+  }),
+  make: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Make / Brand must be a valid string",
+  }),
+  model: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Model must be a valid string",
+  }),
+  yearRange: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Year range must be a valid string",
+  }),
+  position: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Position must be a valid string",
+  }),
+  condition: Joi.string().optional().allow(null, "").messages({
+    "string.base": "Condition must be a valid string",
   }),
   categoryId: Joi.number().integer().positive().optional().allow(null).messages({
     "number.base": "Category ID must be a valid number",

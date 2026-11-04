@@ -746,6 +746,12 @@ function ProductsContent() {
               ? `€${p.price.toLocaleString()}`
               : p.price
             : 'Inquire',
+        finish:
+          p.finish ||
+          p.specifications?.find((s: any) =>
+            s.name?.toLowerCase().includes('finish')
+          )?.value ||
+          'To be painted',
         image: p.image || p.images?.[0] || p.thumbnail || '/msp_car_1.png',
         oemNumber: p.oemNumber,
         category: p.category?.title || p.category?.name || 'Bumper assembly',

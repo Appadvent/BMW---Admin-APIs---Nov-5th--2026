@@ -22,6 +22,8 @@ export const ProductController = {
         yearRange,
         position,
         condition,
+        price,
+        finish,
         specifications,
       } = req.body;
 
@@ -75,6 +77,8 @@ export const ProductController = {
         yearRange: typeof yearRange === "string" && yearRange.trim() ? yearRange.trim() : undefined,
         position: typeof position === "string" && position.trim() ? position.trim() : undefined,
         condition: typeof condition === "string" && condition.trim() ? condition.trim() : undefined,
+        price: price !== undefined && price !== null && price !== "" ? Number(price) : undefined,
+        finish: typeof finish === "string" && finish.trim() ? finish.trim() : undefined,
         categoryId: resolvedCategoryId,
         subcategoryId: resolvedSubcategoryId,
         specifications: Array.isArray(specifications) ? specifications : undefined,
@@ -208,6 +212,8 @@ export const ProductController = {
         yearRange,
         position,
         condition,
+        price,
+        finish,
         specifications,
       } = req.body;
 
@@ -284,6 +290,8 @@ export const ProductController = {
         yearRange: yearRange !== undefined ? (yearRange ? String(yearRange).trim() : null) : (existingProduct as any).yearRange,
         position: position !== undefined ? (position ? String(position).trim() : null) : (existingProduct as any).position,
         condition: condition !== undefined ? (condition ? String(condition).trim() : null) : (existingProduct as any).condition,
+        price: price !== undefined ? (price !== null && price !== "" ? Number(price) : null) : (existingProduct as any).price,
+        finish: finish !== undefined ? (finish ? String(finish).trim() : null) : (existingProduct as any).finish,
         categoryId: resolvedCategoryId,
         subcategoryId: resolvedSubcategoryId,
         specifications: Array.isArray(specifications) ? specifications : undefined,
