@@ -13,6 +13,8 @@ export const ProductDao = {
     yearRange?: string | null;
     position?: string | null;
     condition?: string | null;
+    price?: number | null;
+    finish?: string | null;
     categoryId?: number | null;
     subcategoryId?: number | null;
     specifications?: Array<{ name: string; value: string; order?: number }>;
@@ -237,6 +239,8 @@ export const ProductDao = {
       yearRange?: string | null;
       position?: string | null;
       condition?: string | null;
+      price?: number | null;
+      finish?: string | null;
       categoryId?: number | null;
       subcategoryId?: number | null;
       specifications?: Array<{ name: string; value: string; order?: number }>;

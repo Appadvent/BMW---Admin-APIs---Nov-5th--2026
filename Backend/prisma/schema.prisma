@@ -52,6 +52,8 @@ model Product {
   yearRange      String?
   position       String?
   condition      String?
+  price          Float?
+  finish         String?
   categoryId     Int?
   category       Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   subcategoryId  Int?
