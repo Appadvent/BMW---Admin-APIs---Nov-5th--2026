@@ -34,16 +34,16 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/Icon.svg",
-        type: "image/svg+xml",
+        url: "/favicon.png",
+        type: "image/png",
       },
       {
         url: "/favicon.ico",
         sizes: "any",
       },
     ],
-    shortcut: "/Icon.svg",
-    apple: "/Icon.svg",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 

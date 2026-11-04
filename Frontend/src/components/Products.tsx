@@ -12,6 +12,13 @@ import {
   SlidersHorizontal,
   X,
 } from 'lucide-react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchCategories } from '../redux/Slice/categorySlice';
 import { fetchProducts } from '../redux/Slice/productSlice';
@@ -503,6 +510,7 @@ function ProductsContent() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const mainRef = useRef<HTMLDivElement>(null);
   const productSectionRef = useRef<HTMLDivElement>(null);
 
   const urlCategoryId = searchParams.get('categoryId');
@@ -916,11 +924,59 @@ function ProductsContent() {
     currentPage * itemsPerPage
   );
 
+  // GSAP Animations (Header, Sidebar Filters, Product Cards Grid)
+  useGSAP(
+    () => {
+      // 1. Header Animation on mount / brand switch
+      const headerEl = mainRef.current?.querySelector('.gsap-products-header');
+      if (headerEl) {
+        gsap.fromTo(
+          headerEl,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }
+        );
+      }
+
+      // 2. Filter Sidebar Animation on mount
+      const filterEl = mainRef.current?.querySelector('.gsap-filter-sidebar');
+      if (filterEl) {
+        gsap.fromTo(
+          filterEl,
+          { opacity: 0, x: -25 },
+          { opacity: 1, x: 0, duration: 0.65, delay: 0.1, ease: 'power2.out' }
+        );
+      }
+    },
+    { scope: mainRef, dependencies: [selectedBrand] }
+  );
+
+  useGSAP(
+    () => {
+      // 3. Product Cards animation when page, filters, or viewMode changes
+      const cards = mainRef.current?.querySelectorAll('.gsap-product-card');
+      if (cards && cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 30, scale: 0.97 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.45,
+            stagger: 0.05,
+            ease: 'power2.out',
+          }
+        );
+      }
+    },
+    { scope: mainRef, dependencies: [currentPage, viewMode, paginatedProducts] }
+  );
+
   return (
-    <div className="w-full bg-[#081516] text-[#F8FAFC] min-h-screen font-sans selection:bg-[#00E5EE] selection:text-[#081516]">
+    <div ref={mainRef} className="w-full bg-[#081516] text-[#F8FAFC] min-h-screen font-sans selection:bg-[#00E5EE] selection:text-[#081516]">
       {/* 1. Header & Title Section matching Figma Frames (Spare parts, BMW parts, Mercedes-Benz parts, Rangerover parts) */}
       <section className="pt-10 sm:pt-14 pb-8 sm:pb-10 border-b border-[#1b2d30]/60">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 gsap-products-header">
           <div className="text-[#00E5EE] font-bold text-[11px] sm:text-xs tracking-[0.2em] uppercase mb-2.5 flex items-center gap-1.5">
             {pageHeadingInfo.breadcrumb.includes('/') ? (
               <>
@@ -969,7 +1025,7 @@ function ProductsContent() {
           {/* ========================================================================= */}
           <aside
             className={`lg:col-span-3 lg:block ${mobileFilterOpen ? 'block' : 'hidden'
-              } space-y-5`}
+              } space-y-5 gsap-filter-sidebar`}
           >
             {/* Header: Filters + Clear all */}
             <div>
@@ -1460,12 +1516,13 @@ function ProductsContent() {
             ) : viewMode === 'grid' ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 {paginatedProducts.map((prod, idx) => (
-                  <ProductCard
-                    key={prod.id || idx}
-                    prod={prod}
-                    idx={idx}
-                    onInquire={handleOpenEnquiry}
-                  />
+                  <div key={prod.id || idx} className="gsap-product-card h-full">
+                    <ProductCard
+                      prod={prod}
+                      idx={idx}
+                      onInquire={handleOpenEnquiry}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
@@ -1473,7 +1530,7 @@ function ProductsContent() {
                 {paginatedProducts.map((prod, idx) => (
                   <div
                     key={prod.id || idx}
-                    className="bg-white rounded-none overflow-hidden flex flex-col sm:flex-row justify-between text-[#111827] shadow-lg border border-white/10 group hover:shadow-2xl transition-all"
+                    className="gsap-product-card bg-white rounded-none overflow-hidden flex flex-col sm:flex-row justify-between text-[#111827] shadow-lg border border-white/10 group hover:shadow-2xl transition-all"
                   >
                     {/* Photo with Badge */}
                     <div className="relative w-full sm:w-56 h-48 bg-black shrink-0 overflow-hidden">

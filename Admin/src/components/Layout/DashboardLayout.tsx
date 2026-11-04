@@ -39,7 +39,7 @@ const DashboardLayout: React.FC = () => {
         className="bg-[rgb(31,41,55)] fixed h-screen overflow-hidden"
         style={{ position: 'fixed', height: '100vh', left: 0, top: 0 }}
       >
-        <div className="p-4 text-center border-b border-gray-700">
+        <div className="p-4 text-center border-b border-gray-700 flex flex-col items-center gap-2"><img src="/favicon.png" alt="Logo" className="w-10 h-10 object-contain rounded-full shadow-md bg-[#081516] p-1 border border-cyan-500/40" />
           <h2 className="text-xl font-semibold text-white">{user?.name || 'Admin'}</h2>
           <p className="text-gray-300 text-sm">{user?.email || 'admin@example.com'}</p>
         </div>

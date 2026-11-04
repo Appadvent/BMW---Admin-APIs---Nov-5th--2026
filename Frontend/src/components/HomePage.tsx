@@ -1,39 +1,33 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Search,
   ArrowRight,
   Check,
-  Shield,
-  Car,
-  Layers,
-  Phone,
-  Mail,
-  Truck,
-  Sparkles,
-  Users,
-  CheckCircle2,
-  Calendar,
-  Clock,
-  ExternalLink,
   Scan,
   ChevronRight,
   Box,
   Globe,
   Headphones,
 } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchCategories } from "../redux/Slice/categorySlice";
 import { fetchProducts } from "../redux/Slice/productSlice";
 import { fetchAllBlogs } from "../redux/Slice/BlogSlice";
-import ProductCard from "./ProductCard";
-import CategoryCard from "./CategoryCard";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const mainRef = useRef<HTMLDivElement>(null);
 
   const { list: products, loading: productsLoading } = useAppSelector((state) => state.products);
   const { list: categories, loading: categoriesLoading } = useAppSelector((state) => state.categories);
@@ -51,47 +45,278 @@ export default function HomePage() {
   // Filter state for Vehicle Search
   const [selectedBrand, setSelectedBrand] = useState("BMW");
   const [selectedModel, setSelectedModel] = useState("");
-  const [selectedGen, setSelectedGen] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-  const [selectedCat, setSelectedCat] = useState("");
   const [oemInput, setOemInput] = useState("");
-  const [vinInput, setVinInput] = useState("");
 
   const handleVehicleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (selectedBrand) params.set("brand", selectedBrand);
     if (selectedModel) params.set("model", selectedModel);
-    if (selectedCat) params.set("categoryId", selectedCat);
     if (oemInput.trim()) params.set("search", oemInput.trim());
 
     router.push(`/products?${params.toString()}`);
   };
 
-  // Curated category fallback images from Figma assets
-  const categoryAssets: Record<string, string> = {
-    bumper: "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
-    headlight: "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
-    grille: "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
-    trim: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-    lens: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-  };
+  // GSAP SCROLLTRIGGER ANIMATIONS (Eutoriia & Black&Blink style)
+  useGSAP(
+    () => {
+      // 1. Hero Content Entrance
+      const heroContent = mainRef.current?.querySelector(".gsap-hero-content");
+      if (heroContent) {
+        gsap.fromTo(
+          heroContent,
+          { opacity: 0, y: 35 },
+          { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.1 }
+        );
+      }
 
-  const getCategoryAsset = (cat: any, idx: number) => {
-    const name = (cat?.name || cat?.title || "").toLowerCase();
-    if (name.includes("headlight") || name.includes("lamp")) return categoryAssets.headlight;
-    if (name.includes("grille") || name.includes("atrap")) return categoryAssets.grille;
-    if (name.includes("shell") || name.includes("trim") || name.includes("lens")) return categoryAssets.trim;
-    if (name.includes("bumper") || name.includes("zderzak")) return categoryAssets.bumper;
+      // 2. Premium Brands Cards Animation
+      const brandHeader = mainRef.current?.querySelector(".gsap-brand-header");
+      const brandCards = mainRef.current?.querySelectorAll(".gsap-brand-card");
+      if (brandHeader && brandCards && brandCards.length > 0) {
+        const brandTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#vehicle-search-widget",
+            start: "top 85%",
+            once: true,
+          },
+        });
+        brandTl
+          .fromTo(
+            brandHeader,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+          )
+          .fromTo(
+            brandCards,
+            { opacity: 0, y: 40, scale: 0.96 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.55,
+              stagger: 0.1,
+              ease: "power2.out",
+            },
+            "-=0.3"
+          );
+      }
 
-    const fallbacks = [
-      "/08b2b9be9642bbf6c5b41bc55de409ebd418d294.jpg",
-      "/ce1d8aa4367dcb587ee79305a43bd21e5d10d260.jpg",
-      "/0065630ec2b4dbc86f746c86f25ccc999111c337.jpg",
-      "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-    ];
-    return cat?.image || fallbacks[idx % fallbacks.length];
-  };
+      // 3. Categories Grid Animation
+      const catHeader = mainRef.current?.querySelector(".gsap-cat-header");
+      const catCards = mainRef.current?.querySelectorAll(".gsap-cat-card");
+      if (catHeader && catCards && catCards.length > 0) {
+        const catTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#categories-section",
+            start: "top 85%",
+            once: true,
+          },
+        });
+        catTl
+          .fromTo(
+            catHeader,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+          )
+          .fromTo(
+            catCards,
+            { opacity: 0, y: 35, scale: 0.97 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.5,
+              stagger: 0.08,
+              ease: "power2.out",
+            },
+            "-=0.3"
+          );
+      }
+
+      // 4. Most Selling Parts Animation
+      const mspHeader = mainRef.current?.querySelector(".gsap-msp-header");
+      const mspCards = mainRef.current?.querySelectorAll(".gsap-msp-card");
+      if (mspHeader && mspCards && mspCards.length > 0) {
+        const mspTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#msp-section",
+            start: "top 85%",
+            once: true,
+          },
+        });
+        mspTl
+          .fromTo(
+            mspHeader,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+          )
+          .fromTo(
+            mspCards,
+            { opacity: 0, y: 40, scale: 0.96 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.55,
+              stagger: 0.1,
+              ease: "power2.out",
+            },
+            "-=0.3"
+          );
+      }
+
+      // 5. Compatibility Verification Section (Split Horizon Left/Right)
+      const compatImg = mainRef.current?.querySelector(".gsap-compat-img");
+      const compatContent = mainRef.current?.querySelector(".gsap-compat-content");
+      const compatItems = mainRef.current?.querySelectorAll(".gsap-compat-item");
+      if (compatImg && compatContent) {
+        const compatTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#compat-section",
+            start: "top 82%",
+            once: true,
+          },
+        });
+        compatTl
+          .fromTo(
+            compatImg,
+            { opacity: 0, x: -45, scale: 0.96 },
+            { opacity: 1, x: 0, scale: 1, duration: 0.7, ease: "power2.out" }
+          )
+          .fromTo(
+            compatContent,
+            { opacity: 0, x: 45 },
+            { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" },
+            "-=0.5"
+          );
+        if (compatItems && compatItems.length > 0) {
+          compatTl.fromTo(
+            compatItems,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              stagger: 0.05,
+              ease: "power2.out",
+            },
+            "-=0.3"
+          );
+        }
+      }
+
+      // 6. Simple Process Steps Animation
+      const processHeader = mainRef.current?.querySelector(".gsap-process-header");
+      const processSteps = mainRef.current?.querySelectorAll(".gsap-process-step");
+      if (processHeader && processSteps && processSteps.length > 0) {
+        const processTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#process-section",
+            start: "top 85%",
+            once: true,
+          },
+        });
+        processTl
+          .fromTo(
+            processHeader,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+          )
+          .fromTo(
+            processSteps,
+            { opacity: 0, y: 35 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              stagger: 0.1,
+              ease: "power2.out",
+            },
+            "-=0.3"
+          );
+      }
+
+      // 7. Automotive Guides / Knowledge Base Animation
+      const guideHeader = mainRef.current?.querySelector(".gsap-guide-header");
+      const guideCards = mainRef.current?.querySelectorAll(".gsap-guide-card");
+      if (guideHeader && guideCards && guideCards.length > 0) {
+        const guideTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#guides-section",
+            start: "top 85%",
+            once: true,
+          },
+        });
+        guideTl
+          .fromTo(
+            guideHeader,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+          )
+          .fromTo(
+            guideCards,
+            { opacity: 0, y: 40, scale: 0.96 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.55,
+              stagger: 0.1,
+              ease: "power2.out",
+            },
+            "-=0.3"
+          );
+      }
+
+      // 8. Value Pillars Animation
+      const pillarsSection = mainRef.current?.querySelector("#pillars-section");
+      const pillars = mainRef.current?.querySelectorAll(".gsap-pillar-item");
+      if (pillarsSection && pillars && pillars.length > 0) {
+        gsap.fromTo(
+          pillars,
+          { opacity: 0, y: 25 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.55,
+            stagger: 0.12,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: pillarsSection,
+              start: "top 90%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // 9. Need Help Section Animation
+      const helpSection = mainRef.current?.querySelector("#help-section");
+      const helpBox = mainRef.current?.querySelector(".gsap-help-box");
+      if (helpSection && helpBox) {
+        gsap.fromTo(
+          helpBox,
+          { opacity: 0, scale: 0.97, y: 30 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: helpSection,
+              start: "top 88%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      ScrollTrigger.refresh();
+    },
+    { scope: mainRef }
+  );
 
   // Brand Cards matching Figma "Replacement by make and model"
   const brandCards = [
@@ -102,7 +327,7 @@ export default function HomePage() {
       image: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
       logo: "/B-M-W.png",
       brandParam: "BMW",
-      containerStyle: "w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full bg-black/40 border border-white/20 p-3 shadow-xl",
+      containerStyle: "w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full bg-black/40 border border-white/20 p-2 shadow-xl",
       logoStyle: "w-full h-full object-contain scale-110 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]",
     },
     {
@@ -112,7 +337,7 @@ export default function HomePage() {
       image: "/13d46830bc0c8f31c49b6fb7035b8c4135d3134c.jpg",
       logo: "/Benz.png",
       brandParam: "Mercedes-Benz",
-      containerStyle: "w-[62px] h-[62px] sm:w-[70px] sm:h-[70px] rounded-full bg-black/40 border border-white/20 p-2 shadow-xl",
+      containerStyle: "w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full bg-black/40 border border-white/20 p-2 shadow-xl",
       logoStyle: "w-full h-full object-contain scale-110 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]",
     },
     {
@@ -174,7 +399,6 @@ export default function HomePage() {
     },
   ];
 
-  // Single place to customize Category Cards styling (Fonts, Sizes, Colors)
   const categoryCardStyles = {
     title: "text-[19px] sm:text-[20px] font-bold text-white mb-1.5 group-hover:text-[#00C2CB] transition-colors",
     action: "inline-flex items-center gap-1.5 text-[14px] sm:text-[15px] font-semibold text-[#33FDFF] group-hover:text-[#00E5FF] transition-colors",
@@ -182,9 +406,9 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] font-sans antialiased selection:bg-[#00C2CB] selection:text-[#0B0F19]">
+    <main ref={mainRef} className="min-h-screen bg-[#0B0F19] text-[#F8FAFC] font-sans antialiased selection:bg-[#00C2CB] selection:text-[#0B0F19] overflow-x-hidden">
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (Figma: Premium replacements, Perfect fitment.) */}
+      {/* 1. HERO SECTION */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden min-h-[580px] lg:min-h-[640px] flex items-center border-b border-[#26354A]">
         {/* Full Hero Image matching reference image exactly */}
@@ -194,20 +418,19 @@ export default function HomePage() {
             alt="Premium automotive replacement parts"
             className="w-full h-full object-cover object-[center_right] sm:object-center"
           />
-          {/* Dark gradient on the left side to keep text crisp and legible */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#070b12] via-[#070b12]/85 to-transparent w-full md:w-[65%]" />
           <div className="absolute inset-0 bg-black/20" />
         </div>
 
         <div className="relative z-10 max-w-[1360px] w-full mx-auto px-4 sm:px-6 lg:px-12 py-16 sm:py-24">
-          <div className="max-w-2xl">
-            {/* Main Hero Headline - exact word to word */}
+          <div className="gsap-hero-content max-w-2xl">
+            {/* Main Hero Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold text-white tracking-tight leading-[1.08] mb-6">
               Premium replacements.<br />
               Perfect fitment.
             </h1>
 
-            {/* Description Paragraph - exact word to word */}
+            {/* Description Paragraph */}
             <p className="text-[#CFD0D2] text-sm sm:text-base lg:text-[17px] font-normal leading-relaxed mb-8 max-w-xl">
               Discover high-quality replacement bumpers, headlights, grilles, and exterior parts for BMW, Mercedes-Benz, Audi, and Range Rover.
             </p>
@@ -254,44 +477,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Wrapper around Vehicle Search Widget */}
       {/* ========================================================================= */}
-      {/* VEHICLE / VIN FILTER WIDGET (Figma: Replacement by make and model) */}
+      {/* VEHICLE / VIN FILTER WIDGET */}
       {/* ========================================================================= */}
       <section id="vehicle-search-widget" className="relative pt-6 sm:pt-8 pb-10 sm:pb-12 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A] bg-[#081516]">
-        {/* Header matching image */}
-        <div className="flex flex-col items-start justify-between mb-4 sm:mb-6">
+        {/* Header */}
+        <div className="gsap-brand-header flex flex-col items-start justify-between mb-4 sm:mb-6">
           <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
             PREMIUM BRANDS
           </span>
           <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-bold text-white tracking-tight">
             Replacement by Make and Model
           </h2>
-
-          {/* <Link
-            href="/products"
-            className="text-xs sm:text-sm text-slate-400 hover:text-[#00C2CB] transition-colors flex items-center gap-1 font-medium group"
-          >
-            <span>All brands</span>
-            <span className="group-hover:translate-x-0.5 transition-transform text-xs sm:text-sm">&rarr;</span>
-          </Link> */}
         </div>
 
-        {/* 4 Brand Cards with EQUAL size and larger prominent logos */}
+        {/* 4 Brand Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 items-stretch">
           {brandCards.map((b) => (
             <Link
               key={b.name}
               href={`/products?brand=${encodeURIComponent(b.brandParam)}`}
-              className="group relative rounded-[8px] overflow-hidden border border-[#1E293B]/80 hover:border-[#00E5EE]/70 bg-[#0B1522] h-[355px] sm:h-[365px] flex flex-col justify-between p-4 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-950/25"
+              className="gsap-brand-card group relative rounded-[8px] overflow-hidden border border-[#1E293B]/80 hover:border-[#00E5EE]/70 bg-[#0B1522] h-[355px] sm:h-[365px] flex flex-col justify-between p-4 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-950/25"
             >
               {/* Card Background Car Photo */}
               <div className="absolute inset-0 z-0">
                 <img
                   src={b.image}
                   alt={b.name}
-                  className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${b.name === "BMW" ? "object-[center_top]" : "object-center"
-                    }`}
+                  className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${b.name === "BMW" ? "object-[center_top]" : "object-center"}`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/25 pointer-events-none" />
               </div>
@@ -333,11 +546,11 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. PARTS BY CATEGORY SECTION (Figma: Parts by category) */}
+      {/* 2. PARTS BY CATEGORY SECTION */}
       {/* ========================================================================= */}
-      <section className="py-16 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A] bg-[#000000]">
-        {/* Header matching reference image */}
-        <div className="mb-8">
+      <section id="categories-section" className="py-16 sm:py-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A] bg-[#000000]">
+        {/* Header */}
+        <div className="gsap-cat-header mb-8">
           <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2">
             CATEGORIES
           </p>
@@ -354,7 +567,7 @@ export default function HomePage() {
               <Link
                 key={cat.name}
                 href={cat.href}
-                className="group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[210px] sm:h-[240px] flex flex-col justify-end p-6 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
+                className="gsap-cat-card group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[210px] sm:h-[240px] flex flex-col justify-end p-6 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
               >
                 <div className="absolute inset-0 z-0">
                   <img
@@ -383,7 +596,7 @@ export default function HomePage() {
               <Link
                 key={cat.name}
                 href={cat.href}
-                className="group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
+                className="gsap-cat-card group relative overflow-hidden border border-[#23354E]/60 bg-[#0B1522] h-[190px] sm:h-[210px] flex flex-col justify-end p-5 transition-all duration-300 hover:border-[#00C2CB] hover:shadow-xl hover:shadow-cyan-950/30"
               >
                 <div className="absolute inset-0 z-0">
                   <img
@@ -409,11 +622,11 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. MOST SELLING PARTS (Figma: Most selling parts) */}
+      {/* 3. MOST SELLING PARTS */}
       {/* ========================================================================= */}
-      <section className="pt-20 pb-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A]/40 bg-[#081516]">
-        {/* Header matching image */}
-        <div className="flex items-center justify-between mb-9">
+      <section id="msp-section" className="pt-20 pb-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A]/40 bg-[#081516]">
+        {/* Header */}
+        <div className="gsap-msp-header flex items-center justify-between mb-9">
           <div>
             <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
               SELECTED FROM THE CATALOG
@@ -430,7 +643,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 4 White-Card Products exact to reference image */}
+        {/* 4 White-Card Products */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
             {
@@ -476,7 +689,7 @@ export default function HomePage() {
           ].map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-none overflow-hidden flex flex-col justify-between text-[#111827] shadow-xl border border-white/10"
+              className="gsap-msp-card bg-white rounded-none overflow-hidden flex flex-col justify-between text-[#111827] shadow-xl border border-white/10"
             >
               {/* Product Photo with Badge */}
               <div className="relative h-44 sm:h-[185px] w-full bg-black overflow-hidden">
@@ -485,7 +698,6 @@ export default function HomePage() {
                   alt={item.title}
                   className="w-full h-full object-cover object-center"
                 />
-                {/* Brand Badge on photo bottom left */}
                 <div className="absolute bottom-2.5 left-2.5">
                   <span className="bg-[#11161f]/40 backdrop-blur-sm text-[#00E5EE] text-[10px] font-bold px-2 py-0.5 border-[#00E5EE]/40 uppercase tracking-wider">
                     {item.badge}
@@ -529,21 +741,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. COMPATIBILITY VERIFICATION (The right part starts with the right match.) */}
       {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A]/40 bg-[#000000]">
+      {/* 4. COMPATIBILITY VERIFICATION */}
+      {/* ========================================================================= */}
+      <section id="compat-section" className="py-16 sm:py-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A]/40 bg-[#000000]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Column: Car Front-End Image matching exact reference */}
-          <div className="lg:col-span-5 relative overflow-hidden border border-white/10 bg-[#0d141e] aspect-square flex items-center justify-center shadow-2xl group">
+          {/* Left Column: Car Front-End Image */}
+          <div className="gsap-compat-img lg:col-span-5 relative overflow-hidden border border-white/10 bg-[#0d141e] aspect-square flex items-center justify-center shadow-2xl group">
             <img
               src="/compatibility_bmw_m5.jpg"
               alt="BMW M5 Front End Compatibility Verification"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            {/* Fine thin grid boundary overlay like in reference */}
             <div className="absolute inset-5 border border-white/20 pointer-events-none rounded-sm" />
 
-            {/* Overlay indicators matching reference image: PDC CHECK top right, OEM MATCH bottom left */}
             <div className="absolute top-[32%] right-6 bg-[#161a23]/90 backdrop-blur-md px-3 py-1.5 rounded border border-white/10 flex items-center gap-2 shadow-xl">
               <span className="text-[10px] font-mono font-bold text-slate-300 tracking-wider">PDC</span>
               <span className="text-[10px] font-mono font-bold text-[#00E5EE] tracking-wider">CHECK</span>
@@ -555,7 +766,7 @@ export default function HomePage() {
           </div>
 
           {/* Right Column: Compatibility Checklist & Copy */}
-          <div className="lg:col-span-7 flex flex-col justify-center">
+          <div className="gsap-compat-content lg:col-span-7 flex flex-col justify-center">
             <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
               COMPATIBILITY VERIFICATION
             </span>
@@ -566,7 +777,6 @@ export default function HomePage() {
               The same vehicle generation may have several equipment variants. Gather the most important data before sending an inquiry.
             </p>
 
-            {/* 8-Item Quality Checklist matching reference 2 columns */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5 mb-8">
               {[
                 "VIN and OEM/OE number",
@@ -578,7 +788,7 @@ export default function HomePage() {
                 "Lighting technology",
                 "EU or US specification",
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2.5 text-[14px] text-[#FFFFFF] font-regular">
+                <div key={idx} className="gsap-compat-item flex items-center gap-2.5 text-[14px] text-[#FFFFFF] font-regular">
                   <Check size={14} className="text-[#00E5EE] shrink-0" strokeWidth={2.5} />
                   <span>{item}</span>
                 </div>
@@ -604,14 +814,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. SIMPLE PROCESS (How it works) */}
       {/* ========================================================================= */}
-      <section className="pt-20 pb-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 bg-[#081516]">
-        <div className="mb-14">
+      {/* 5. SIMPLE PROCESS */}
+      {/* ========================================================================= */}
+      <section id="process-section" className="pt-20 pb-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 bg-[#081516]">
+        <div className="gsap-process-header mb-14">
           <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3">
             SIMPLE PROCESS
           </p>
-          <h2 className="text-[44px] sm:text-[45] lg:text-[46px] font-medium text-white tracking-tight leading-none">
+          <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-medium text-white tracking-tight leading-none">
             How it works
           </h2>
         </div>
@@ -641,7 +852,7 @@ export default function HomePage() {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="border-l border-white/10 pl-6 sm:pl-7 pr-4 py-1 flex flex-col justify-between"
+              className="gsap-process-step border-l border-white/10 pl-6 sm:pl-7 pr-4 py-1 flex flex-col justify-between"
             >
               <div>
                 <span className="text-[#33FDFF] font-mono font-extrabold text-[13px] uppercase tracking-widest block mb-8">
@@ -660,62 +871,10 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 6. B2B COOPERATION (Full-width dark container) */}
-      {/* ========================================================================= */}
-      {/* <section className="w-full bg-[#1c1e22] py-20 sm:py-24 relative overflow-hidden">
-
-        <div className="absolute right-10 top-1/2 -translate-y-1/2 text-[280px] font-black text-white/[0.03] select-none pointer-events-none leading-none tracking-tighter">
-          LA
-        </div>
-
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-            <div className="max-w-2xl">
-              <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3 block">
-                KNOWLEDGE BASE
-              </span>
-              <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-regular text-white tracking-tight leading-[1.12] mb-4">
-                Automotive guides
-              </h2>
-              <p className="text-[#686B70] text-[14px] leading-relaxed mb-8 max-w-xl">
-                Practical tips to help identify the right part.
-              </p>
-
-              <div className="flex flex-wrap gap-2.5">
-                {["WORKSHOPS", "BODY SHOPS", "DISTRIBUTORS"].map((tag, i) => (
-                  <span
-                    key={i}
-                    className="border border-white/20 text-[10px] font-semibold text-slate-400 px-3.5 py-1.5 rounded uppercase tracking-wider"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 min-w-[210px] sm:min-w-[230px]">
-              <Link
-                href="/contact-us?subject=B2B+Partner"
-                className="bg-[#00E5EE] hover:bg-[#00c8d1] text-[#0B0F19] text-center font-bold px-7 py-3.5 rounded-md text-xs sm:text-sm transition-all"
-              >
-                Become a partner
-              </Link>
-              <Link
-                href="/contact-us?subject=B2B+Inquiry"
-                className="bg-[#2c2f34] hover:bg-[#34383e] text-white border border-white/10 text-center font-bold px-7 py-3.5 rounded-md text-xs sm:text-sm transition-all"
-              >
-                Business inquiry
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-
       {/* 7. AUTOMOTIVE GUIDES (Knowledge Base) */}
       {/* ========================================================================= */}
-      <section className="pt-20 pb-28 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12">
+      <section id="guides-section" className="pt-20 pb-28 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="gsap-guide-header mb-12">
           <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
             KNOWLEDGE BASE
           </p>
@@ -753,7 +912,7 @@ export default function HomePage() {
           ].map((blog) => (
             <div
               key={blog.id}
-              className="bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
+              className="gsap-guide-card bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
             >
               <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative text-[17px] font-medium">
                 <img
@@ -788,9 +947,9 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 8 VALUE PILLARS (Delivery in Poland, European shipping, Assistance in matching) */}
+      {/* 8. VALUE PILLARS */}
       {/* ========================================================================= */}
-      <section className="w-full bg-[#081516] border-y border-white/10 py-8 sm:py-10">
+      <section id="pillars-section" className="w-full bg-[#081516] border-y border-white/10 py-8 sm:py-10">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 items-center">
             {[
@@ -812,8 +971,7 @@ export default function HomePage() {
             ].map((item, idx) => (
               <div
                 key={idx}
-                className={`flex items-center justify-center ${idx !== 0 ? "md:border-l md:border-white/15" : ""
-                  }`}
+                className={`gsap-pillar-item flex items-center justify-center ${idx !== 0 ? "md:border-l md:border-white/15" : ""}`}
               >
                 <div className="flex items-center gap-4 py-1">
                   <item.icon size={22} className="text-[#00E5EE] shrink-0" strokeWidth={1.75} />
@@ -833,10 +991,10 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 9. NEED HELP? (Looking for a specific car part?) */}
+      {/* 9. NEED HELP? */}
       {/* ========================================================================= */}
-      <section className="pt-20 pb-28 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 text-center bg-[#081516]">
-        <div className="max-w-3xl mx-auto flex flex-col items-center">
+      <section id="help-section" className="pt-20 pb-28 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 text-center bg-[#081516]">
+        <div className="gsap-help-box max-w-3xl mx-auto flex flex-col items-center">
           <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3 block">
             NEED HELP?
           </span>
