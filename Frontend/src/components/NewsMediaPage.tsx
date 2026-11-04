@@ -1,7 +1,14 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, Search } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface GuideItem {
   id: number;
@@ -13,6 +20,7 @@ interface GuideItem {
 
 export default function NewsMediaPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 9 exact guides matching Figma screenshot: 3 rows of 3 columns each
   const allGuides: GuideItem[] = [
@@ -95,8 +103,41 @@ export default function NewsMediaPage() {
     );
   }, [searchQuery, allGuides]);
 
+  // GSAP SCROLLTRIGGER ANIMATION
+  useGSAP(
+    () => {
+      const headerEl = containerRef.current?.querySelector(".gsap-blogs-header");
+      const cardEls = containerRef.current?.querySelectorAll(".gsap-blog-card");
+
+      if (headerEl) {
+        gsap.fromTo(
+          headerEl,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" }
+        );
+      }
+
+      if (cardEls && cardEls.length > 0) {
+        gsap.fromTo(
+          cardEls,
+          { opacity: 0, y: 35, scale: 0.96 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.55,
+            stagger: 0.08,
+            ease: "power2.out",
+            delay: 0.2,
+          }
+        );
+      }
+    },
+    { scope: containerRef, dependencies: [filteredGuides] }
+  );
+
   return (
-    <div className="w-full min-h-screen bg-[#070e12] text-white">
+    <div ref={containerRef} className="w-full min-h-screen bg-[#070e12] text-white">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-24">
         {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 text-xs text-[#00E5EE] mb-4">
@@ -108,7 +149,7 @@ export default function NewsMediaPage() {
         </div>
 
         {/* Top Header Row: Title & Search Input */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 sm:mb-12">
+        <div className="gsap-blogs-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-white tracking-tight">
             All blogs
           </h1>
@@ -134,7 +175,7 @@ export default function NewsMediaPage() {
           {filteredGuides.map((blog) => (
             <div
               key={blog.id}
-              className="bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
+              className="gsap-blog-card bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
             >
               {/* Card Image */}
               <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative text-[17px] font-medium">
