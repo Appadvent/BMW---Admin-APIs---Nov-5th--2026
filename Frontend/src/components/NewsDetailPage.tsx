@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft } from "lucide-react";
+import AnimatedText from "./AnimatedText";
 
 interface NewsDetailPageProps {
   id: string;
@@ -250,7 +251,14 @@ export default function NewsDetailPage({ id }: NewsDetailPageProps) {
           </span>
 
           {/* Main Title */}
-          <h1
+          <AnimatedText
+            key={article.title}
+            text={article.title}
+            variant="typewriter-char"
+            as="h1"
+            start="top 85%"
+            duration={0.45}
+            stagger={0.02}
             style={{
               fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
               fontSize: "28px",
@@ -259,9 +267,7 @@ export default function NewsDetailPage({ id }: NewsDetailPageProps) {
               letterSpacing: "0px",
             }}
             className="text-white mb-6"
-          >
-            {article.title}
-          </h1>
+          />
 
           {/* Intro Paragraphs */}
           <div className="space-y-4 mb-8">
@@ -294,7 +300,13 @@ export default function NewsDetailPage({ id }: NewsDetailPageProps) {
           {article.sections.map((sec, idx) => (
             <div key={idx} className="mb-8">
               {/* Section Heading matching Figma spec */}
-              <h2
+              <AnimatedText
+                text={sec.heading}
+                variant="typewriter-char"
+                as="h2"
+                start="top 85%"
+                duration={0.4}
+                stagger={0.02}
                 style={{
                   fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
                   fontWeight: 700,
@@ -303,9 +315,7 @@ export default function NewsDetailPage({ id }: NewsDetailPageProps) {
                   letterSpacing: "0px",
                 }}
                 className="text-white mb-5 mt-7"
-              >
-                {sec.heading}
-              </h2>
+              />
 
               {/* Section Paragraphs */}
               {sec.paragraphs && (

@@ -7,6 +7,8 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { sendContact, resetContactState } from '@/redux/Slice/contactSlice';
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import AnimatedText from "@/components/AnimatedText";
+import CustomSelect from "@/components/CustomSelect";
 
 function SupportInquiryContent() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -164,19 +166,29 @@ function SupportInquiryContent() {
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Title: Contact us / Support Request */}
         <div className="gsap-header mb-8 sm:mb-10">
-          <h1
+          <AnimatedText
+            text="Inquiry"
+            variant="typewriter-char"
+            as="h1"
+            start="top 85%"
+            duration={0.45}
+            stagger={0.02}
             style={{
               fontFamily: 'Manrope, sans-serif',
               fontWeight: 500,
-              fontSize: '44px',
+              
               lineHeight: '100%',
               letterSpacing: '-2.43px',
             }}
-            className="text-white mb-4 tracking-[-2.43px]"
-          >
-            Inquiry
-          </h1>
-          <p
+            className="text-white text-3xl sm:text-4xl lg:text-[44px] mb-4 tracking-[-1px] sm:tracking-[-2.43px]"
+          />
+          <AnimatedText
+            text="The more accurate the vehicle data you provide, the more efficiently we will be able to check compatibility and delivery options."
+            variant="smooth-paragraph"
+            as="p"
+            start="top 85%"
+            duration={0.4}
+            stagger={0.015}
             style={{
               fontFamily: 'Manrope, sans-serif',
               fontWeight: 400,
@@ -186,99 +198,27 @@ function SupportInquiryContent() {
               color: '#9CA2A2',
             }}
             className="text-[#9CA2A2] max-w-4xl"
-          >
-            The more accurate the vehicle data you provide, the more efficiently we will be able to check compatibility and delivery options.
-          </p>
+          />
         </div>
 
         {/* 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          {/* ========================================================================= */}
-          {/* LEFT CARD: Parts department (Exact match to contact page) */}
-          {/* ========================================================================= */}
-          <div className="gsap-left lg:col-span-4 bg-[#121c21] p-8 sm:p-10 flex flex-col justify-between min-h-[460px]">
-            <div>
-              <h2
-                style={{
-                  fontFamily: 'Manrope, sans-serif',
-                  fontWeight: 400,
-                  fontSize: '22px',
-                  lineHeight: '33px',
-                  letterSpacing: '0px',
-                }}
-                className="text-white mb-8"
-              >
-                Parts department
-              </h2>
-
-              {/* Contact Info Items */}
-              <div className="space-y-6">
-                {/* E-MAIL */}
-                <div className="pb-5 border-b border-[#202d33]">
-                  <span className="block text-[11px] font-medium tracking-[0.1em] text-[#6b7b83] uppercase mb-1">
-                    E-MAIL
-                  </span>
-                  <a
-                    href="mailto:kontakt@motorium.pl"
-                    className="text-[15px] font-normal text-white hover:text-[#33FDFF] transition-colors"
-                  >
-                    kontakt@motorium.pl
-                  </a>
-                </div>
-
-                {/* PHONE */}
-                <div className="pb-5 border-b border-[#202d33]">
-                  <span className="block text-[11px] font-medium tracking-[0.1em] text-[#6b7b83] uppercase mb-1">
-                    PHONE
-                  </span>
-                  <a
-                    href="tel:+48000000000"
-                    className="text-[15px] font-normal text-white hover:text-[#33FDFF] transition-colors"
-                  >
-                    +48 000 000 000
-                  </a>
-                </div>
-
-                {/* WORKING HOURS */}
-                <div>
-                  <span className="block text-[11px] font-medium tracking-[0.1em] text-[#6b7b83] uppercase mb-1">
-                    WORKING HOURS
-                  </span>
-                  <p className="text-[15px] font-normal text-white">
-                    Mon.–Fri. · 9:00AM - 10:00PM
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Cyan WhatsApp Button */}
-            <div className="pt-8">
-              <a
-                href="https://wa.me/48000000000"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full bg-[#33FDFF] hover:bg-[#00e5ee] text-[#070e12] font-semibold text-[15px] py-3.5 px-4 rounded-none flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
-              >
-                <svg
-                  className="w-5 h-5 fill-current"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
-                </svg>
-                <span>WhatsApp</span>
-              </a>
-            </div>
-          </div>
+        <div className="items-center">
 
           {/* ========================================================================= */}
           {/* RIGHT CONTENT: Submit a Support Request Form */}
           {/* ========================================================================= */}
-          <div className="gsap-right lg:col-span-8 bg-[#121c21] p-8 sm:p-10">
+          <div className="gsap-right lg:col-span-8 bg-[#121c21] p-5 sm:p-8 md:p-10">
             {/* Header */}
             <div className="mb-8">
-              <h2 className="text-[22px] sm:text-[24px] font-medium text-white mb-1.5">
-                Submit a Support Request
-              </h2>
+              <AnimatedText
+                text="Submit a Support Request"
+                variant="typewriter-char"
+                as="h2"
+                start="top 85%"
+                duration={0.4}
+                stagger={0.02}
+                className="text-[22px] sm:text-[24px] font-medium text-white mb-1.5"
+              />
               <p className="text-[13px] text-[#9CA2A2]">
                 We will contact you in 24 hrs.
               </p>
@@ -306,8 +246,8 @@ function SupportInquiryContent() {
                     onBlur={handleBlur}
                     placeholder=""
                     className={`w-full px-4 py-3 bg-[#192429] text-white border text-sm focus:outline-none transition-colors ${touched.name && formErrors.name
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-[#253238] focus:border-[#33FDFF]"
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[#253238] focus:border-[#33FDFF]"
                       }`}
                   />
                   {touched.name && formErrors.name && (
@@ -330,8 +270,8 @@ function SupportInquiryContent() {
                     onBlur={handleBlur}
                     placeholder=""
                     className={`w-full px-4 py-3 bg-[#192429] text-white border text-sm focus:outline-none transition-colors ${touched.email && formErrors.email
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-[#253238] focus:border-[#33FDFF]"
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[#253238] focus:border-[#33FDFF]"
                       }`}
                   />
                   {touched.email && formErrors.email && (
@@ -357,8 +297,8 @@ function SupportInquiryContent() {
                     onBlur={handleBlur}
                     placeholder=""
                     className={`w-full px-4 py-3 bg-[#192429] text-white border text-sm focus:outline-none transition-colors ${touched.phone && formErrors.phone
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-[#253238] focus:border-[#33FDFF]"
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[#253238] focus:border-[#33FDFF]"
                       }`}
                   />
                   {touched.phone && formErrors.phone && (
@@ -373,26 +313,18 @@ function SupportInquiryContent() {
                   <label className="block text-[11px] font-bold tracking-[0.08em] text-[#8e9fa7] uppercase mb-2">
                     ISSUE
                   </label>
-                  <div className="relative">
-                    <select
-                      name="issue"
-                      value={formData.issue}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-[#192429] text-white border border-[#253238] text-sm focus:outline-none focus:border-[#33FDFF] transition-colors appearance-none cursor-pointer"
-                    >
-                      <option value="" className="bg-[#121c21] text-gray-400">Select</option>
-                      <option value="Part Price & Availability Inquiry" className="bg-[#121c21] text-white">Part Price & Availability Inquiry</option>
-                      <option value="VIN Fitment Verification" className="bg-[#121c21] text-white">VIN Fitment Verification</option>
-                      <option value="Order & Delivery Tracking" className="bg-[#121c21] text-white">Order & Delivery Tracking</option>
-                      <option value="OEM Number Check" className="bg-[#121c21] text-white">OEM Number Check</option>
-                      <option value="General Technical Question" className="bg-[#121c21] text-white">General Technical Question</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                      </svg>
-                    </div>
-                  </div>
+                  <CustomSelect
+                    value={formData.issue}
+                    onChange={(val) => setFormData((prev) => ({ ...prev, issue: val }))}
+                    placeholder="Select"
+                    options={[
+                      { value: "Part Price & Availability Inquiry", label: "Part Price & Availability Inquiry" },
+                      { value: "VIN Fitment Verification", label: "VIN Fitment Verification" },
+                      { value: "Order & Delivery Tracking", label: "Order & Delivery Tracking" },
+                      { value: "OEM Number Check", label: "OEM Number Check" },
+                      { value: "General Technical Question", label: "General Technical Question" },
+                    ]}
+                  />
                 </div>
               </div>
 

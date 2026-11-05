@@ -8,6 +8,8 @@ import { sendContact, resetContactState } from '../../redux/Slice/contactSlice';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import AnimatedText from "@/components/AnimatedText";
+import CustomSelect from "@/components/CustomSelect";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -202,19 +204,29 @@ function ContactUsContent() {
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title Section (Matching exact Figma typography specifications) */}
         <div className="gsap-contact-header mb-12 sm:mb-14">
-          <h1
+          <AnimatedText
+            text="Contact us"
+            variant="typewriter-char"
+            as="h1"
+            start="top 85%"
+            duration={0.45}
+            stagger={0.02}
             style={{
               fontFamily: 'Manrope, sans-serif',
               fontWeight: 500,
-              fontSize: '44px',
+              
               lineHeight: '100%',
               letterSpacing: '-2.43px',
             }}
-            className="text-white mb-4 sm:mb-5 tracking-[-2.43px]"
-          >
-            Contact us
-          </h1>
-          <p
+            className="text-white text-3xl sm:text-4xl lg:text-[44px] mb-4 sm:mb-5 tracking-[-1px] sm:tracking-[-2.43px]"
+          />
+          <AnimatedText
+            text="The more accurate the vehicle data you provide, the more efficiently we will be able to check compatibility and delivery options."
+            variant="smooth-paragraph"
+            as="p"
+            start="top 85%"
+            duration={0.4}
+            stagger={0.015}
             style={{
               fontFamily: 'Manrope, sans-serif',
               fontWeight: 400,
@@ -224,9 +236,7 @@ function ContactUsContent() {
               color: '#9CA2A2',
             }}
             className="text-[#9CA2A2] max-w-4xl"
-          >
-            The more accurate the vehicle data you provide, the more efficiently we will be able to check compatibility and delivery options.
-          </p>
+          />
         </div>
 
         {/* 2-Column Grid (Left: Parts department, Right: Contact us form) */}
@@ -234,10 +244,16 @@ function ContactUsContent() {
           {/* ========================================================================= */}
           {/* LEFT CARD: Parts department */}
           {/* ========================================================================= */}
-          <div className="gsap-left-box lg:col-span-4 bg-[#121c21] p-8 sm:p-10 flex flex-col justify-between min-h-[460px]">
+          <div className="gsap-left-box lg:col-span-4 bg-[#121c21] p-5 sm:p-8 md:p-10 flex flex-col justify-between min-h-[460px]">
             <div>
               {/* Heading matching Figma Image 2 */}
-              <h2
+              <AnimatedText
+                text="Parts department"
+                variant="typewriter-char"
+                as="h2"
+                start="top 85%"
+                duration={0.4}
+                stagger={0.02}
                 style={{
                   fontFamily: 'Manrope, sans-serif',
                   fontWeight: 400,
@@ -246,9 +262,7 @@ function ContactUsContent() {
                   letterSpacing: '0px',
                 }}
                 className="text-white mb-8"
-              >
-                Parts department
-              </h2>
+              />
 
               {/* Contact Info Items */}
               <div className="space-y-6">
@@ -313,10 +327,16 @@ function ContactUsContent() {
           {/* ========================================================================= */}
           {/* RIGHT CARD: Contact us form */}
           {/* ========================================================================= */}
-          <div className="gsap-right-box lg:col-span-8 bg-[#121c21] p-8 sm:p-10">
+          <div className="gsap-right-box lg:col-span-8 bg-[#121c21] p-5 sm:p-8 md:p-10">
             {/* Header matching Figma */}
             <div className="mb-8">
-              <h2
+              <AnimatedText
+                text="Contact us"
+                variant="typewriter-char"
+                as="h2"
+                start="top 85%"
+                duration={0.4}
+                stagger={0.02}
                 style={{
                   fontFamily: 'Manrope, sans-serif',
                   fontWeight: 500,
@@ -324,9 +344,7 @@ function ContactUsContent() {
                   lineHeight: '120%',
                 }}
                 className="text-white mb-2"
-              >
-                Contact us
-              </h2>
+              />
               <p className="text-[13px] text-[#9CA2A2]">
                 Please fill the form , we will get back to you in 24 hours.
               </p>
@@ -424,30 +442,22 @@ function ContactUsContent() {
                   <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
                     COUNTRY
                   </label>
-                  <div className="relative">
-                    <select
-                      name="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-[#192429] text-white border border-[#253238] text-sm focus:outline-none focus:border-[#33FDFF] transition-colors appearance-none cursor-pointer"
-                    >
-                      <option value="" className="bg-[#121c21] text-gray-400">Select</option>
-                      <option value="Poland" className="bg-[#121c21] text-white">Poland</option>
-                      <option value="Germany" className="bg-[#121c21] text-white">Germany</option>
-                      <option value="United Kingdom" className="bg-[#121c21] text-white">United Kingdom</option>
-                      <option value="United States" className="bg-[#121c21] text-white">United States</option>
-                      <option value="France" className="bg-[#121c21] text-white">France</option>
-                      <option value="Italy" className="bg-[#121c21] text-white">Italy</option>
-                      <option value="Spain" className="bg-[#121c21] text-white">Spain</option>
-                      <option value="Netherlands" className="bg-[#121c21] text-white">Netherlands</option>
-                      <option value="Other" className="bg-[#121c21] text-white">Other</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                      </svg>
-                    </div>
-                  </div>
+                  <CustomSelect
+                    value={formData.country}
+                    onChange={(val) => setFormData((prev) => ({ ...prev, country: val }))}
+                    placeholder="Select"
+                    options={[
+                      { value: "Poland", label: "Poland" },
+                      { value: "Germany", label: "Germany" },
+                      { value: "United Kingdom", label: "United Kingdom" },
+                      { value: "United States", label: "United States" },
+                      { value: "France", label: "France" },
+                      { value: "Italy", label: "Italy" },
+                      { value: "Spain", label: "Spain" },
+                      { value: "Netherlands", label: "Netherlands" },
+                      { value: "Other", label: "Other" },
+                    ]}
+                  />
                 </div>
               </div>
 
@@ -457,26 +467,18 @@ function ContactUsContent() {
                   <label className="block text-[11px] font-bold tracking-[0.08em] text-[#A6B0B5] uppercase mb-2">
                     VEHICLE BRAND
                   </label>
-                  <div className="relative">
-                    <select
-                      name="vehicleBrand"
-                      value={formData.vehicleBrand}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-[#192429] text-white border border-[#253238] text-sm focus:outline-none focus:border-[#33FDFF] transition-colors appearance-none cursor-pointer"
-                    >
-                      <option value="" className="bg-[#121c21] text-gray-400">Select</option>
-                      <option value="BMW" className="bg-[#121c21] text-white">BMW</option>
-                      <option value="Mercedes-Benz" className="bg-[#121c21] text-white">MERCEDES-BENZ</option>
-                      <option value="Audi" className="bg-[#121c21] text-white">AUDI</option>
-                      <option value="Range Rover" className="bg-[#121c21] text-white">RANGE ROVER</option>
-                      <option value="Porsche" className="bg-[#121c21] text-white">PORSCHE</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                      </svg>
-                    </div>
-                  </div>
+                  <CustomSelect
+                    value={formData.vehicleBrand}
+                    onChange={(val) => setFormData((prev) => ({ ...prev, vehicleBrand: val }))}
+                    placeholder="Select"
+                    options={[
+                      { value: "BMW", label: "BMW" },
+                      { value: "Mercedes-Benz", label: "MERCEDES-BENZ" },
+                      { value: "Audi", label: "AUDI" },
+                      { value: "Range Rover", label: "RANGE ROVER" },
+                      { value: "Porsche", label: "PORSCHE" },
+                    ]}
+                  />
                 </div>
 
                 <div>

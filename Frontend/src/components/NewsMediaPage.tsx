@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchAllBlogs } from "../redux/Slice/BlogSlice";
+import AnimatedText from "./AnimatedText";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -116,9 +117,15 @@ export default function NewsMediaPage() {
 
         {/* Top Header Row: Title & Search Input */}
         <div className="gsap-blogs-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-white tracking-tight">
-            All blogs
-          </h1>
+          <AnimatedText
+            text="All blogs"
+            variant="typewriter-char"
+            as="h1"
+            start="top 85%"
+            duration={0.45}
+            stagger={0.02}
+            className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-white tracking-tight"
+          />
 
           {/* Search by blog name box */}
           <div className="relative w-full sm:w-[320px] md:w-[360px]">

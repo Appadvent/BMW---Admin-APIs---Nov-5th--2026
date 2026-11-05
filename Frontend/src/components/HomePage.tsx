@@ -15,6 +15,7 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import AnimatedText from "./AnimatedText";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchCategories } from "../redux/Slice/categorySlice";
 import { fetchProducts } from "../redux/Slice/productSlice";
@@ -457,41 +458,55 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-[1360px] w-full mx-auto px-4 sm:px-6 lg:px-12 py-16 sm:py-24">
           <div className="gsap-hero-content max-w-2xl">
-            {/* Main Hero Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold text-white tracking-tight leading-[1.08] mb-6">
-              Premium replacements.<br />
-              Perfect fitment.
-            </h1>
+            {/* Main Hero Headline with Letter-by-Letter Reveal */}
+            <AnimatedText
+              text="Premium replacements. Perfect fitment."
+              variant="typewriter-char"
+              as="h1"
+              autoPlay={true}
+              duration={0.5}
+              stagger={0.02}
+              className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold text-white tracking-tight leading-[1.08] mb-6"
+            />
 
-            {/* Description Paragraph */}
-            <p className="text-[#CFD0D2] text-sm sm:text-base lg:text-[17px] font-normal leading-relaxed mb-8 max-w-xl">
-              Discover high-quality replacement bumpers, headlights, grilles, and exterior parts for BMW, Mercedes-Benz, Audi, and Range Rover.
-            </p>
+            {/* Description Paragraph with Smooth Typewriter Reveal */}
+            <AnimatedText
+              text="Discover high-quality replacement bumpers, headlights, grilles, and exterior parts for BMW, Mercedes-Benz, Audi, and Range Rover."
+              variant="smooth-paragraph"
+              as="p"
+              autoPlay={true}
+              delay={0.4}
+              duration={0.45}
+              stagger={0.015}
+              className="text-[#CFD0D2] text-sm sm:text-base lg:text-[17px] font-normal leading-relaxed mb-8 max-w-xl"
+            />
 
             {/* Search Input Bar with Cyan Search parts button & Live Dropdown */}
             <div ref={searchWrapperRef} className="relative mb-4 max-w-[520px]">
               <form onSubmit={handleVehicleSearch}>
-                <div className="relative flex items-center bg-[#07111e]/90 border border-[#23354E] rounded-xl p-1.5 focus-within:border-[#00C2CB] shadow-2xl backdrop-blur-md transition-all">
-                  <Search size={18} className="text-[#94A3B8] ml-3 mr-2 shrink-0" />
-                  <input
-                    type="text"
-                    value={oemInput}
-                    onFocus={() => setShowDropdown(true)}
-                    onChange={(e) => {
-                      setOemInput(e.target.value);
-                      setShowDropdown(true);
-                    }}
-                    placeholder="Enter OEM number, VIN, make or model"
-                    className="w-full bg-transparent text-white placeholder-[#8A9EB5] text-sm sm:text-[15px] focus:outline-none px-2 py-2"
-                  />
-                  {isSearching && (
-                    <div className="mr-3 shrink-0">
-                      <div className="w-4 h-4 border-2 border-[#33FDFF] border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  )}
+                <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-[#07111e]/90 border border-[#23354E] rounded-xl p-1.5 focus-within:border-[#00C2CB] shadow-2xl backdrop-blur-md transition-all gap-1.5 sm:gap-0">
+                  <div className="flex items-center flex-1 min-w-0">
+                    <Search size={18} className="text-[#94A3B8] ml-3 mr-2 shrink-0" />
+                    <input
+                      type="text"
+                      value={oemInput}
+                      onFocus={() => setShowDropdown(true)}
+                      onChange={(e) => {
+                        setOemInput(e.target.value);
+                        setShowDropdown(true);
+                      }}
+                      placeholder="Enter OEM number, VIN, make or model"
+                      className="w-full bg-transparent text-white placeholder-[#8A9EB5] text-sm sm:text-[15px] focus:outline-none px-2 py-2.5 sm:py-2"
+                    />
+                    {isSearching && (
+                      <div className="mr-3 shrink-0">
+                        <div className="w-4 h-4 border-2 border-[#33FDFF] border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    )}
+                  </div>
                   <button
                     type="submit"
-                    className="bg-[#33FDFF] hover:bg-[#00f5ff] text-[#0B0F19] text-sm font-bold px-6 py-3.5 rounded-lg shrink-0 transition-colors cursor-pointer shadow-md"
+                    className="w-full sm:w-auto bg-[#33FDFF] hover:bg-[#00f5ff] text-[#0B0F19] text-sm font-bold px-6 py-3 sm:py-3.5 rounded-lg shrink-0 transition-colors cursor-pointer shadow-md text-center"
                   >
                     Search parts
                   </button>
@@ -593,9 +608,15 @@ export default function HomePage() {
           <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
             PREMIUM BRANDS
           </span>
-          <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-bold text-white tracking-tight">
-            Replacement by Make and Model
-          </h2>
+          <AnimatedText
+            text="Replacement by Make and Model"
+            variant="typewriter-char"
+            as="h2"
+            trigger="#vehicle-search-widget"
+            duration={0.45}
+            stagger={0.02}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold text-white tracking-tight"
+          />
         </div>
 
         {/* 4 Brand Cards */}
@@ -661,9 +682,15 @@ export default function HomePage() {
           <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2">
             CATEGORIES
           </p>
-          <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-bold text-white tracking-tight">
-            Parts by category
-          </h2>
+          <AnimatedText
+            text="Parts by category"
+            variant="typewriter-char"
+            as="h2"
+            trigger="#categories-section"
+            duration={0.45}
+            stagger={0.02}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold text-white tracking-tight"
+          />
         </div>
 
         {/* Dynamic Categories Grid from Backend */}
@@ -744,14 +771,20 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section id="msp-section" className="pt-20 pb-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#26354A]/40 bg-[#081516]">
         {/* Header */}
-        <div className="gsap-msp-header flex items-center justify-between mb-9">
+        <div className="gsap-msp-header flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-9">
           <div>
             <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
               SELECTED FROM THE CATALOG
             </p>
-            <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-extrabold text-white tracking-tight leading-none">
-              Most selling parts
-            </h2>
+            <AnimatedText
+              text="Most selling parts"
+              variant="typewriter-char"
+              as="h2"
+              trigger="#msp-section"
+              duration={0.45}
+              stagger={0.02}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-extrabold text-white tracking-tight leading-none"
+            />
           </div>
           <Link
             href="/products"
@@ -872,12 +905,24 @@ export default function HomePage() {
             <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
               COMPATIBILITY VERIFICATION
             </span>
-            <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-medium text-white tracking-tight leading-[1.15] mb-4">
-              The right part starts with the right match.
-            </h2>
-            <p className="text-[#E6E8E8] text-[18px] leading-relaxed mb-8 max-w-xl">
-              The same vehicle generation may have several equipment variants. Gather the most important data before sending an inquiry.
-            </p>
+            <AnimatedText
+              text="The right part starts with the right match."
+              variant="typewriter-char"
+              as="h2"
+              trigger="#compat-section"
+              duration={0.45}
+              stagger={0.02}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-medium text-white tracking-tight leading-[1.15] mb-4"
+            />
+            <AnimatedText
+              text="The same vehicle generation may have several equipment variants. Gather the most important data before sending an inquiry."
+              variant="smooth-paragraph"
+              as="p"
+              trigger="#compat-section"
+              duration={0.4}
+              stagger={0.015}
+              className="text-[#E6E8E8] text-sm sm:text-base md:text-[18px] leading-relaxed mb-8 max-w-xl"
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5 mb-8">
               {[
@@ -924,12 +969,18 @@ export default function HomePage() {
           <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3">
             SIMPLE PROCESS
           </p>
-          <h2 className="text-[44px] sm:text-[45px] lg:text-[46px] font-medium text-white tracking-tight leading-none">
-            How it works
-          </h2>
+          <AnimatedText
+            text="How it works"
+            variant="typewriter-char"
+            as="h2"
+            trigger="#process-section"
+            duration={0.45}
+            stagger={0.02}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-medium text-white tracking-tight leading-none"
+          />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0">
           {[
             {
               step: "01",
@@ -954,7 +1005,7 @@ export default function HomePage() {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="gsap-process-step border-l border-white/10 pl-6 sm:pl-7 pr-4 py-1 flex flex-col justify-between"
+              className="gsap-process-step border-l border-white/10 pl-6 sm:pl-7 pr-4 py-2 flex flex-col justify-between"
             >
               <div>
                 <span className="text-[#33FDFF] font-mono font-extrabold text-[13px] uppercase tracking-widest block mb-8">
@@ -980,12 +1031,24 @@ export default function HomePage() {
           <p className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-2.5">
             KNOWLEDGE BASE
           </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-tight mb-2">
-            Automotive guides
-          </h2>
-          <p className="text-[#686B70] text-xs sm:text-sm mt-1">
-            Practical tips to help identify the right part.
-          </p>
+          <AnimatedText
+            text="Automotive guides"
+            variant="typewriter-char"
+            as="h2"
+            trigger="#guides-section"
+            duration={0.45}
+            stagger={0.02}
+            className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-tight mb-2"
+          />
+          <AnimatedText
+            text="Practical tips to help identify the right part."
+            variant="smooth-paragraph"
+            as="p"
+            trigger="#guides-section"
+            duration={0.4}
+            stagger={0.015}
+            className="text-[#686B70] text-xs sm:text-sm mt-1"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
@@ -1018,23 +1081,17 @@ export default function HomePage() {
                     month: "2-digit",
                     year: "numeric",
                   }).replace(/\//g, ".")
-                : "14.05.2025";
+                : "";
 
               const categoryName = blog.category?.name || "KNOWLEDGE BASE";
-              const badgeText = `${categoryName} • ${formattedDate}`;
+              const badgeText = formattedDate ? `${categoryName} • ${formattedDate}` : categoryName;
 
               // Strip HTML tags for clean card description preview
               const cleanDesc = blog.description
                 ? blog.description.replace(/<[^>]*>/g, "").trim()
-                : "Learn about the data worth checking before sending a part inquiry.";
+                : "";
 
-              // Fallback image if blog.image is not provided or empty
-              const fallbackImages = [
-                "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-                "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-                "/734295950a53ab641f4c489e327584416018d44d.jpg",
-              ];
-              const displayImage = blog.image || fallbackImages[idx % fallbackImages.length];
+              const displayImage = blog.image || "/1889c8da558725682709642aeaf212caab3ad5e6.jpg";
 
               return (
                 <div
@@ -1072,63 +1129,9 @@ export default function HomePage() {
               );
             })
           ) : (
-            // Fallback guides if no blogs exist in database
-            [
-              {
-                id: 1,
-                badge: "OEM NUMBERS • 14.05.2025",
-                title: "How to find the right OEM number for BMW?",
-                desc: "Learn about the data worth checking before sending a part inquiry.",
-                image: "/1889c8da558725682709642aeaf212caab3ad5e6.jpg",
-              },
-              {
-                id: 2,
-                badge: "COMPATIBILITY • 14.05.2025",
-                title: "BMW G20 — compatibility of body parts",
-                desc: "Learn about the data worth checking before sending a part inquiry.",
-                image: "/2b8b934ac924c6a627a96fbf63e3f9026d394379.jpg",
-              },
-              {
-                id: 3,
-                badge: "TECHNICAL GUIDE • 14.05.2025",
-                title: "How to check if the bumper supports PDC?",
-                desc: "Learn about the data worth checking before sending a part inquiry.",
-                image: "/734295950a53ab641f4c489e327584416018d44d.jpg",
-              },
-            ].map((fallbackBlog) => (
-              <div
-                key={fallbackBlog.id}
-                className="gsap-guide-card bg-white rounded-none overflow-hidden shadow-lg flex flex-col justify-between group"
-              >
-                <div className="h-[210px] sm:h-[220px] overflow-hidden bg-black relative text-[17px] font-medium">
-                  <img
-                    src={fallbackBlog.image}
-                    alt={fallbackBlog.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between bg-white text-[#0B0F19]">
-                  <div>
-                    <span className="text-[10px] font-mono font-bold text-[#9CA2A2] uppercase tracking-wider block mb-3">
-                      {fallbackBlog.badge}
-                    </span>
-                    <h3 className="text-[17px] sm:text-lg font-medium text-[#111214] mb-3 leading-snug">
-                      {fallbackBlog.title}
-                    </h3>
-                    <p className="text-[14px] text-[#686B70] leading-relaxed mb-6">
-                      {fallbackBlog.desc}
-                    </p>
-                  </div>
-                  <Link
-                    href={"/news/" + fallbackBlog.id}
-                    className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111214] hover:text-[#00c8d1] transition-colors mt-auto"
-                  >
-                    <span>Read the article</span>
-                    <ArrowRight size={13} className="text-slate-900" />
-                  </Link>
-                </div>
-              </div>
-            ))
+            <div className="col-span-full py-12 text-center text-[#8A9EB5]">
+              No automotive guides available.
+            </div>
           )}
         </div>
       </section>
@@ -1138,7 +1141,7 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section id="pillars-section" className="w-full bg-[#081516] border-y border-white/10 py-8 sm:py-10">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0 items-stretch">
             {[
               {
                 icon: Box,
@@ -1158,15 +1161,19 @@ export default function HomePage() {
             ].map((item, idx) => (
               <div
                 key={idx}
-                className={`gsap-pillar-item flex items-center justify-center ${idx !== 0 ? "md:border-l md:border-white/15" : ""}`}
+                className={`gsap-pillar-item flex items-center justify-start md:justify-center px-4 sm:px-6 py-2 ${
+                  idx !== 0 ? "md:border-l md:border-white/15" : ""
+                }`}
               >
-                <div className="flex items-center gap-4 py-1">
-                  <item.icon size={22} className="text-[#00E5EE] shrink-0" strokeWidth={1.75} />
-                  <div>
-                    <h4 className="text-[16px] font-bold text-white mb-0.5">
+                <div className="flex items-center gap-4 py-1 max-w-sm w-full mx-auto md:mx-0">
+                  <div className="w-10 h-10 rounded-lg bg-[#00E5EE]/10 border border-[#00E5EE]/20 flex items-center justify-center shrink-0">
+                    <item.icon size={20} className="text-[#00E5EE]" strokeWidth={1.75} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-[15px] sm:text-[16px] font-bold text-white mb-0.5">
                       {item.title}
                     </h4>
-                    <p className="text-[14px] text-[#686B70] font-regular leading-normal">
+                    <p className="text-[13px] sm:text-[14px] text-[#686B70] font-regular leading-normal">
                       {item.desc}
                     </p>
                   </div>
@@ -1185,12 +1192,24 @@ export default function HomePage() {
           <span className="text-[#33FDFF] font-bold text-[14px] uppercase tracking-[0.2em] mb-3 block">
             NEED HELP?
           </span>
-          <h2 className="text-[44px] sm:text-4xl lg:text-[46px] font-extrabold text-white tracking-tight mb-4 leading-tight">
-            Looking for a specific car part?
-          </h2>
-          <p className="text-[#9CA2A2] text-[14px] font-regular sm:text-sm leading-relaxed mb-8 max-w-xl">
-            Send vehicle data or OEM number, and our team will help identify the right component.
-          </p>
+          <AnimatedText
+            text="Looking for a specific car part?"
+            variant="typewriter-char"
+            as="h2"
+            trigger="#help-section"
+            duration={0.45}
+            stagger={0.02}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-extrabold text-white tracking-tight mb-4 leading-tight"
+          />
+          <AnimatedText
+            text="Send vehicle data or OEM number, and our team will help identify the right component."
+            variant="smooth-paragraph"
+            as="p"
+            trigger="#help-section"
+            duration={0.4}
+            stagger={0.015}
+            className="text-[#9CA2A2] text-[14px] font-regular sm:text-sm leading-relaxed mb-8 max-w-xl"
+          />
 
           <div className="flex flex-wrap items-center justify-center gap-3.5">
             <Link

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -9,11 +9,18 @@ import { UserCog } from "lucide-react";
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    // Reset form fields when login page loads
+    form.resetFields();
+  }, [form]);
 
   const onFinish = async (values: { email: string; password: string }) => {
     try {
       const response = await authService.login(values);
       dispatch(setCredentials(response));
+      form.resetFields();
       navigate('/dashboard');
     } catch (error: any) {
       // console.error('Login error:', error);
@@ -33,6 +40,7 @@ const LoginPage: React.FC = () => {
           <h1 className="text-2xl font-bold">Admin Login</h1>
         </div>
         <Form
+          form={form}
           name="login"
           layout="vertical"
           onFinish={onFinish}
@@ -43,7 +51,7 @@ const LoginPage: React.FC = () => {
             name="email"
             rules={[{ required: true, message: 'Please input your email!' }]}
           >
-            <Input size="large" />
+            <Input size="large" autoComplete="new-password" />
           </Form.Item>
 
           <Form.Item
@@ -51,7 +59,7 @@ const LoginPage: React.FC = () => {
             name="password"
             rules={[{ required: true, message: 'Please input your password!' }]}
           >
-            <Input.Password size="large" />
+            <Input.Password size="large" autoComplete="new-password" />
           </Form.Item>
 
           <Form.Item>
