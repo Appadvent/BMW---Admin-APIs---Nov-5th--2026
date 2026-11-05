@@ -227,7 +227,7 @@ export default function ProductDetail() {
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+              <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-4 leading-tight">
                 {currentProduct?.title}
               </h1>
 
@@ -306,12 +306,12 @@ export default function ProductDetail() {
                 {specifications.map((spec, index) => (
                   <div
                     key={spec.id || index}
-                    className="grid grid-cols-12 px-6 py-4 items-center hover:bg-[#0B0F19]/40 transition-colors"
+                    className="grid grid-cols-1 sm:grid-cols-12 px-4 sm:px-6 py-3.5 sm:py-4 items-start sm:items-center hover:bg-[#0B0F19]/40 transition-colors gap-1 sm:gap-0"
                   >
-                    <div className="col-span-5 sm:col-span-4 font-bold text-white text-xs sm:text-sm">
+                    <div className="sm:col-span-4 font-bold text-white text-xs sm:text-sm">
                       {spec.name}
                     </div>
-                    <div className="col-span-7 sm:col-span-8 text-slate-300 text-xs sm:text-sm font-medium">
+                    <div className="sm:col-span-8 text-slate-300 text-xs sm:text-sm font-medium">
                       {spec.value}
                     </div>
                   </div>

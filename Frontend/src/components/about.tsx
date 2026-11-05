@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import AnimatedCounter from "./AnimatedCounter";
+import AnimatedText from "./AnimatedText";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchTestimonials } from "../redux/Slice/testimonialSlice";
 
@@ -99,12 +100,24 @@ const AboutPage = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C2CB]/10 border border-[#00C2CB]/30 text-[#00C2CB] text-xs font-semibold mb-4 tracking-wider uppercase">
               ABOUT OUR OEM PARTS DISTRIBUTION
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[48px] font-extrabold mb-4 sm:mb-5 tracking-tight leading-tight text-white">
-              Genuine OEM Body Panels &amp; Lighting Solutions
-            </h1>
-            <p className="text-slate-300 text-sm sm:text-base md:text-[16px] leading-relaxed">
-              We are a dedicated distributor of genuine OEM plastic body panels, bumper assemblies, shells, and headlights for BMW, Mercedes-Benz, Audi, and Range Rover.
-            </p>
+            <AnimatedText
+              text="Genuine OEM Body Panels & Lighting Solutions"
+              variant="typewriter-char"
+              as="h1"
+              start="top 85%"
+              duration={0.45}
+              stagger={0.02}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-[48px] font-extrabold mb-4 sm:mb-5 tracking-tight leading-tight text-white"
+            />
+            <AnimatedText
+              text="We are a dedicated distributor of genuine OEM plastic body panels, bumper assemblies, shells, and headlights for BMW, Mercedes-Benz, Audi, and Range Rover."
+              variant="smooth-paragraph"
+              as="p"
+              start="top 85%"
+              duration={0.4}
+              stagger={0.015}
+              className="text-slate-300 text-sm sm:text-base md:text-[16px] leading-relaxed"
+            />
           </div>
         </div>
       </section>
@@ -128,9 +141,15 @@ const AboutPage = () => {
               </div>
               <div className="gsap-feature-text space-y-5">
                 <span className="text-xs font-bold text-[#00C2CB] tracking-wider uppercase">Mission &amp; Precision</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
-                  Guaranteed 100% VIN Compatibility
-                </h2>
+                <AnimatedText
+                  text="Guaranteed 100% VIN Compatibility"
+                  variant="typewriter-char"
+                  as="h2"
+                  start="top 85%"
+                  duration={0.4}
+                  stagger={0.02}
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold text-white"
+                />
                 <p className="text-slate-300 leading-relaxed text-[15px]">
                   Modern premium vehicles (BMW, Mercedes-Benz, Audi) demand precision-engineered replacement parts. Differences across production years, aero packages (M-Sport, AMG Line, S-Line), and driver-assistance sensors prevent generic fitment.
                 </p>
@@ -155,9 +174,15 @@ const AboutPage = () => {
               </div>
               <div className="order-2 md:order-1 gsap-feature-text space-y-5">
                 <span className="text-xs font-bold text-[#00C2CB] tracking-wider uppercase">Quality Control</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
-                  Original Thermoplastics &amp; Verified Mounting Tabs
-                </h2>
+                <AnimatedText
+                  text="Original Thermoplastics & Verified Mounting Tabs"
+                  variant="typewriter-char"
+                  as="h2"
+                  start="top 85%"
+                  duration={0.4}
+                  stagger={0.02}
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold text-white"
+                />
                 <p className="text-slate-300 leading-relaxed text-[15px]">
                   Every bumper, shell, headlight, and lens in our catalogue undergoes thorough inspection for structural geometry, intact mounting tabs, undamaged bracket points, and authentic factory markings.
                 </p>
@@ -182,9 +207,15 @@ const AboutPage = () => {
               </div>
               <div className="gsap-feature-text space-y-5">
                 <span className="text-xs font-bold text-[#00C2CB] tracking-wider uppercase">Dedicated B2B Support</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
-                  Built for Body Shops, Dealerships &amp; Repair Centers
-                </h2>
+                <AnimatedText
+                  text="Built for Body Shops, Dealerships & Repair Centers"
+                  variant="typewriter-char"
+                  as="h2"
+                  start="top 85%"
+                  duration={0.4}
+                  stagger={0.02}
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold text-white"
+                />
                 <p className="text-slate-300 leading-relaxed text-[15px]">
                   We support collision repair facilities with comprehensive Request for Quotation (RFQ) processing. We provide high-resolution photos of specific parts, condition reports, and availability within 24 hours.
                 </p>
@@ -205,9 +236,15 @@ const AboutPage = () => {
               <span className="text-[#00C2CB] font-bold tracking-[0.16em] text-xs uppercase">
                 WHY CHOOSE US
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-white">
-                Specialized in Premium Automotive Marques
-              </h2>
+              <AnimatedText
+                text="Specialized in Premium Automotive Marques"
+                variant="typewriter-char"
+                as="h2"
+                start="top 85%"
+                duration={0.4}
+                stagger={0.02}
+                className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-white"
+              />
               <p className="text-slate-300 leading-relaxed text-sm sm:text-base">
                 Rather than offering millions of generic aftermarket items, we focus strictly on our core expertise: genuine OEM bumper assemblies, shells, headlights, and lenses for BMW, Mercedes-Benz, Audi, and Range Rover.
               </p>
@@ -256,9 +293,15 @@ const AboutPage = () => {
             <span className="text-[#00C2CB] font-bold tracking-[0.16em] text-xs uppercase mb-2 block">
               QUALITY STANDARDS
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
-              Our Operational Standards
-            </h2>
+            <AnimatedText
+              text="Our Operational Standards"
+              variant="typewriter-char"
+              as="h2"
+              start="top 85%"
+              duration={0.4}
+              stagger={0.02}
+              className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-3"
+            />
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Principles that guarantee reliability and confidence with every order.
             </p>

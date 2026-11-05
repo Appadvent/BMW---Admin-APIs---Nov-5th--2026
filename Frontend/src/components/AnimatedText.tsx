@@ -33,7 +33,7 @@ export default function AnimatedText({
   duration = 0.4,
   delay = 0,
   trigger,
-  start = "top 85%",
+  start = "top 80%",
   highlightWords = [],
   highlightClass = "text-[#00C2CB]",
   autoPlay = false,
@@ -66,7 +66,7 @@ export default function AnimatedText({
         ? 0.015
         : 0.03;
 
-    // Set initial state for Left -> Right reveal
+    // Set initial state for Left -> Right reveal (hidden until scrolled to)
     gsap.set(targets, {
       opacity: 0,
       x: -6,
@@ -89,11 +89,12 @@ export default function AnimatedText({
       return;
     }
 
+    // ScrollTrigger fires ONLY when user scrolls to this section
     const st = ScrollTrigger.create({
-      trigger: trigger || el,
+      trigger: el,
       start: start,
+      once: true,
       onEnter: () => playReveal(),
-      onEnterBack: () => playReveal(),
     });
 
     return () => {

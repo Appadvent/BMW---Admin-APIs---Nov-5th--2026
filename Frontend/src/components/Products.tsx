@@ -23,7 +23,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchCategories } from '../redux/Slice/categorySlice';
 import { fetchProducts } from '../redux/Slice/productSlice';
 import ProductCard, { ProductItem } from './ProductCard';
-import EnquiryPopup from './EnquiryPopup';
+import AnimatedText from './AnimatedText';
 
 const ALL_BUMPER_SPECS = [
   'M Sport / AMG package',
@@ -163,8 +163,16 @@ function ProductsContent() {
   };
 
   const handleOpenEnquiry = (prod?: ProductItem) => {
-    setEnquiryProduct(prod || null);
-    setEnquiryModalOpen(true);
+    if (prod) {
+      const q = new URLSearchParams();
+      if (prod.title) q.set("part", prod.title);
+      if (prod.oemNumber) q.set("oem", prod.oemNumber);
+      if (prod.make) q.set("brand", prod.make);
+      if (prod.model) q.set("model", prod.model);
+      router.push(`/inquiry?${q.toString()}`);
+    } else {
+      router.push('/inquiry');
+    }
   };
 
   const handlePageChange = (newPage: number) => {
@@ -566,12 +574,26 @@ function ProductsContent() {
               <span>{pageHeadingInfo.breadcrumb}</span>
             )}
           </div>
-          <h1 className="text-[44px] sm:text-[44px] lg:text-[44px] font-medium text-white tracking-tight leading-tight mb-3">
-            {pageHeadingInfo.title}
-          </h1>
-          <p className="text-[#9CA2A2] text-[14px] sm:text-[14px] font-regular max-w-3xl leading-relaxed">
-            {pageHeadingInfo.subtitle}
-          </p>
+          <AnimatedText
+            key={pageHeadingInfo.title}
+            text={pageHeadingInfo.title}
+            variant="typewriter-char"
+            as="h1"
+            start="top 85%"
+            duration={0.45}
+            stagger={0.02}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-medium text-white tracking-tight leading-tight mb-3"
+          />
+          <AnimatedText
+            key={pageHeadingInfo.subtitle}
+            text={pageHeadingInfo.subtitle}
+            variant="smooth-paragraph"
+            as="p"
+            start="top 85%"
+            duration={0.4}
+            stagger={0.015}
+            className="text-[#9CA2A2] text-[14px] sm:text-[14px] font-regular max-w-3xl leading-relaxed"
+          />
         </div>
       </section>
 
@@ -951,15 +973,17 @@ function ProductsContent() {
           {/* ========================================================================= */}
           <main className="lg:col-span-9">
             {/* Top Toolbar matching Figma Frame */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-7">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-7">
               {/* Left: Results Count */}
-              <div className="shrink-0">
-                <span className="text-[16px] font-bold text-white block">
-                  {sortedProducts.length} results
-                </span>
-                <span className="text-[9px] text-[#9CA2A2] mt-0.5 block">
-                  Showing all spare parts
-                </span>
+              <div className="shrink-0 flex items-center justify-between sm:block">
+                <div>
+                  <span className="text-[16px] font-bold text-white block">
+                    {sortedProducts.length} results
+                  </span>
+                  <span className="text-[9px] text-[#9CA2A2] mt-0.5 block">
+                    Showing all spare parts
+                  </span>
+                </div>
               </div>
 
               {/* Center: Search OEM number, VIN, make or model */}
@@ -987,7 +1011,7 @@ function ProductsContent() {
                     }
                   }}
                   placeholder="Enter OEM number, VIN, make or model"
-                  className="w-full bg-[#0d1c1e] border border-[#1b2d30] rounded-md pl-9 pr-9 py-2 text-[16px] text-[#9CA2A2] placeholder-slate-400 focus:outline-none focus:border-[#00E5EE] transition-colors"
+                  className="w-full bg-[#0d1c1e] border border-[#1b2d30] rounded-md pl-9 pr-9 py-2 text-sm sm:text-[16px] text-[#9CA2A2] placeholder-slate-400 focus:outline-none focus:border-[#00E5EE] transition-colors"
                 />
                 {searchQuery && (
                   <button
@@ -1006,7 +1030,7 @@ function ProductsContent() {
               </form>
 
               {/* Right: Sort & View Toggle */}
-              <div className="flex items-center gap-4 shrink-0 self-end md:self-auto">
+              <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 w-full sm:w-auto">
                 {/* Sort Dropdown matching Figma design */}
                 <div className="relative inline-flex items-center cursor-pointer group">
                   <div className="flex items-center gap-1.5 text-[15px] select-none pointer-events-none">
@@ -1185,7 +1209,7 @@ function ProductsContent() {
               </button>
 
               {/* Number Buttons grouped together (max 5 visible at a time) */}
-              <div className="inline-flex items-center border border-[#D9D9D9] divide-x divide-[#D9D9D9]">
+              <div className="inline-flex items-center border border-[#D9D9D9] divide-x divide-[#D9D9D9] overflow-x-auto max-w-full">
                 {(() => {
                   const maxVisible = 5;
                   let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
@@ -1209,7 +1233,7 @@ function ProductsContent() {
                         type="button"
                         onClick={() => handlePageChange(num)}
                         aria-label={`Page ${num}`}
-                        className={`w-11 h-11 text-[15px] flex items-center justify-center transition-colors cursor-pointer ${
+                        className={`w-9 h-9 sm:w-11 sm:h-11 text-xs sm:text-[15px] flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
                           isActive
                             ? 'bg-[#121619] text-white font-normal'
                             : 'bg-white text-[#111214] font-normal hover:bg-slate-100'
@@ -1228,7 +1252,7 @@ function ProductsContent() {
                   disabled={currentPage === totalPages}
                   aria-label="Next Page"
                   title="Next Page"
-                  className={`w-11 h-11 bg-white text-[#111214] text-[15px] font-normal flex items-center justify-center transition-colors ${
+                  className={`w-9 h-9 sm:w-11 sm:h-11 bg-white text-[#111214] text-xs sm:text-[15px] font-normal flex items-center justify-center transition-colors shrink-0 ${
                     currentPage === totalPages
                       ? 'opacity-40 cursor-not-allowed'
                       : 'hover:bg-slate-100 cursor-pointer'
@@ -1242,14 +1266,7 @@ function ProductsContent() {
         </div>
       </section>
 
-      {/* Interactive Enquiry Modal / RFQ Popup */}
-      <EnquiryPopup
-        isOpen={enquiryModalOpen}
-        onClose={() => setEnquiryModalOpen(false)}
-        initialProductTitle={enquiryProduct?.title || ''}
-        initialOem={enquiryProduct?.oemNumber || ''}
-        initialCategory={enquiryProduct?.badge || enquiryProduct?.make || 'Spare Parts'}
-      />
+      
     </div>
   );
 }

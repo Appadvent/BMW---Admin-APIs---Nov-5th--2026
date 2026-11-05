@@ -123,21 +123,21 @@ export default function ProductCard({
           </h4>
 
           <div className="space-y-2.5 border-t border-slate-100 pt-3 text-[12px] text-[#11161f] mb-6">
-            <div className="flex items-center justify-between">
-              <span className="text-[#686B70]">Vehicle</span>
-              <span className="font-semibold text-[#11161f] truncate max-w-[170px] text-right">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[#686B70] shrink-0">Vehicle</span>
+              <span className="font-semibold text-[#11161f] truncate max-w-[130px] sm:max-w-[170px] text-right">
                 {vehicle}
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[#686B70]">Number</span>
-              <span className="font-mono text-[#11161f] truncate max-w-[170px] text-right">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[#686B70] shrink-0">Number</span>
+              <span className="font-mono text-[#11161f] truncate max-w-[130px] sm:max-w-[170px] text-right">
                 {oemNumber}
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[#686B70]">Finish</span>
-              <span className="font-semibold text-[#11161f] truncate max-w-[170px] text-right">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[#686B70] shrink-0">Finish</span>
+              <span className="font-semibold text-[#11161f] truncate max-w-[130px] sm:max-w-[170px] text-right">
                 {finish}
               </span>
             </div>
