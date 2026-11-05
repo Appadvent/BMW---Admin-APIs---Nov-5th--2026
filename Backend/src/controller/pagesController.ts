@@ -9,6 +9,16 @@ const pagesController = {
         try {
             const { title, content, type } = req.body;
             // Check if a page with the same type already exists
+            // Strictly restrict maximum pages to 3
+            const allPages = await PageDao.getPages();
+            if (allPages && allPages.length >= 3) {
+                res.status(400).json({
+                    success: false,
+                    message: "Maximum limit reached. You can only create up to 3 pages."
+                });
+                return;
+            }
+
             const existingPage = await PageDao.findPageByType(type);
             if (existingPage) {
                 res.status(400).json(RESPONSE_MESSAGES.ERROR.PAGE_TYPE_ALREADY_EXISTS);

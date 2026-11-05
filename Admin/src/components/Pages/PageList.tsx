@@ -37,6 +37,7 @@ const PageList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { pages, loading } = useSelector((state: RootState) => state.pages);
+  const isLimitReached = (pages?.length || 0) >= 3;
 
   const [searchText, setSearchText] = useState("");
 
@@ -98,12 +99,12 @@ const PageList: React.FC = () => {
       case "terms_and_conditions":
       case "terms":
         return <Tag color="purple" className="rounded-full px-2.5 py-0.5 font-medium border-none">Terms & Conditions</Tag>;
-      case "about":
-      case "about_us":
-        return <Tag color="cyan" className="rounded-full px-2.5 py-0.5 font-medium border-none">About Us</Tag>;
-      case "refund_policy":
-      case "return_policy":
-        return <Tag color="orange" className="rounded-full px-2.5 py-0.5 font-medium border-none">Refund Policy</Tag>;
+      // case "about":
+      // case "about_us":
+      //   return <Tag color="cyan" className="rounded-full px-2.5 py-0.5 font-medium border-none">About Us</Tag>;
+      // case "refund_policy":
+      // case "return_policy":
+      //   return <Tag color="orange" className="rounded-full px-2.5 py-0.5 font-medium border-none">Refund Policy</Tag>;
       case "cookie_policy":
         return <Tag color="geekblue" className="rounded-full px-2.5 py-0.5 font-medium border-none">Cookie Policy</Tag>;
       default:
@@ -238,15 +239,20 @@ const PageList: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Tooltip title="Create a new web page or policy">
+            <Tooltip title={isLimitReached ? "Maximum limit of 3 pages reached. Edit or update existing pages." : "Create a new web page or policy"}>
               <Button
                 type="primary"
                 size="large"
-                className="bg-indigo-600 hover:bg-indigo-500 border-none shadow-md shadow-indigo-600/30 font-medium flex items-center gap-2 rounded-lg h-11 px-5"
+                disabled={isLimitReached}
+                className={`font-medium flex items-center gap-2 rounded-lg h-11 px-5 transition-all ${
+                  isLimitReached
+                    ? "bg-slate-700/50 text-slate-400 border-none cursor-not-allowed opacity-50 shadow-none hover:bg-slate-700/50 hover:text-slate-400"
+                    : "bg-indigo-600 hover:bg-indigo-500 border-none shadow-md shadow-indigo-600/30"
+                }`}
                 icon={<Plus size={18} />}
                 onClick={handleCreatePage}
               >
-                Create Page
+                Create Page {isLimitReached && "(Max 3 reached)"}
               </Button>
             </Tooltip>
           </div>
