@@ -134,15 +134,9 @@ export default function Footer() {
           <div className="pt-8 border-t border-[#1E293B]/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[14px] text-[#6F7175] font-regular">
             <p>&copy; 2025 Motorium. Demonstration project.</p>
             <div className="flex items-center gap-6 text-[14px] text-[#6F7175] font-regular">
-              <Link href="/about" className="hover:text-slate-300 transition-colors">
-                Privacy policy
-              </Link>
-              <Link href="/about" className="hover:text-slate-300 transition-colors">
-                Terms of service
-              </Link>
-              <span className="hover:text-slate-300 transition-colors cursor-pointer">
-                Cookie settings
-              </span>
+              <Link href="/privacy-policy" className="hover:text-slate-300 transition-colors">Privacy policy</Link>
+              <Link href="/terms-of-service" className="hover:text-slate-300 transition-colors">Terms of service</Link>
+              <Link href="/cookie-settings" className="hover:text-slate-300 transition-colors">Cookie settings</Link>
             </div>
           </div>
         </div>

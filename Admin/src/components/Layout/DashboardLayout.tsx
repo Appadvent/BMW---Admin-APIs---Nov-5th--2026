@@ -27,7 +27,7 @@ const DashboardLayout: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    window.location.href = '/login';
   };
 
   return (

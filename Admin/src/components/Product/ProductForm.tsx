@@ -146,8 +146,8 @@ const ProductForm: React.FC = () => {
         condition: product.condition || null,
         price: product.price ?? null,
         finish: product.finish || null,
-        price: product.price ?? null,
-        finish: product.finish || null,
+        // price: product.price ?? null,
+        // finish: product.finish || null,
         categoryId: product.categoryId || (product.category?.id ?? null),
         subcategoryId: product.subcategoryId || (product.subcategory?.id ?? null),
       });
@@ -187,7 +187,7 @@ const ProductForm: React.FC = () => {
               );
             }
           })
-          .catch(() => {});
+          .catch(() => { });
       }
     }
   }, [product, form]);
@@ -255,7 +255,7 @@ const ProductForm: React.FC = () => {
       if (imageUrl && imageUrl !== product?.image) {
         try {
           await uploadService.deleteFile(imageUrl);
-        } catch {}
+        } catch { }
       }
 
       setImageUrl(uploadedUrl);
@@ -304,7 +304,7 @@ const ProductForm: React.FC = () => {
       if (brochureUrl && brochureUrl !== product?.brochure) {
         try {
           await uploadService.deleteFile(brochureUrl);
-        } catch {}
+        } catch { }
       }
 
       setBrochureUrl(uploadedUrl);
@@ -402,7 +402,14 @@ const ProductForm: React.FC = () => {
       setSpecifications([]);
       navigate("/dashboard/products");
     } catch (error: any) {
-      message.error(error || "Failed to save product");
+      console.error("Save product error:", error);
+      const errMsg =
+        typeof error === "string"
+          ? error
+          : error?.response?.data?.message ||
+            error?.message ||
+            "Failed to save product";
+      message.error(errMsg);
     } finally {
       hide();
       setIsSubmitting(false);
@@ -479,6 +486,12 @@ const ProductForm: React.FC = () => {
         form={form}
         layout="vertical"
         onFinish={handleSubmit}
+        onFinishFailed={({ errorFields }) => {
+          if (errorFields && errorFields.length > 0) {
+            const firstErr = errorFields[0].errors[0];
+            message.error(firstErr || "Please fill in all required fields");
+          }
+        }}
         requiredMark={false}
         className="w-full"
       >
@@ -607,11 +620,10 @@ const ProductForm: React.FC = () => {
                       Product Description <span className="text-red-500">*</span>
                     </span>
                     <span
-                      className={`text-xs ${
-                        cleanDescLength > DESCRIPTION_LIMIT
-                          ? "text-red-500 font-bold"
-                          : "text-gray-400"
-                      }`}
+                      className={`text-xs ${cleanDescLength > DESCRIPTION_LIMIT
+                        ? "text-red-500 font-bold"
+                        : "text-gray-400"
+                        }`}
                     >
                       {cleanDescLength} / {DESCRIPTION_LIMIT}
                     </span>
@@ -945,76 +957,6 @@ const ProductForm: React.FC = () => {
                     <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center bg-gray-50/50">
                       <ImageIcon size={40} className="mx-auto text-gray-300 mb-2" />
                       <p className="text-xs text-gray-400 mb-0">No image uploaded yet</p>
-                    </div>
-                  )}
-                </div>
-              </Card>
-
-              {/* Brochure Card */}
-              <Card
-                bordered={false}
-                className="shadow-sm rounded-2xl border border-gray-200/80 bg-white"
-                title={
-                  <div className="flex items-center gap-2 py-1">
-                    <FileText size={18} className="text-indigo-600" />
-                    <span className="font-semibold text-gray-800 text-base">Product Brochure (PDF)</span>
-                  </div>
-                }
-              >
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
-                      Upload PDF brochure (Optional)
-                    </span>
-                    {uploadingBrochure && (
-                      <span className="text-xs text-indigo-600 flex items-center gap-1">
-                        <Spin size="small" /> Uploading...
-                      </span>
-                    )}
-                  </div>
-
-                  <Upload
-                    customRequest={handleBrochureUpload}
-                    showUploadList={false}
-                    accept="application/pdf"
-                    disabled={uploadingBrochure}
-                  >
-                    <Tooltip title="Upload product brochure PDF">
-                      <Button
-                        icon={<UploadCloud size={16} />}
-                        size="large"
-                        loading={uploadingBrochure}
-                        className="rounded-lg border-indigo-200 text-indigo-600 hover:bg-indigo-50 flex items-center gap-2 font-medium"
-                      >
-                        {brochureUrl ? "Change PDF" : "Upload PDF"}
-                      </Button>
-                    </Tooltip>
-                  </Upload>
-
-                  {/* Brochure Preview */}
-                  {brochureUrl ? (
-                    <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 p-3 relative flex items-center justify-between">
-                      <div className="flex items-center gap-2 overflow-hidden">
-                        <FileText size={20} className="text-red-500 flex-shrink-0" />
-                        <span className="text-sm font-medium text-gray-700 truncate">
-                          {brochureUrl.split("/").pop()}
-                        </span>
-                      </div>
-                      <Tooltip title="Remove PDF">
-                        <Button
-                          danger
-                          type="text"
-                          size="small"
-                          icon={<Trash2 size={16} />}
-                          onClick={handleRemoveBrochure}
-                          className="hover:bg-red-50 flex items-center justify-center p-1"
-                        />
-                      </Tooltip>
-                    </div>
-                  ) : (
-                    <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center bg-gray-50/50">
-                      <FileText size={32} className="mx-auto text-gray-300 mb-2" />
-                      <p className="text-xs text-gray-400 mb-0">No PDF uploaded</p>
                     </div>
                   )}
                 </div>

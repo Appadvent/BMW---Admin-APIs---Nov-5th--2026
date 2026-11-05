@@ -41,6 +41,51 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchQueries, Query } from "../../store/slices/querySlice";
 import { queryService, userService } from "../../services/api";
 
+// Helper to clean duplicate OEM prefix e.g. "OEM: OEM: sample data" -> "sample data"
+const cleanOemDisplay = (val?: string | null) => {
+  if (!val) return "";
+  return val.replace(/^(OEM:s*)+/i, "").trim();
+};
+
+// Helper to extract clean pure customer message without technical brackets/headers
+const extractPureCustomerMessage = (raw?: string | null) => {
+  if (!raw) return "";
+  let text = raw;
+  if (text.includes("User Message:")) {
+    text = text.split("User Message:")[1] || "";
+  } else {
+    text = text.replace(/\[(Issue|Part|Ref\/Part|OEM|VIN|Country|Brand|Qty|Attachment):[^\]]*\]/gi, "");
+    text = text.replace(/^(Vehicle|VIN|OEM Number|Product Reference|Quantity|Country|Attachment):[^\n]*\n?/gim, "");
+  }
+  return text.trim();
+};
+
+// Helper to parse extra structured details from message
+const parseMessageFitment = (msg?: string | null) => {
+  const info: Record<string, string> = {};
+  if (!msg) return info;
+
+  const partM = msg.match(/(?:\[(?:Part|Ref\/Part):\s*|Product Reference:\s*)([^,\]\n]+)/i);
+  if (partM) info.part = partM[1].trim();
+
+  const oemM = msg.match(/(?:\[OEM:\s*|OEM Number:\s*)([^,\]\n]+)/i);
+  if (oemM) info.oem = cleanOemDisplay(oemM[1].replace(/\]$/, ""));
+
+  const modelM = msg.match(/(?:\[Model:\s*|Vehicle:\s*)([^,\]\n]+)/i);
+  if (modelM) info.model = modelM[1].replace(/\]$/, "").trim();
+
+  const vinM = msg.match(/(?:\[VIN:\s*|VIN:\s*)([^,\]\n]+)/i);
+  if (vinM) info.vin = vinM[1].replace(/\]$/, "").trim();
+
+  const countryM = msg.match(/(?:\[Country:\s*|Country:\s*)([^,\]\n]+)/i);
+  if (countryM) info.country = countryM[1].replace(/\]$/, "").trim();
+
+  const qtyM = msg.match(/(?:\[Qty:\s*|Quantity:\s*)([^,\]\n]+)/i);
+  if (qtyM) info.qty = qtyM[1].replace(/\]$/, "").trim();
+
+  return info;
+};
+
 const QueryList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { queries, pagination, loading } = useSelector((state: RootState) => state.queries);
@@ -48,6 +93,7 @@ const QueryList: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [searchText, setSearchText] = useState("");
+  const [filterType, setFilterType] = useState<"all" | "inquiry" | "contact">("all");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Detail Drawer state
@@ -277,7 +323,7 @@ const QueryList: React.FC = () => {
         <div className="space-y-1 text-xs">
           {record.oemNumber && (
             <div className="flex items-center gap-1 font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded text-[11px] font-semibold w-fit">
-              OEM: {record.oemNumber}
+              OEM: {cleanOemDisplay(record.oemNumber)}
             </div>
           )}
           {record.carModel && (
@@ -300,13 +346,14 @@ const QueryList: React.FC = () => {
       title: "Inquiry Message",
       dataIndex: "message",
       key: "message",
+      width: 320,
       render: (text: string, record: Query) => (
         <div
           onClick={() => handleViewDetails(record)}
           className="cursor-pointer group hover:bg-indigo-50/60 p-2 rounded-lg transition-colors"
         >
           <p className="text-xs text-gray-700 line-clamp-2 leading-relaxed group-hover:text-gray-900 m-0">
-            {text || <span className="italic text-gray-400">No message content</span>}
+            {extractPureCustomerMessage(text) || <span className="italic text-gray-400">No message content</span>}
           </p>
           <span className="text-[11px] text-indigo-600 font-medium mt-1 inline-block opacity-0 group-hover:opacity-100 transition-opacity">
             Click to view full message →
@@ -329,7 +376,8 @@ const QueryList: React.FC = () => {
     {
       title: "Actions",
       key: "actions",
-      width: 140,
+      width: 120,
+      fixed: "right" as const,
       align: "center" as const,
       render: (_: any, record: Query) => (
         <Space size={4}>
@@ -435,12 +483,57 @@ const QueryList: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Layers size={16} className="text-indigo-600" />
-            <span>
-              Showing <strong className="text-gray-800">{queries?.length || 0}</strong> of{" "}
-              <strong className="text-gray-800">{pagination?.total || 0}</strong> inquiries
-            </span>
+          <div className="flex items-center gap-2">
+            <div className="inline-flex p-1 bg-gray-100 rounded-xl border border-gray-200">
+              <button
+                type="button"
+                onClick={() => setFilterType("all")}
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                  filterType === "all"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                All ({queries?.length || 0})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType("inquiry")}
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                  filterType === "inquiry"
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-gray-600 hover:text-indigo-600"
+                }`}
+              >
+                <Sparkles size={13} />
+                Inquiries ({
+                  queries?.filter(
+                    (q) =>
+                      (q.services && q.services.toLowerCase().includes("inquiry")) ||
+                      (q.message && q.message.includes("Vehicle:"))
+                  ).length || 0
+                })
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType("contact")}
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                  filterType === "contact"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                General Contact ({
+                  queries?.filter(
+                    (q) =>
+                      !(
+                        (q.services && q.services.toLowerCase().includes("inquiry")) ||
+                        (q.message && q.message.includes("Vehicle:"))
+                      )
+                  ).length || 0
+                })
+              </button>
+            </div>
           </div>
         </div>
 
@@ -448,7 +541,13 @@ const QueryList: React.FC = () => {
         <div className="mt-4">
           <Table
             columns={columns}
-            dataSource={queries}
+            scroll={{ x: 1200 }}
+            dataSource={queries.filter((q) => {
+              if (filterType === "all") return true;
+              const isPartsInq = (q.services && q.services.toLowerCase().includes("inquiry")) ||
+                                 (q.message && q.message.includes("Vehicle:"));
+              return filterType === "inquiry" ? isPartsInq : !isPartsInq;
+            })}
             rowKey="id"
             loading={loading}
             pagination={{
@@ -504,7 +603,7 @@ const QueryList: React.FC = () => {
           </div>
         }
         placement="right"
-        width={500}
+        width={Math.min(600, typeof window !== "undefined" ? window.innerWidth * 0.95 : 600)}
         onClose={() => setIsDrawerVisible(false)}
         open={isDrawerVisible}
         bodyStyle={{ padding: "24px" }}
@@ -599,47 +698,94 @@ const QueryList: React.FC = () => {
             </div>
 
             {/* Automotive Fitment & Enquiry Details */}
-            {(selectedQuery.oemNumber || selectedQuery.carModel || selectedQuery.vin || selectedQuery.year) && (
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Automotive Fitment & Part</h4>
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 grid grid-cols-2 gap-3 text-xs">
-                  {selectedQuery.oemNumber && (
-                    <div>
-                      <span className="text-gray-400 block text-[11px]">Requested OEM Number</span>
-                      <span className="font-mono font-bold text-indigo-700 text-sm">{selectedQuery.oemNumber}</span>
-                    </div>
-                  )}
-                  {selectedQuery.carModel && (
-                    <div>
-                      <span className="text-gray-400 block text-[11px]">Vehicle Model</span>
-                      <span className="font-semibold text-gray-800">{selectedQuery.carModel}</span>
-                    </div>
-                  )}
-                  {selectedQuery.year && (
-                    <div>
-                      <span className="text-gray-400 block text-[11px]">Model Year</span>
-                      <span className="font-semibold text-gray-800">{selectedQuery.year}</span>
-                    </div>
-                  )}
-                  {selectedQuery.vin && (
-                    <div className="col-span-2">
-                      <span className="text-gray-400 block text-[11px]">VIN Number (Confidential Verification)</span>
-                      <span className="font-mono font-semibold text-gray-800 bg-white px-2 py-1 rounded border border-gray-200 inline-block mt-0.5">
-                        {selectedQuery.vin}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {(() => {
+              const extra = parseMessageFitment(selectedQuery.message);
+              const oemVal = cleanOemDisplay(selectedQuery.oemNumber) || extra.oem;
+              const modelVal = selectedQuery.carModel || extra.model;
+              const vinVal = selectedQuery.vin || extra.vin;
+              const yearVal = selectedQuery.year;
+              const partVal = extra.part;
+              const countryVal = extra.country;
+              const qtyVal = extra.qty;
+              const pureMsg = extractPureCustomerMessage(selectedQuery.message);
 
-            {/* Message Card */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Customer Message</h4>
-              <div className="p-4 rounded-xl bg-white border border-gray-200/80 shadow-sm leading-relaxed text-sm text-gray-800 whitespace-pre-wrap">
-                {selectedQuery.message}
-              </div>
-            </div>
+              const hasFitment = oemVal || modelVal || vinVal || yearVal || partVal || countryVal || qtyVal;
+
+              return (
+                <>
+                  {hasFitment && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Automotive Fitment & Part
+                      </h4>
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 grid grid-cols-2 gap-3 text-xs">
+                        {oemVal && (
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Requested OEM Number</span>
+                            <span className="font-mono font-bold text-indigo-700 text-sm">
+                              {oemVal}
+                            </span>
+                          </div>
+                        )}
+                        {modelVal && (
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Vehicle Model</span>
+                            <span className="font-semibold text-gray-800">{modelVal}</span>
+                          </div>
+                        )}
+                        {partVal && (
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Product Reference / Part</span>
+                            <span className="font-semibold text-gray-800">{partVal}</span>
+                          </div>
+                        )}
+                        {qtyVal && (
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Required Quantity</span>
+                            <span className="font-semibold text-gray-800">{qtyVal} pcs</span>
+                          </div>
+                        )}
+                        {countryVal && (
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Destination Country</span>
+                            <span className="font-semibold text-gray-800">{countryVal}</span>
+                          </div>
+                        )}
+                        {yearVal && (
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Model Year</span>
+                            <span className="font-semibold text-gray-800">{yearVal}</span>
+                          </div>
+                        )}
+                        {vinVal && (
+                          <div className="col-span-2">
+                            <span className="text-gray-400 block text-[11px]">
+                              VIN Number (Confidential Verification)
+                            </span>
+                            <span className="font-mono font-semibold text-gray-800 bg-white px-2 py-1 rounded border border-gray-200 inline-block mt-0.5">
+                              {vinVal}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Customer Message Card (Pure user message separated) */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                      Customer Message
+                    </h4>
+                    <div
+                      className="p-4 rounded-xl bg-white border border-gray-200/80 shadow-sm leading-relaxed text-sm text-gray-800 whitespace-pre-wrap break-all"
+                      style={{ wordBreak: "break-word", overflowWrap: "anywhere" }}
+                    >
+                      {pureMsg || <span className="italic text-gray-400">No additional message provided</span>}
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
 
             {/* Action Buttons */}
             <div className="pt-4 border-t border-gray-100 flex items-center gap-3">

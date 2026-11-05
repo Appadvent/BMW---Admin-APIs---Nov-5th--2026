@@ -60,6 +60,18 @@ const PageForm: React.FC = () => {
   };
 
   const handleSubmit = async (values: any) => {
+    if (!isEditing) {
+      try {
+        const currentPagesRes = await pageService.getPage();
+        const currentList = currentPagesRes?.data?.pages || currentPagesRes?.data || currentPagesRes?.pages || [];
+        if (Array.isArray(currentList) && currentList.length >= 3) {
+          message.error("Maximum limit reached. You cannot create more than 3 pages.");
+          return;
+        }
+      } catch (e) {
+        // continue
+      }
+    }
     const cleanContent = content ? content.replace(/<(.|\n)*?>/g, "").trim() : "";
     if (!cleanContent) {
       message.error("Please enter the page content");
@@ -178,8 +190,8 @@ const PageForm: React.FC = () => {
                 >
                   <Select.Option value="privacy_and_policy">Privacy Policy</Select.Option>
                   <Select.Option value="terms_and_conditions">Terms & Conditions</Select.Option>
-                  <Select.Option value="about">About Us</Select.Option>
-                  <Select.Option value="refund_policy">Refund & Return Policy</Select.Option>
+                  {/* <Select.Option value="about">About Us</Select.Option>
+                  <Select.Option value="refund_policy">Refund & Return Policy</Select.Option> */}
                   <Select.Option value="cookie_policy">Cookie Policy</Select.Option>
                 </Select>
               </Form.Item>
