@@ -13,10 +13,9 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "npx prisma migrate deploy",
     "db:clear": "npx ts-node src/scripts/clearData.ts",
-    "db:seed": "npx ts-node src/scripts/seedDummyData.ts",
-    "db:seed-subcategories": "npx ts-node src/scripts/seedSubcategories.ts",
+    "db:seed": "npx ts-node src/scripts/seedAutomotiveCatalog.ts",
     "db:reset": "npm run db:clear && npm run seed",
-    "seed": "npx ts-node src/scripts/clearData.ts && npx ts-node src/scripts/seedDummyData.ts && npx ts-node src/scripts/seedSubcategories.ts && npx ts-node src/scripts/seedBanners.ts && npx ts-node src/scripts/seedBlogs.ts"
+    "seed": "npx ts-node src/scripts/clearData.ts && npx ts-node src/scripts/seedAutomotiveCatalog.ts && npx ts-node src/scripts/seedBanners.ts && npx ts-node src/scripts/seedAutomotiveGuides.ts"
   },
   "keywords": [],
   "author": "",
